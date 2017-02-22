@@ -1,4 +1,4 @@
-# chartrow
+# flask-jpos
 
 Below you have instructions on how the skeleton project has been set up.
 

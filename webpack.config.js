@@ -7,7 +7,7 @@ var config = {
 
 config.entry = [
   'babel-polyfill',
-  path.join(__dirname, 'src', 'js', 'main.js')
+  path.join(__dirname, 'static_src', 'js', 'main.js')
 ];
 
 config.module = {
@@ -15,7 +15,38 @@ config.module = {
     {
       loader:  'babel-loader',
       test:    /\.jsx?$/,
-      exclude: /node_modules/
+      exclude: /node_modules/,
+      query: {
+        presets: ["react", "es2015"]
+      }
+    },
+    {
+      loader: 'style-loader!css-loader',
+      test:    /\.css$/
+    }, {
+        test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
+        loader: 'url?limit=10000&mimetype=application/font-woff',
+    }, {
+        test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
+        loader: 'url?limit=10000&mimetype=application/font-woff2',
+    }, {
+        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+        loader: 'url?limit=10000&mimetype=application/octet-stream',
+    }, {
+        test: /\.otf(\?v=\d+\.\d+\.\d+)?$/,
+        loader: 'url?limit=10000&mimetype=application/font-otf',
+    }, {
+        test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+        loader: 'file',
+    }, {
+        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+        loader: 'url?limit=10000&mimetype=image/svg+xml',
+    }, {
+        test: /\.png$/,
+        loader: 'file?name=[name].[ext]',
+    }, {
+        test: /\.jpg$/,
+        loader: 'file?name=[name].[ext]',
     }
   ],
   postLoaders: []
@@ -30,11 +61,7 @@ config.output = {
   devtoolFallbackModuleFilenameTemplate: '[resourcePath]?[hash]'
 };
 
-config.plugins = [new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                warnings: false
-            }
-        })];
+config.plugins = [];
 
 config.resolve = {
   extensions: [
@@ -43,9 +70,11 @@ config.resolve = {
     '.jsx'
   ],
   modulesDirectories: [
-    './src/js',
+    './static_src/js',
     './node_modules/'
   ]
 };
+
+config.watch=true;
 
 module.exports = config;
