@@ -1,6 +1,6 @@
 import React from 'react';
 import jQuery from 'jquery';
-window.jQuery = jQuery;
+window.$ = jQuery;
 const FeedItem = React.createClass({
   render() {
     return (

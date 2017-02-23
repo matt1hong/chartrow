@@ -5,28 +5,31 @@ from flask_restful import reqparse, Resource, Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_script import Manager, Server
+from flask_oauthlib.client import OAuth
 
 from utils import DecimalEncoder
-
-class SQLAlchemyPlus(SQLAlchemy):
-	def _execute_for_all_tables(self, app, bind, operation, **kwargs):
-		app = self.get_app(app)
-		binds = [None] + list(app.config.get('SQLALCHEMY_BINDS') or ())
-
-		for bind in binds:
-			tables = self.get_tables_for_bind(bind)
-			op = getattr(self.Model.metadata, operation)
-			op(bind=self.get_engine(app, bind), tables=tables, **kwargs)
-
-	def reflect(self, bind='__all__', app=None, **kwargs):
-		self._execute_for_all_tables(app, bind, 'reflect', **kwargs)
 
 
 app = Flask(__name__)
 app.config.from_object('config')
 app.json_encoder = DecimalEncoder
 
-db = SQLAlchemyPlus(app)
+db = SQLAlchemy(app)
+
+from server import app
+
+oauth = OAuth(app)
+def oauth_app():
+	twitter = oauth.remote_app('twitter',
+		base_url='https://api.twitter.com/1.1/',
+		request_token_url='https://api.twitter.com/oauth/request_token',
+		access_token_url='https://api.twitter.com/oauth/access_token',
+		authorize_url='https://api.twitter.com/oauth/authenticate',
+		consumer_key='wSSpGearal9PNosxjRRCvvlWm',
+		consumer_secret='s5gY6R1mybTqVSJrY1ZvVp6Yalan7bY8Hd51JWVTv7kFJLkQQj'
+	)
+	return twitter
+twitter = oauth_app()
 
 parser = reqparse.RequestParser()
 
