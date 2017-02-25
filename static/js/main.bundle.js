@@ -40325,7 +40325,7 @@
 		_createClass(Admin, [{
 			key: 'componentDidMount',
 			value: function componentDidMount() {
-				this.loadData();
+				// this.loadData();
 			}
 		}, {
 			key: 'loadData',
@@ -53122,6 +53122,26 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+	var tweetData = {
+		id: 'XXX',
+		user: {
+			name: 'XXX',
+			screen_name: 'XXX',
+			profile_image_url: 'XXX'
+		},
+		text: 'XXX',
+		created_at: 'XXX',
+		favorite_count: 'XXX',
+		retweet_count: 'XXX',
+		entities: {
+			media: [],
+			urls: [],
+			user_mentions: [],
+			hashtags: [],
+			symbols: []
+		}
+	};
+
 	var TweetFeed = function (_React$Component) {
 		_inherits(TweetFeed, _React$Component);
 
@@ -53132,6 +53152,17 @@
 		}
 
 		_createClass(TweetFeed, [{
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+				var socket = io.connect('http://' + document.domain + ':' + location.port);
+				socket.on('connect', function () {
+					socket.emit('connected', { data: 'I\'m connected!' });
+				});
+				socket.on('tweet', function (data) {
+					console.log(data);
+				});
+			}
+		}, {
 			key: 'render',
 			value: function render() {
 				return _react2.default.createElement(

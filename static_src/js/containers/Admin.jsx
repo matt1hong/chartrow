@@ -21,7 +21,7 @@ export default class Admin extends React.Component {
 		this.loadData = this.loadData.bind(this)
 	}
 	componentDidMount() {
-		this.loadData();
+		// this.loadData();
 	}
 	loadData() {
 		axios.get('/api/get_tweets').then(response => {
