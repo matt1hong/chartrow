@@ -24,7 +24,7 @@ stream = Stream(twitter, listener)
 
 @socketio.on('connected')
 def stream_tweets(message):
-    return Response(stream.filter(track=['trump']), content_type='text/event-stream')
+    return Response(stream.filter(track=['maher']), content_type='text/event-stream')
 
 # @twitter.tokengetter
 # def get_twitter_token(token=None):

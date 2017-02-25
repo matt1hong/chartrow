@@ -40318,24 +40318,23 @@
 			_this.state = {
 				tweets: []
 			};
-			_this.loadData = _this.loadData.bind(_this);
 			return _this;
 		}
 
 		_createClass(Admin, [{
 			key: 'componentDidMount',
 			value: function componentDidMount() {
-				// this.loadData();
+				var socket = io.connect('http://' + document.domain + ':' + location.port);
+				socket.on('connect', function () {
+					socket.emit('connected', { data: 'I\'m connected!' });
+				});
+				socket.on('tweet', this.updateTweets.bind(this));
 			}
 		}, {
-			key: 'loadData',
-			value: function loadData() {
-				var _this2 = this;
-
-				_axios2.default.get('/api/get_tweets').then(function (response) {
-					_this2.setState({
-						tweets: JSON.parse(response.data.results).data
-					});
+			key: 'updateTweets',
+			value: function updateTweets(data) {
+				this.setState({
+					tweets: Array.concat(this.state.tweets, JSON.parse(data))
 				});
 			}
 		}, {
@@ -53152,17 +53151,6 @@
 		}
 
 		_createClass(TweetFeed, [{
-			key: 'componentDidMount',
-			value: function componentDidMount() {
-				var socket = io.connect('http://' + document.domain + ':' + location.port);
-				socket.on('connect', function () {
-					socket.emit('connected', { data: 'I\'m connected!' });
-				});
-				socket.on('tweet', function (data) {
-					console.log(data);
-				});
-			}
-		}, {
 			key: 'render',
 			value: function render() {
 				return _react2.default.createElement(
@@ -53180,12 +53168,15 @@
 							'ul',
 							null,
 							this.props.tweets.map(function (x, k) {
-								return _react2.default.createElement(
-									'span',
-									null,
-									x.id,
-									' '
-								);
+								return x.entities.urls.length > 0 ? _react2.default.createElement(
+									'a',
+									{ key: k, href: x.entities.urls[0].url, target: '_blank' },
+									_react2.default.createElement(
+										'li',
+										{ className: 'feeditem' },
+										x.text
+									)
+								) : null;
 							})
 						)
 					)

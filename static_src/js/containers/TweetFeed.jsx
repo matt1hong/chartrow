@@ -23,15 +23,6 @@ const tweetData = {
 }
 
 export default class TweetFeed extends React.Component {
-	componentDidMount() {
-		var socket = io.connect('http://' + document.domain + ':' + location.port);
-        socket.on('connect', function() {
-            socket.emit('connected', {data: 'I\'m connected!'});
-        });
-		socket.on('tweet', function (data) {
-			console.log(data)
-		});
-	}
 	render() {
 		return (
 		      <div className="feedwidget widget">
@@ -39,7 +30,11 @@ export default class TweetFeed extends React.Component {
 		          <h2 ref="feed"> Twitter</h2>
 		          <ul>
 		            {this.props.tweets.map((x,k)=>
-		            	<span>{x.id} </span>
+		            	x.entities.urls.length > 0 ?
+			            	<a key={k} href={x.entities.urls[0].url} target="_blank">
+						        <li className="feeditem">{x.text}</li>
+						    </a>
+						: null
 					)}
 		          </ul>
 		        </div>

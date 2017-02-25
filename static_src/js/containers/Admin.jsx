@@ -18,16 +18,17 @@ export default class Admin extends React.Component {
 		this.state= {
 			tweets: []
 		}
-		this.loadData = this.loadData.bind(this)
 	}
 	componentDidMount() {
-		// this.loadData();
+		var socket = io.connect('http://' + document.domain + ':' + location.port);
+        socket.on('connect', function() {
+            socket.emit('connected', {data: 'I\'m connected!'});
+        });
+        socket.on('tweet', this.updateTweets.bind(this))
 	}
-	loadData() {
-		axios.get('/api/get_tweets').then(response => {
-			this.setState({
-				tweets: JSON.parse(response.data.results).data
-			})
+	updateTweets(data) {
+		this.setState({
+			tweets: Array.concat(this.state.tweets, JSON.parse(data))
 		})
 	}
 	render() {
