@@ -53,6 +53,7 @@
     "react-spinkit": "^2.0.0",
     "react-stack-grid": "^0.1.1",
     "react-tap-event-plugin": "^2.0.1",
+    "react-twitter-widgets": "^1.2.0",
     "react-ultimate-pagination": "^0.9.0",
     "rgx": "^0.2.4",
     "style-loader": "^0.13.1",

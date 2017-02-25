@@ -25,8 +25,8 @@ def oauth_app():
 		request_token_url='https://api.twitter.com/oauth/request_token',
 		access_token_url='https://api.twitter.com/oauth/access_token',
 		authorize_url='https://api.twitter.com/oauth/authenticate',
-		consumer_key='wSSpGearal9PNosxjRRCvvlWm',
-		consumer_secret='s5gY6R1mybTqVSJrY1ZvVp6Yalan7bY8Hd51JWVTv7kFJLkQQj'
+		consumer_key='ZQgQejG6uuceFPx4lnz3d8ttp',
+		consumer_secret='YRX7rHhsXZnWEYuhCq0asMQWHINyhs6gH3GmT398tmcnooKTjJ'
 	)
 	return twitter
 twitter = oauth_app()

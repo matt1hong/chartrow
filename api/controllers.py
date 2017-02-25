@@ -8,7 +8,7 @@ from flask_login import login_user, logout_user, current_user
 
 @twitter.tokengetter
 def get_twitter_token(token=None):
-    return ('833666853520150528-be809NsQC77rNnHOLx7PBI0vQDYIgmo','oN8BGaILEEXRaQ1vjJxcE3906IK7Ho93UM1f02NAoPUom')
+    return ('833666853520150528-dAkmBZ6i1TW6PGuuxUyJSyfEl3yo9Kg','ZCNf0AYdlm28qDHVUM1M7C9Oe8CEc6JZHfgHm7FIUe9Ur')
 
 @app.route('/')
 def index():
