@@ -8271,10 +8271,14 @@
 	function init() {
 	  var app = document.querySelectorAll('[data-section="app"]')[0];
 	  _reactDom2.default.render(_react2.default.createElement(
-	    _reactRouter.Router,
-	    { history: _reactRouter.hashHistory },
-	    _react2.default.createElement(_reactRouter.Route, { path: '/', component: _HomePage2.default }),
-	    _react2.default.createElement(_reactRouter.Route, { path: 'admin', component: _Admin2.default })
+	    _MuiThemeProvider2.default,
+	    { muiTheme: (0, _getMuiTheme2.default)() },
+	    _react2.default.createElement(
+	      _reactRouter.Router,
+	      { history: _reactRouter.hashHistory },
+	      _react2.default.createElement(_reactRouter.Route, { path: '/', component: _HomePage2.default }),
+	      _react2.default.createElement(_reactRouter.Route, { path: 'admin', component: _Admin2.default })
+	    )
 	  ), app);
 	}
 
@@ -40275,6 +40279,8 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _GridList = __webpack_require__(794);
+
 	var _RSSFeed = __webpack_require__(606);
 
 	var _RSSFeed2 = _interopRequireDefault(_RSSFeed);
@@ -40318,6 +40324,7 @@
 			_this.state = {
 				tweets: []
 			};
+			_this.getImages('http://fivethirtyeight.com/features/' + 'how-trumps-supreme-court-could-overturn-roe-v-wade-without-overturning-it/?ex_cid=story-twitter');
 			return _this;
 		}
 
@@ -40338,6 +40345,13 @@
 				});
 			}
 		}, {
+			key: 'getImages',
+			value: function getImages(link) {
+				_axios2.default.get('/api/get_images?link=' + link).then(function (response) {
+					console.log(response);
+				});
+			}
+		}, {
 			key: 'render',
 			value: function render() {
 				return _react2.default.createElement(
@@ -40355,12 +40369,27 @@
 								_react2.default.createElement(
 									'td',
 									{ style: style.td },
-									_react2.default.createElement(_TweetFeed2.default, { tweets: this.state.tweets })
+									_react2.default.createElement(_TweetFeed2.default, {
+										tweets: this.state.tweets,
+										onClick: this.getImages.bind(this) })
 								),
 								_react2.default.createElement(
 									'td',
 									{ style: style.td },
 									_react2.default.createElement(_reactImageCrop2.default, { src: 'https://www.smashingmagazine.com/wp-content/uploads/2016/10/inclusive-design-pattners-250px.png' })
+								),
+								_react2.default.createElement(
+									'td',
+									{ style: style.td },
+									_react2.default.createElement(
+										_GridList.GridList,
+										null,
+										_react2.default.createElement(
+											_GridList.GridTile,
+											{ title: 'Sample' },
+											_react2.default.createElement('img', { src: 'http://www.material-ui.com/images/grid-list/00-52-29-429_640.jpg' })
+										)
+									)
 								),
 								_react2.default.createElement(
 									'td',
@@ -58972,6 +59001,671 @@
 	var $export = __webpack_require__(651)
 	// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
 	$export($export.S, 'Object', {create: __webpack_require__(670)});
+
+/***/ },
+/* 754 */,
+/* 755 */,
+/* 756 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	exports.__esModule = true;
+
+	var _assign = __webpack_require__(757);
+
+	var _assign2 = _interopRequireDefault(_assign);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _assign2.default || function (target) {
+	  for (var i = 1; i < arguments.length; i++) {
+	    var source = arguments[i];
+
+	    for (var key in source) {
+	      if (Object.prototype.hasOwnProperty.call(source, key)) {
+	        target[key] = source[key];
+	      }
+	    }
+	  }
+
+	  return target;
+	};
+
+/***/ },
+/* 757 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(758), __esModule: true };
+
+/***/ },
+/* 758 */
+/***/ function(module, exports, __webpack_require__) {
+
+	__webpack_require__(759);
+	module.exports = __webpack_require__(653).Object.assign;
+
+/***/ },
+/* 759 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 19.1.3.1 Object.assign(target, source)
+	var $export = __webpack_require__(651);
+
+	$export($export.S + $export.F, 'Object', {assign: __webpack_require__(760)});
+
+/***/ },
+/* 760 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	// 19.1.2.1 Object.assign(target, source, ...)
+	var getKeys  = __webpack_require__(672)
+	  , gOPS     = __webpack_require__(719)
+	  , pIE      = __webpack_require__(720)
+	  , toObject = __webpack_require__(688)
+	  , IObject  = __webpack_require__(675)
+	  , $assign  = Object.assign;
+
+	// should work with symbols and should have deterministic property order (V8 bug)
+	module.exports = !$assign || __webpack_require__(662)(function(){
+	  var A = {}
+	    , B = {}
+	    , S = Symbol()
+	    , K = 'abcdefghijklmnopqrst';
+	  A[S] = 7;
+	  K.split('').forEach(function(k){ B[k] = k; });
+	  return $assign({}, A)[S] != 7 || Object.keys($assign({}, B)).join('') != K;
+	}) ? function assign(target, source){ // eslint-disable-line no-unused-vars
+	  var T     = toObject(target)
+	    , aLen  = arguments.length
+	    , index = 1
+	    , getSymbols = gOPS.f
+	    , isEnum     = pIE.f;
+	  while(aLen > index){
+	    var S      = IObject(arguments[index++])
+	      , keys   = getSymbols ? getKeys(S).concat(getSymbols(S)) : getKeys(S)
+	      , length = keys.length
+	      , j      = 0
+	      , key;
+	    while(length > j)if(isEnum.call(S, key = keys[j++]))T[key] = S[key];
+	  } return T;
+	} : $assign;
+
+/***/ },
+/* 761 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	exports.__esModule = true;
+
+	exports.default = function (obj, keys) {
+	  var target = {};
+
+	  for (var i in obj) {
+	    if (keys.indexOf(i) >= 0) continue;
+	    if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;
+	    target[i] = obj[i];
+	  }
+
+	  return target;
+	};
+
+/***/ },
+/* 762 */
+/***/ function(module, exports) {
+
+	module.exports = function (target) {
+	  for (var i = 1; i < arguments.length; i++) {
+	    var source = arguments[i];
+	    for (var key in source) {
+	      if (Object.prototype.hasOwnProperty.call(source, key)) {
+	        target[key] = source[key];
+	      }
+	    }
+	  }
+	  return target;
+	};
+
+
+/***/ },
+/* 763 */,
+/* 764 */,
+/* 765 */,
+/* 766 */,
+/* 767 */,
+/* 768 */,
+/* 769 */,
+/* 770 */,
+/* 771 */,
+/* 772 */,
+/* 773 */,
+/* 774 */,
+/* 775 */,
+/* 776 */,
+/* 777 */,
+/* 778 */,
+/* 779 */,
+/* 780 */,
+/* 781 */,
+/* 782 */,
+/* 783 */,
+/* 784 */,
+/* 785 */,
+/* 786 */,
+/* 787 */,
+/* 788 */,
+/* 789 */,
+/* 790 */,
+/* 791 */,
+/* 792 */,
+/* 793 */,
+/* 794 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = exports.GridTile = exports.GridList = undefined;
+
+	var _GridList2 = __webpack_require__(795);
+
+	var _GridList3 = _interopRequireDefault(_GridList2);
+
+	var _GridTile2 = __webpack_require__(796);
+
+	var _GridTile3 = _interopRequireDefault(_GridTile2);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.GridList = _GridList3.default;
+	exports.GridTile = _GridTile3.default;
+	exports.default = _GridList3.default;
+
+/***/ },
+/* 795 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends2 = __webpack_require__(756);
+
+	var _extends3 = _interopRequireDefault(_extends2);
+
+	var _objectWithoutProperties2 = __webpack_require__(761);
+
+	var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
+
+	var _getPrototypeOf = __webpack_require__(738);
+
+	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+	var _classCallCheck2 = __webpack_require__(736);
+
+	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+	var _createClass2 = __webpack_require__(741);
+
+	var _createClass3 = _interopRequireDefault(_createClass2);
+
+	var _possibleConstructorReturn2 = __webpack_require__(745);
+
+	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+	var _inherits2 = __webpack_require__(746);
+
+	var _inherits3 = _interopRequireDefault(_inherits2);
+
+	var _simpleAssign = __webpack_require__(762);
+
+	var _simpleAssign2 = _interopRequireDefault(_simpleAssign);
+
+	var _react = __webpack_require__(299);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function getStyles(props) {
+	  return {
+	    root: {
+	      display: 'flex',
+	      flexWrap: 'wrap',
+	      margin: -props.padding / 2
+	    },
+	    item: {
+	      boxSizing: 'border-box',
+	      padding: props.padding / 2
+	    }
+	  };
+	}
+
+	var GridList = function (_Component) {
+	  (0, _inherits3.default)(GridList, _Component);
+
+	  function GridList() {
+	    (0, _classCallCheck3.default)(this, GridList);
+	    return (0, _possibleConstructorReturn3.default)(this, (GridList.__proto__ || (0, _getPrototypeOf2.default)(GridList)).apply(this, arguments));
+	  }
+
+	  (0, _createClass3.default)(GridList, [{
+	    key: 'render',
+	    value: function render() {
+	      var _props = this.props,
+	          cols = _props.cols,
+	          padding = _props.padding,
+	          cellHeight = _props.cellHeight,
+	          children = _props.children,
+	          style = _props.style,
+	          other = (0, _objectWithoutProperties3.default)(_props, ['cols', 'padding', 'cellHeight', 'children', 'style']);
+	      var prepareStyles = this.context.muiTheme.prepareStyles;
+
+	      var styles = getStyles(this.props, this.context);
+	      var mergedRootStyles = (0, _simpleAssign2.default)(styles.root, style);
+
+	      var wrappedChildren = _react2.default.Children.map(children, function (currentChild) {
+	        if (_react2.default.isValidElement(currentChild) && currentChild.type.muiName === 'Subheader') {
+	          return currentChild;
+	        }
+	        var childCols = currentChild.props.cols || 1;
+	        var childRows = currentChild.props.rows || 1;
+	        var itemStyle = (0, _simpleAssign2.default)({}, styles.item, {
+	          width: 100 / cols * childCols + '%',
+	          height: cellHeight === 'auto' ? 'auto' : cellHeight * childRows + padding
+	        });
+
+	        return _react2.default.createElement(
+	          'div',
+	          { style: prepareStyles(itemStyle) },
+	          currentChild
+	        );
+	      });
+
+	      return _react2.default.createElement(
+	        'div',
+	        (0, _extends3.default)({ style: prepareStyles(mergedRootStyles) }, other),
+	        wrappedChildren
+	      );
+	    }
+	  }]);
+	  return GridList;
+	}(_react.Component);
+
+	GridList.defaultProps = {
+	  cols: 2,
+	  padding: 4,
+	  cellHeight: 180
+	};
+	GridList.contextTypes = {
+	  muiTheme: _react.PropTypes.object.isRequired
+	};
+	process.env.NODE_ENV !== "production" ? GridList.propTypes = {
+	  /**
+	   * Number of px for one cell height.
+	   * You can set `'auto'` if you want to let the children determine the height.
+	   */
+	  cellHeight: _react.PropTypes.oneOfType([_react.PropTypes.number, _react.PropTypes.oneOf(['auto'])]),
+	  /**
+	   * Grid Tiles that will be in Grid List.
+	   */
+	  children: _react.PropTypes.node,
+	  /**
+	   * Number of columns.
+	   */
+	  cols: _react.PropTypes.number,
+	  /**
+	   * Number of px for the padding/spacing between items.
+	   */
+	  padding: _react.PropTypes.number,
+	  /**
+	   * Override the inline-styles of the root element.
+	   */
+	  style: _react.PropTypes.object
+	} : void 0;
+	exports.default = GridList;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(294)))
+
+/***/ },
+/* 796 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends2 = __webpack_require__(756);
+
+	var _extends3 = _interopRequireDefault(_extends2);
+
+	var _objectWithoutProperties2 = __webpack_require__(761);
+
+	var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
+
+	var _getPrototypeOf = __webpack_require__(738);
+
+	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+	var _classCallCheck2 = __webpack_require__(736);
+
+	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+	var _createClass2 = __webpack_require__(741);
+
+	var _createClass3 = _interopRequireDefault(_createClass2);
+
+	var _possibleConstructorReturn2 = __webpack_require__(745);
+
+	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+	var _inherits2 = __webpack_require__(746);
+
+	var _inherits3 = _interopRequireDefault(_inherits2);
+
+	var _defineProperty2 = __webpack_require__(797);
+
+	var _defineProperty3 = _interopRequireDefault(_defineProperty2);
+
+	var _simpleAssign = __webpack_require__(762);
+
+	var _simpleAssign2 = _interopRequireDefault(_simpleAssign);
+
+	var _react = __webpack_require__(299);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function getStyles(props, context) {
+	  var _titleBar;
+
+	  var _context$muiTheme = context.muiTheme,
+	      baseTheme = _context$muiTheme.baseTheme,
+	      gridTile = _context$muiTheme.gridTile;
+
+
+	  var actionPos = props.actionIcon && props.actionPosition;
+
+	  var styles = {
+	    root: {
+	      position: 'relative',
+	      display: 'block',
+	      height: '100%',
+	      overflow: 'hidden'
+	    },
+	    titleBar: (_titleBar = {
+	      position: 'absolute',
+	      left: 0,
+	      right: 0
+	    }, (0, _defineProperty3.default)(_titleBar, props.titlePosition, 0), (0, _defineProperty3.default)(_titleBar, 'height', props.subtitle ? 68 : 48), (0, _defineProperty3.default)(_titleBar, 'background', props.titleBackground), (0, _defineProperty3.default)(_titleBar, 'display', 'flex'), (0, _defineProperty3.default)(_titleBar, 'alignItems', 'center'), _titleBar),
+	    titleWrap: {
+	      flexGrow: 1,
+	      marginLeft: actionPos !== 'left' ? baseTheme.spacing.desktopGutterLess : 0,
+	      marginRight: actionPos === 'left' ? baseTheme.spacing.desktopGutterLess : 0,
+	      color: gridTile.textColor,
+	      overflow: 'hidden'
+	    },
+	    title: {
+	      fontSize: '16px',
+	      textOverflow: 'ellipsis',
+	      overflow: 'hidden',
+	      whiteSpace: 'nowrap'
+	    },
+	    subtitle: {
+	      fontSize: '12px',
+	      textOverflow: 'ellipsis',
+	      overflow: 'hidden',
+	      whiteSpace: 'nowrap'
+	    },
+	    actionIcon: {
+	      order: actionPos === 'left' ? -1 : 1
+	    },
+	    childImg: {
+	      height: '100%',
+	      transform: 'translateX(-50%)',
+	      position: 'relative',
+	      left: '50%'
+	    }
+	  };
+	  return styles;
+	}
+
+	var GridTile = function (_Component) {
+	  (0, _inherits3.default)(GridTile, _Component);
+
+	  function GridTile() {
+	    (0, _classCallCheck3.default)(this, GridTile);
+	    return (0, _possibleConstructorReturn3.default)(this, (GridTile.__proto__ || (0, _getPrototypeOf2.default)(GridTile)).apply(this, arguments));
+	  }
+
+	  (0, _createClass3.default)(GridTile, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.ensureImageCover();
+	    }
+	  }, {
+	    key: 'componentDidUpdate',
+	    value: function componentDidUpdate() {
+	      this.ensureImageCover();
+	    }
+	  }, {
+	    key: 'ensureImageCover',
+	    value: function ensureImageCover() {
+	      var _this2 = this;
+
+	      var imgEl = this.refs.img;
+
+	      if (imgEl) {
+	        (function () {
+	          var fit = function fit() {
+	            if (imgEl.offsetWidth < imgEl.parentNode.offsetWidth) {
+	              var isRtl = _this2.context.muiTheme.isRtl;
+
+	              imgEl.style.height = 'auto';
+	              if (isRtl) {
+	                imgEl.style.right = '0';
+	              } else {
+	                imgEl.style.left = '0';
+	              }
+	              imgEl.style.width = '100%';
+	              imgEl.style.top = '50%';
+	              imgEl.style.transform = imgEl.style.WebkitTransform = 'translateY(-50%)';
+	            }
+	            imgEl.removeEventListener('load', fit);
+	            imgEl = null; // prevent closure memory leak
+	          };
+	          if (imgEl.complete) {
+	            fit();
+	          } else {
+	            imgEl.addEventListener('load', fit);
+	          }
+	        })();
+	      }
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _props = this.props,
+	          title = _props.title,
+	          subtitle = _props.subtitle,
+	          titlePosition = _props.titlePosition,
+	          titleBackground = _props.titleBackground,
+	          titleStyle = _props.titleStyle,
+	          actionIcon = _props.actionIcon,
+	          actionPosition = _props.actionPosition,
+	          style = _props.style,
+	          children = _props.children,
+	          containerElement = _props.containerElement,
+	          other = (0, _objectWithoutProperties3.default)(_props, ['title', 'subtitle', 'titlePosition', 'titleBackground', 'titleStyle', 'actionIcon', 'actionPosition', 'style', 'children', 'containerElement']);
+	      var prepareStyles = this.context.muiTheme.prepareStyles;
+
+	      var styles = getStyles(this.props, this.context);
+	      var mergedRootStyles = (0, _simpleAssign2.default)(styles.root, style);
+
+	      var titleBar = null;
+
+	      if (title) {
+	        titleBar = _react2.default.createElement(
+	          'div',
+	          { key: 'titlebar', style: prepareStyles(styles.titleBar) },
+	          _react2.default.createElement(
+	            'div',
+	            { style: prepareStyles(styles.titleWrap) },
+	            _react2.default.createElement(
+	              'div',
+	              { style: prepareStyles((0, _simpleAssign2.default)(styles.title, titleStyle)) },
+	              title
+	            ),
+	            subtitle ? _react2.default.createElement(
+	              'div',
+	              { style: prepareStyles(styles.subtitle) },
+	              subtitle
+	            ) : null
+	          ),
+	          actionIcon ? _react2.default.createElement(
+	            'div',
+	            { style: prepareStyles(styles.actionIcon) },
+	            actionIcon
+	          ) : null
+	        );
+	      }
+
+	      var newChildren = children;
+
+	      // if there is a single image passed as children
+	      // clone it and add our styles
+	      if (_react2.default.Children.count(children) === 1) {
+	        newChildren = _react2.default.Children.map(children, function (child) {
+	          if (child.type === 'img') {
+	            return _react2.default.cloneElement(child, {
+	              key: 'img',
+	              ref: 'img',
+	              style: prepareStyles((0, _simpleAssign2.default)({}, styles.childImg, child.props.style))
+	            });
+	          } else {
+	            return child;
+	          }
+	        });
+	      }
+
+	      var containerProps = (0, _extends3.default)({
+	        style: prepareStyles(mergedRootStyles)
+	      }, other);
+
+	      return _react2.default.isValidElement(containerElement) ? _react2.default.cloneElement(containerElement, containerProps, [newChildren, titleBar]) : _react2.default.createElement(containerElement, containerProps, [newChildren, titleBar]);
+	    }
+	  }]);
+	  return GridTile;
+	}(_react.Component);
+
+	GridTile.defaultProps = {
+	  titlePosition: 'bottom',
+	  titleBackground: 'rgba(0, 0, 0, 0.4)',
+	  actionPosition: 'right',
+	  cols: 1,
+	  rows: 1,
+	  containerElement: 'div'
+	};
+	GridTile.contextTypes = {
+	  muiTheme: _react.PropTypes.object.isRequired
+	};
+	process.env.NODE_ENV !== "production" ? GridTile.propTypes = {
+	  /**
+	   * An IconButton element to be used as secondary action target
+	   * (primary action target is the tile itself).
+	   */
+	  actionIcon: _react.PropTypes.element,
+	  /**
+	   * Position of secondary action IconButton.
+	   */
+	  actionPosition: _react.PropTypes.oneOf(['left', 'right']),
+	  /**
+	   * Theoretically you can pass any node as children, but the main use case is to pass an img,
+	   * in whichcase GridTile takes care of making the image "cover" available space
+	   * (similar to background-size: cover or to object-fit:cover).
+	   */
+	  children: _react.PropTypes.node,
+	  /**
+	   * Width of the tile in number of grid cells.
+	   */
+	  cols: _react.PropTypes.number,
+	  /**
+	   * Either a string used as tag name for the tile root element, or a ReactElement.
+	   * This is useful when you have, for example, a custom implementation of
+	   * a navigation link (that knows about your routes) and you want to use it as the primary tile action.
+	   * In case you pass a ReactElement, please ensure that it passes all props,
+	   * accepts styles overrides and render it's children.
+	   */
+	  containerElement: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.element]),
+	  /**
+	   * Height of the tile in number of grid cells.
+	   */
+	  rows: _react.PropTypes.number,
+	  /**
+	   * Override the inline-styles of the root element.
+	   */
+	  style: _react.PropTypes.object,
+	  /**
+	   * String or element serving as subtitle (support text).
+	   */
+	  subtitle: _react.PropTypes.node,
+	  /**
+	   * Title to be displayed on tile.
+	   */
+	  title: _react.PropTypes.node,
+	  /**
+	   * Style used for title bar background.
+	   * Useful for setting custom gradients for example
+	   */
+	  titleBackground: _react.PropTypes.string,
+	  /**
+	   * Position of the title bar (container of title, subtitle and action icon).
+	   */
+	  titlePosition: _react.PropTypes.oneOf(['top', 'bottom']),
+	  /**
+	   * Override the inline-styles of the title element.
+	   */
+	  titleStyle: _react.PropTypes.object
+	} : void 0;
+	exports.default = GridTile;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(294)))
+
+/***/ },
+/* 797 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	exports.__esModule = true;
+
+	var _defineProperty = __webpack_require__(742);
+
+	var _defineProperty2 = _interopRequireDefault(_defineProperty);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = function (obj, key, value) {
+	  if (key in obj) {
+	    (0, _defineProperty2.default)(obj, key, {
+	      value: value,
+	      enumerable: true,
+	      configurable: true,
+	      writable: true
+	    });
+	  } else {
+	    obj[key] = value;
+	  }
+
+	  return obj;
+	};
 
 /***/ }
 /******/ ]);

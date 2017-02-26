@@ -14,10 +14,12 @@ injectTapEventPlugin();
 function init () {
   let app = document.querySelectorAll('[data-section="app"]')[0];
   ReactDOM.render(
+  	<MuiThemeProvider muiTheme={getMuiTheme()}>
 		<Router history={hashHistory}>
     		<Route path="/" component={Home}></Route>
     		<Route path="admin" component={Admin}></Route>
-    	</Router>,
+    	</Router>
+    </MuiThemeProvider>,
 	app
   );
 }

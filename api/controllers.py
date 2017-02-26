@@ -1,5 +1,6 @@
 import sys
 import jsonpickle
+import urllib
 from server import app, login_manager, twitter, socketio
 from api.models import *
 
@@ -10,10 +11,11 @@ from flask_socketio import emit
 from tweepy.streaming import StreamListener
 from tweepy import Stream
 
+from bs4 import BeautifulSoup
+
 class TweetListener(StreamListener):
     def on_data(self, data):
         emit('tweet', data, broadcast=True)
-        print(data)
         return True
 
     def on_error(self, status):
@@ -26,18 +28,9 @@ stream = Stream(twitter, listener)
 def stream_tweets(message):
     return Response(stream.filter(track=['maher']), content_type='text/event-stream')
 
-# @twitter.tokengetter
-# def get_twitter_token(token=None):
-#     return ('833666853520150528-dAkmBZ6i1TW6PGuuxUyJSyfEl3yo9Kg','ZCNf0AYdlm28qDHVUM1M7C9Oe8CEc6JZHfgHm7FIUe9Ur')
-
 @app.route('/')
 def index():
 	return render_template('index.html')
-
-# @app.route('/api/get_tweets')
-# def get_tweets():
-# 	# home_timeline = twitter.get('statuses/home_timeline.json')
-# 	return Response(stream.filter(track=['trump']), content_type='text/event-stream')
 
 @login_manager.user_loader
 def load_user(userID):
@@ -47,6 +40,15 @@ def load_user(userID):
 @app.before_request
 def before_request():
 	g.user = current_user
+
+
+@app.route('/api/get_images')
+def get_images():
+	url = request.args.get('link')
+	r = urllib.request.urlopen(url).read()
+	soup = BeautifulSoup(r)
+	links = soup.findAll('img')
+	return jsonify(results=[link['src'] for link in links], success=True)
 
 @app.route('/api/login', methods=['GET', 'POST'])
 def login():
