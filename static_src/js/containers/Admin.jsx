@@ -17,28 +17,37 @@ export default class Admin extends React.Component {
 	constructor() {
 		super()
 		this.state= {
-			tweets: []
+			tweets: [],
+			imageLinks: []
 		}
-		this.getImages('http://fivethirtyeight.com/features/'+
-			'how-trumps-supreme-court-could-overturn-roe-v-wade-without-overturning-it/?ex_cid=story-twitter')
+		this.updateTweets = this.updateTweets.bind(this)
 	}
 	componentDidMount() {
 		var socket = io.connect('http://' + document.domain + ':' + location.port);
         socket.on('connect', function() {
             socket.emit('connected', {data: 'I\'m connected!'});
         });
-        socket.on('tweet', this.updateTweets.bind(this))
+        socket.on('tweet', this.updateTweets)
+        this.getImages('http://fivethirtyeight.com/features/'+
+			'how-trumps-supreme-court-could-overturn-roe-v-wade-without-overturning-it/?ex_cid=story-twitter')
+		
 	}
 	updateTweets(data) {
+		const tweet = JSON.parse(data)
 		this.setState({
 			tweets: Array.concat(this.state.tweets, JSON.parse(data))
 		})
 	}
 	getImages(link) {
+		this.setState({
+			imageLinks: []
+		})
 		axios
 			.get('/api/get_images?link='+link)
 			.then((response) => {
-				console.log(response)
+				this.setState({
+					imageLinks: response.data.results
+				})
 			})
 	}
 	render() {
@@ -50,19 +59,24 @@ export default class Admin extends React.Component {
 						<td style={style.td}>
 							<TweetFeed 
 								tweets={this.state.tweets}
-								onClick={this.getImages.bind(this)}></TweetFeed>
+								onSurf={this.getImages.bind(this)}></TweetFeed>
 						</td>
 						<td style={style.td}>
 							<ReactCrop src="https://www.smashingmagazine.com/wp-content/uploads/2016/10/inclusive-design-pattners-250px.png" />
 						</td>
 						<td style={style.td}>
 						<GridList>
-						<GridTile title='Sample'>
-          <img src={'http://www.material-ui.com/images/grid-list/00-52-29-429_640.jpg'} />
-        </GridTile></GridList>
+							{ 
+								this.state.imageLinks.map((link, k)=>(
+									<GridTile key={k}>
+										<img src={link} />
+									</GridTile>	
+								))
+							}
+        				</GridList>
         </td>
 						<td style={style.td}>
-							<Feed feed="https://fivethirtyeight.com/politics/feed/" size="5" delay="60" />
+							<Feed onSurf={this.getImages.bind(this)} feed="https://fivethirtyeight.com/politics/feed/" size="5" delay="60" />
 						</td>
 					</tr>
 				</tbody>

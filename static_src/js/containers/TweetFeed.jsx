@@ -31,9 +31,11 @@ export default class TweetFeed extends React.Component {
 		          <ul>
 		            {this.props.tweets.map((x,k)=>
 		            	x.entities.urls.length > 0 ?
-			            	<a key={k} href={x.entities.urls[0].url} target="_blank">
+			            	<div key={k}><a href={x.entities.urls[0].expanded_url} target="_blank">
 						        <li className="feeditem">{x.text}</li>
 						    </a>
+						        <a onClick={() => this.props.onSurf(x.entities.urls[0].expanded_url)}>Images</a>
+							</div>
 						: null
 					)}
 		          </ul>
@@ -44,5 +46,6 @@ export default class TweetFeed extends React.Component {
 }
 
 TweetFeed.propTypes = {
-	tweets: React.PropTypes.array
+	tweets: React.PropTypes.array,
+	onSurf: React.PropTypes.func
 }
