@@ -43,7 +43,7 @@ export default class Admin extends React.Component {
 			imageLinks: []
 		})
 		axios
-			.get('/api/get_images?link='+link)
+			.get('/api/get_images?link='+encodeURIComponent(link))
 			.then((response) => {
 				this.setState({
 					imageLinks: response.data.results

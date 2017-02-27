@@ -10,3 +10,8 @@ Werkzeug==0.10.4
 Flask-SQLAlchemy==2.1
 Flask-Login==0.4.0
 Flask-Script==2.0.5
+flask-oauthlib==0.9.3
+flask-socketio==2.8.4
+tweepy==3.5.0
+jsonpickle==0.9.4
+beautifulsoup4==4.5.3

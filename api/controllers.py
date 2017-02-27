@@ -44,7 +44,7 @@ def index():
 
 @app.route('/api/get_images')
 def get_images():
-	url = request.args.get('link')
+	url = urllib.parse.unquote(request.args.get('link'))
 	r = urllib.request.urlopen(url).read()
 	soup = BeautifulSoup(r, "html.parser")
 	links = soup.findAll('img')

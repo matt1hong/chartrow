@@ -21,12 +21,9 @@ consumer_key = 'ZQgQejG6uuceFPx4lnz3d8ttp'
 consumer_secret = 'YRX7rHhsXZnWEYuhCq0asMQWHINyhs6gH3GmT398tmcnooKTjJ'
 
 
-#This handles Twitter authetification and the connection to Twitter Streaming API
 
 twitter = OAuthHandler(consumer_key, consumer_secret)
 twitter.set_access_token(access_token, access_token_secret)
-
-#This line filter Twitter Streams to capture data by the keywords: 'python', 'javascript', 'ruby'
 
 
 
