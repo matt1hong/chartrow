@@ -18,7 +18,8 @@ export default class Admin extends React.Component {
 		super()
 		this.state= {
 			tweets: [],
-			imageLinks: []
+			imageLinks: [],
+			cropImage: ''
 		}
 		this.updateTweets = this.updateTweets.bind(this)
 	}
@@ -50,6 +51,11 @@ export default class Admin extends React.Component {
 				})
 			})
 	}
+	setCropImage(src) {
+		this.setState({
+			cropImage: src
+		})
+	}
 	render() {
 		return (
 			<div style={{textAlign:'center'}}>
@@ -62,14 +68,14 @@ export default class Admin extends React.Component {
 								onSurf={this.getImages.bind(this)}></TweetFeed>
 						</td>
 						<td style={style.td}>
-							<ReactCrop src="https://www.smashingmagazine.com/wp-content/uploads/2016/10/inclusive-design-pattners-250px.png" />
+							<ReactCrop src={this.state.cropImage} />
 						</td>
 						<td style={style.td}>
 						<GridList>
 							{ 
 								this.state.imageLinks.map((link, k)=>(
-									<GridTile key={k}>
-										<img src={link} />
+									<GridTile key={k} >
+										<img src={link} onClick={(e) => this.setCropImage(e.target.src)} />
 									</GridTile>	
 								))
 							}
