@@ -50,6 +50,16 @@ def get_images():
 	links = soup.findAll('img')
 	return jsonify(results=[urllib.parse.urljoin(url, link['src']) for link in links], success=True)
 
+@app.route('/api/promote', methods=['POST'])
+def promote():
+	url = request.args['url']
+	if db.session.query(Link).filter(Link.url == url).count() < 1:
+		link = Link(url)
+		db.session.add(link)
+		db.session.commit()
+		return jsonify(success=True)
+	return jsonify(success=False)
+
 @app.route('/api/login', methods=['GET', 'POST'])
 def login():
 	pass

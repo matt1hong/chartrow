@@ -1,5 +1,6 @@
 import React from 'react';
 import {GridList, GridTile} from 'material-ui/GridList';
+import RaisedButton from 'material-ui/RaisedButton'
 import Feed from './RSSFeed';
 import ReactCrop from 'react-image-crop'
 import axios from 'axios'
@@ -56,6 +57,20 @@ export default class Admin extends React.Component {
 			cropImage: src
 		})
 	}
+	promoteLink(){
+		axios
+			.post('/api/promote', this.state.cropImage)
+			.then((response) => {
+				this.setState({
+					alert: 'Success!'
+				})
+			})
+			.catch((e) => {
+				this.setState({
+					alert: e
+				})
+			})
+	}
 	render() {
 		return (
 			<div style={{textAlign:'center'}}>
@@ -68,7 +83,14 @@ export default class Admin extends React.Component {
 								onSurf={this.getImages.bind(this)}></TweetFeed>
 						</td>
 						<td style={style.td}>
-							<ReactCrop src={this.state.cropImage} />
+							<tr>
+								<ReactCrop src={this.state.cropImage} />
+							</tr>
+							<tr>
+								<RaisedButton
+									label="Promote"
+									onClick={this.promoteLink}></RaisedButton>
+							</tr>
 						</td>
 						<td style={style.td}>
 						<GridList>
@@ -80,7 +102,7 @@ export default class Admin extends React.Component {
 								))
 							}
         				</GridList>
-        </td>
+        				</td>
 						<td style={style.td}>
 							<Feed onSurf={this.getImages.bind(this)} feed="https://fivethirtyeight.com/politics/feed/" size="5" delay="60" />
 						</td>
