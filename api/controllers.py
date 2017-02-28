@@ -52,13 +52,18 @@ def get_images():
 
 @app.route('/api/promote', methods=['POST'])
 def promote():
-	url = request.args['url']
-	if db.session.query(Link).filter(Link.url == url).count() < 1:
+	url = request.get_json()['url']
+	if db.session.query(Link).filter_by(url=url).count() < 1:
 		link = Link(url)
 		db.session.add(link)
 		db.session.commit()
 		return jsonify(success=True)
 	return jsonify(success=False)
+
+@app.route('/api/get_links')
+def get_links():
+	links = Link.query.limit(20).all()
+	return jsonify(success=False, results=[link.serialize for link in links])
 
 @app.route('/api/login', methods=['GET', 'POST'])
 def login():

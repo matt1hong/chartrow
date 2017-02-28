@@ -23,6 +23,7 @@ export default class Admin extends React.Component {
 			cropImage: ''
 		}
 		this.updateTweets = this.updateTweets.bind(this)
+		this.promoteLink = this.promoteLink.bind(this)
 	}
 	componentDidMount() {
 		var socket = io.connect('http://' + document.domain + ':' + location.port);
@@ -59,7 +60,9 @@ export default class Admin extends React.Component {
 	}
 	promoteLink(){
 		axios
-			.post('/api/promote', this.state.cropImage)
+			.post('/api/promote', {
+				url: this.state.cropImage
+			})
 			.then((response) => {
 				this.setState({
 					alert: 'Success!'
@@ -97,7 +100,7 @@ export default class Admin extends React.Component {
 							{ 
 								this.state.imageLinks.map((link, k)=>(
 									<GridTile key={k} >
-										<img src={link} onClick={(e) => this.setCropImage(e.target.src)} />
+										<img src={link.url} onClick={(e) => this.setCropImage(e.target.src)} />
 									</GridTile>	
 								))
 							}
