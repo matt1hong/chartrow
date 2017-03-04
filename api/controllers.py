@@ -1,7 +1,9 @@
 import sys
 import jsonpickle
 import urllib
-from server import app, twitter, socketio
+import urllib.request
+import urllib.parse
+from application import app, twitter, socketio
 from api.models import *
 
 from flask import render_template, redirect, request, g, jsonify, session, Response
@@ -11,6 +13,7 @@ from tweepy.streaming import StreamListener
 from tweepy import Stream, TweepError
 
 from bs4 import BeautifulSoup
+from PIL import Image
 
 class TweetListener(StreamListener):
     def on_data(self, data):
@@ -32,10 +35,6 @@ def stream_tweets(message):
 	except:
 		return jsonify(success=False)
 
-# @socketio.on('disconnect')
-# def stop_streaming():
-# 	stream.disconnect()
-
 
 @app.route('/')
 def index():
@@ -45,18 +44,47 @@ def index():
 @app.route('/api/get_images')
 def get_images():
 	url = urllib.parse.unquote(request.args.get('link'))
-	r = urllib.request.urlopen(url).read()
+	r = urllib.request.build_opener(urllib.request.HTTPCookieProcessor()).open(url).read()
 	soup = BeautifulSoup(r, "html.parser")
-	links = soup.findAll('img')
-	return jsonify(results=[urllib.parse.urljoin(url, link['src']) for link in links], success=True)
+	meta_tags = soup.select('meta[property*="image"],meta[name*="image"]')
+	meta_content = [urllib.parse.urljoin(url, link['content']) for link in meta_tags]
+	images = soup.select('img')
+	img_links = [urllib.parse.urljoin(url, link['src']) for link in img_links]
+	return jsonify(results=meta_content+img_links, success=True)
+
 
 @app.route('/api/promote', methods=['POST'])
 def promote():
-	url = request.get_json()['url']
+	incoming = request.get_json()
+	lead = incoming['lead']
+
+	url = incoming['url']
 	if db.session.query(Link).filter_by(url=url).count() < 1:
-		link = Link(url)
+		link = Link(url, lead)
 		db.session.add(link)
 		db.session.commit()
+
+		crop_size = incoming['crop']
+		if len(incoming['imgSrc']) and int(crop_size['width']):
+			size_spec = [crop_size['x'], crop_size['y'], crop_size['width'], crop_size['height']]
+			size_ratio = crop_size['height']/crop_size['width']
+			read_image = urllib.request.urlopen(incoming['imgSrc'])
+			im = Image.open(read_image)
+			cropped = im.crop(tuple([int(spec) for spec in size_spec]))
+
+			if lead:
+				large = cropped.resize((400,400*size_ratio))
+				img_loc = '/images/%r-400.png' % link.id
+				large.save(img_loc)
+			
+			small = cropped.resize((70,70*size_ratio))
+			img_loc = '/images/%r.png' % link.id
+			small.save(img_loc)
+			
+			link.img_loc = img_loc
+			db.session.add(link)
+			db.session.commit()
+
 		return jsonify(success=True)
 	return jsonify(success=False)
 

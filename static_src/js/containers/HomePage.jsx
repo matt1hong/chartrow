@@ -1,6 +1,7 @@
 import React from 'react';
 import StackGrid from 'react-stack-grid';
 import axios from 'axios';
+import LinkItem from './LinkItem'
 
 const style={
 	key1: {
@@ -44,11 +45,12 @@ export default class HomePage extends React.Component {
 					gutterWidth={12} 
 					gutterHeight={6}>
 					{ this.state.links.map((link, key) => (
-						<div key={key} style={style.key1}>{link.url}</div>		
+						<LinkItem 
+							key={key}
+							imgSrc={link.img_src}
+							// url={link.url}
+							headline='Headline 1' />
 					))}
-					<div key="key1" style={style.key1}></div>
-					<div key="key2" style={style.key2}></div>
-					<div key="key3" style={style.key3}></div>
 				</StackGrid>
 	      	</div>
 	    );

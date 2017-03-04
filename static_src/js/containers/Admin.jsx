@@ -20,7 +20,14 @@ export default class Admin extends React.Component {
 		this.state= {
 			tweets: [],
 			imageLinks: [],
-			cropImage: ''
+			cropImage: '',
+			cropSize: {
+				x: 0,
+				y: 0,
+				width: 0,
+				height: 0
+			},
+			linkUrl: ''
 		}
 		this.updateTweets = this.updateTweets.bind(this)
 		this.promoteLink = this.promoteLink.bind(this)
@@ -31,8 +38,7 @@ export default class Admin extends React.Component {
             socket.emit('connected', {data: 'I\'m connected!'});
         });
         socket.on('tweet', this.updateTweets)
-        this.getImages('http://fivethirtyeight.com/features/'+
-			'how-trumps-supreme-court-could-overturn-roe-v-wade-without-overturning-it/?ex_cid=story-twitter')
+        this.getImages('https://www.nytimes.com/interactive/2017/02/27/us/politics/most-important-problem-gallup-polling-question.html')
 		
 	}
 	updateTweets(data) {
@@ -43,7 +49,8 @@ export default class Admin extends React.Component {
 	}
 	getImages(link) {
 		this.setState({
-			imageLinks: []
+			imageLinks: [],
+			linkUrl: link
 		})
 		axios
 			.get('/api/get_images?link='+encodeURIComponent(link))
@@ -61,7 +68,8 @@ export default class Admin extends React.Component {
 	promoteLink(){
 		axios
 			.post('/api/promote', {
-				url: this.state.cropImage
+				url: this.state.linkUrl,
+				imgSrc: this.state.cropImage
 			})
 			.then((response) => {
 				this.setState({
@@ -80,35 +88,38 @@ export default class Admin extends React.Component {
 			<table style={{display:'inline-table', width:1200}}>
 				<tbody>
 					<tr>
-						<td style={style.td}>
+						<td style={style.td} rowSpan="2">
 							<TweetFeed 
 								tweets={this.state.tweets}
 								onSurf={this.getImages.bind(this)}></TweetFeed>
 						</td>
 						<td style={style.td}>
-							<tr>
-								<ReactCrop src={this.state.cropImage} />
-							</tr>
-							<tr>
+								<ReactCrop 
+									src={this.state.cropImage} 
+									crop={this.state.cropSize}
+									onComplete={(crop, pixelCrop) => {
+										this.setState({
+											cropSize: pixelCrop
+										})
+									}}
+									/>
+						</td>
+						<td style={style.td}>
 								<RaisedButton
 									label="Promote"
 									onClick={this.promoteLink}></RaisedButton>
-							</tr>
 						</td>
 						<td style={style.td}>
 						<GridList>
 							{ 
 								this.state.imageLinks.map((link, k)=>(
 									<GridTile key={k} >
-										<img src={link.url} onClick={(e) => this.setCropImage(e.target.src)} />
+										<img src={link} onClick={(e) => this.setCropImage(e.target.src)} />
 									</GridTile>	
 								))
 							}
         				</GridList>
         				</td>
-						<td style={style.td}>
-							<Feed onSurf={this.getImages.bind(this)} feed="https://fivethirtyeight.com/politics/feed/" size="5" delay="60" />
-						</td>
 					</tr>
 				</tbody>
 			</table>
