@@ -3,7 +3,7 @@ import jsonpickle
 import urllib
 import urllib.request
 import urllib.parse
-from application import app, twitter, socketio
+from application import application, twitter, socketio
 from api.models import *
 
 from flask import render_template, redirect, request, g, jsonify, session, Response
@@ -36,12 +36,12 @@ def stream_tweets(message):
 		return jsonify(success=False)
 
 
-@app.route('/')
+@application.route('/')
 def index():
 	return render_template('index.html')
 
 
-@app.route('/api/get_images')
+@application.route('/api/get_images')
 def get_images():
 	url = urllib.parse.unquote(request.args.get('link'))
 	r = urllib.request.build_opener(urllib.request.HTTPCookieProcessor()).open(url).read()
@@ -53,7 +53,7 @@ def get_images():
 	return jsonify(results=meta_content+img_links, success=True)
 
 
-@app.route('/api/promote', methods=['POST'])
+@application.route('/api/promote', methods=['POST'])
 def promote():
 	incoming = request.get_json()
 	lead = incoming['lead']
@@ -75,12 +75,12 @@ def promote():
 			if lead:
 				large = cropped.resize((400,int(400*size_ratio)), Image.ANTIALIAS)
 				img_src = '%r-400.jpeg' % link.id
-				abs_src = '%s_src/images/%s' % (app.static_folder, img_src)
+				abs_src = '%s_src/images/%s' % (application.static_folder, img_src)
 				large.save(abs_src, quality=95)
 			
 			small = cropped.resize((70,int(70*size_ratio)), Image.ANTIALIAS)
 			img_src = '%r.jpeg' % link.id
-			abs_src = '%s_src/images/%s' % (app.static_folder, img_src)
+			abs_src = '%s_src/images/%s' % (application.static_folder, img_src)
 			small.save(abs_src, quality=95)
 			
 			link.set_image(img_src)
@@ -90,7 +90,7 @@ def promote():
 		return jsonify(success=True)
 	return jsonify(success=False)
 
-@app.route('/api/delete', methods=['POST'])
+@application.route('/api/delete', methods=['POST'])
 def delete():
 	incoming = request.get_json()
 	url = incoming['url']
@@ -101,16 +101,16 @@ def delete():
 		return jsonify(success=True)
 	return jsonify(success=False), 403
 
-@app.route('/api/get_links')
+@application.route('/api/get_links')
 def get_links():
 	links = Link.query.limit(20).all()
 	return jsonify(success=False, results=[link.serialize for link in links])
 
-@app.route('/api/login', methods=['GET', 'POST'])
+@application.route('/api/login', methods=['GET', 'POST'])
 def login():
 	pass
 
-@app.route('/api/logout')
+@application.route('/api/logout')
 def logout():
 	logout_user()
 	return jsonify(success=True)

@@ -27,11 +27,11 @@ twitter.set_access_token(access_token, access_token_secret)
 
 
 
-app = Flask(__name__)
-app.config.from_object('config')
-app.json_encoder = DecimalEncoder
-socketio = SocketIO(app)
-db = SQLAlchemy(app)
+application = Flask(__name__)
+application.config.from_object('config')
+application.json_encoder = DecimalEncoder
+socketio = SocketIO(application)
+db = SQLAlchemy(application)
 
 
 
@@ -44,4 +44,4 @@ from api.controllers import *
 
 
 if __name__ == '__main__':
-	socketio.run(app, host='0.0.0.0')
+	socketio.run(application, host='0.0.0.0')
