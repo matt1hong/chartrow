@@ -1,8 +1,10 @@
 import React from 'react';
 import {GridList, GridTile} from 'material-ui/GridList';
 import RaisedButton from 'material-ui/RaisedButton'
+import Checkbox from 'material-ui/Checkbox';
 import Feed from './RSSFeed';
 import ReactCrop from 'react-image-crop'
+import ReactModal from 'react-modal'
 import axios from 'axios'
 import TweetFeed from './TweetFeed'
 
@@ -10,7 +12,12 @@ import 'react-image-crop/dist/ReactCrop.css';
 
 const style= {
 	td: {
-		width: '50%'
+		home: {
+			width: '50%'
+		},
+		modal: {
+			textAlign: 'center'
+		}
 	}
 }
 
@@ -21,13 +28,21 @@ export default class Admin extends React.Component {
 			tweets: [],
 			imageLinks: [],
 			cropImage: '',
-			cropSize: {
+			cropRatio: {
 				x: 0,
 				y: 0,
 				width: 0,
 				height: 0
 			},
-			linkUrl: ''
+			cropPixels: {
+				x: 0,
+				y: 0,
+				width: 0,
+				height: 0
+			},
+			linkUrl: 'https://www.nytimes.com/interactive/2017/02/27/us/politics/most-important-problem-gallup-polling-question.html',
+			openModal: false,
+			lead: false
 		}
 		this.updateTweets = this.updateTweets.bind(this)
 		this.promoteLink = this.promoteLink.bind(this)
@@ -38,8 +53,7 @@ export default class Admin extends React.Component {
             socket.emit('connected', {data: 'I\'m connected!'});
         });
         socket.on('tweet', this.updateTweets)
-        this.getImages('https://www.nytimes.com/interactive/2017/02/27/us/politics/most-important-problem-gallup-polling-question.html')
-		
+        this.getImages(this.state.linkUrl)
 	}
 	updateTweets(data) {
 		const tweet = JSON.parse(data)
@@ -62,14 +76,39 @@ export default class Admin extends React.Component {
 	}
 	setCropImage(src) {
 		this.setState({
+			openModal: true,
 			cropImage: src
+		})
+	}
+	setCropSize(crop, pixelCrop) {
+		this.setState({
+			cropRatio: crop,
+			cropPixels: pixelCrop
 		})
 	}
 	promoteLink(){
 		axios
 			.post('/api/promote', {
 				url: this.state.linkUrl,
-				imgSrc: this.state.cropImage
+				imgSrc: this.state.cropImage,
+				cropPixels: this.state.cropPixels,
+				lead: this.state.lead
+			})
+			.then((response) => {
+				this.setState({
+					alert: 'Success!'
+				})
+			})
+			.catch((e) => {
+				this.setState({
+					alert: e
+				})
+			})
+	}
+	deleteLink(){
+		axios
+			.post('/api/delete', {
+				url: this.state.linkUrl
 			})
 			.then((response) => {
 				this.setState({
@@ -85,31 +124,62 @@ export default class Admin extends React.Component {
 	render() {
 		return (
 			<div style={{textAlign:'center'}}>
+			<ReactModal isOpen={this.state.openModal} contentLabel="cropImage">
+				<table>
+					<tbody>
+						<tr>
+							<td>
+								<ReactCrop 
+								src={this.state.cropImage} 
+								onComplete={this.setCropSize.bind(this)}
+								/>
+							</td>
+							<td>
+								<div>
+									
+									<Checkbox
+								      label="Lead article"
+								      checked={this.state.lead}
+								      onCheck={(event, checked) => {
+								      	this.setState({
+								      		lead: checked
+								      	})
+								      }}
+								    />
+								
+								
+									<RaisedButton
+										label="Promote"
+										onClick={this.promoteLink}></RaisedButton>
+									<RaisedButton
+										label="Delete"
+										onClick={this.deleteLink.bind(this)}></RaisedButton>
+									<br/><br/><br/><br/>
+								
+									<RaisedButton
+									label="Close"
+									onClick={() => {
+										this.setState({
+											openModal: false
+										})
+									}}></RaisedButton>
+								
+								</div>
+								
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</ReactModal>
 			<table style={{display:'inline-table', width:1200}}>
 				<tbody>
 					<tr>
-						<td style={style.td} rowSpan="2">
+						<td style={style.td.home} rowSpan="2">
 							<TweetFeed 
 								tweets={this.state.tweets}
 								onSurf={this.getImages.bind(this)}></TweetFeed>
 						</td>
-						<td style={style.td}>
-								<ReactCrop 
-									src={this.state.cropImage} 
-									crop={this.state.cropSize}
-									onComplete={(crop, pixelCrop) => {
-										this.setState({
-											cropSize: pixelCrop
-										})
-									}}
-									/>
-						</td>
-						<td style={style.td}>
-								<RaisedButton
-									label="Promote"
-									onClick={this.promoteLink}></RaisedButton>
-						</td>
-						<td style={style.td}>
+						<td style={style.td.home}>
 						<GridList>
 							{ 
 								this.state.imageLinks.map((link, k)=>(

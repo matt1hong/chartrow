@@ -49,7 +49,7 @@ def get_images():
 	meta_tags = soup.select('meta[property*="image"],meta[name*="image"]')
 	meta_content = [urllib.parse.urljoin(url, link['content']) for link in meta_tags]
 	images = soup.select('img')
-	img_links = [urllib.parse.urljoin(url, link['src']) for link in img_links]
+	img_links = [urllib.parse.urljoin(url, link['src']) for link in images]
 	return jsonify(results=meta_content+img_links, success=True)
 
 
@@ -64,7 +64,7 @@ def promote():
 		db.session.add(link)
 		db.session.commit()
 
-		crop_size = incoming['crop']
+		crop_size = incoming['cropPixels']
 		if len(incoming['imgSrc']) and int(crop_size['width']):
 			size_spec = [crop_size['x'], crop_size['y'], crop_size['width'], crop_size['height']]
 			size_ratio = crop_size['height']/crop_size['width']
@@ -73,20 +73,33 @@ def promote():
 			cropped = im.crop(tuple([int(spec) for spec in size_spec]))
 
 			if lead:
-				large = cropped.resize((400,400*size_ratio))
-				img_loc = '/images/%r-400.png' % link.id
-				large.save(img_loc)
+				large = cropped.resize((400,int(400*size_ratio)), Image.ANTIALIAS)
+				img_src = '%r-400.jpeg' % link.id
+				abs_src = '%s_src/images/%s' % (app.static_folder, img_src)
+				large.save(abs_src, quality=95)
 			
-			small = cropped.resize((70,70*size_ratio))
-			img_loc = '/images/%r.png' % link.id
-			small.save(img_loc)
+			small = cropped.resize((70,int(70*size_ratio)), Image.ANTIALIAS)
+			img_src = '%r.jpeg' % link.id
+			abs_src = '%s_src/images/%s' % (app.static_folder, img_src)
+			small.save(abs_src, quality=95)
 			
-			link.img_loc = img_loc
+			link.set_image(img_src)
 			db.session.add(link)
 			db.session.commit()
 
 		return jsonify(success=True)
 	return jsonify(success=False)
+
+@app.route('/api/delete', methods=['POST'])
+def delete():
+	incoming = request.get_json()
+	url = incoming['url']
+	query = db.session.query(Link).filter_by(url=url)
+	if query.count() > 0:
+		query.delete()
+		db.session.commit()
+		return jsonify(success=True)
+	return jsonify(success=False), 403
 
 @app.route('/api/get_links')
 def get_links():

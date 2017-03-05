@@ -6,13 +6,13 @@ class Link(db.Model):
 
 	id = db.Column(db.Integer, primary_key=True)
 	url = db.Column(db.String, unique=True)
-	img_loc = db.Column(db.String, unique=True)
+	img_src = db.Column(db.String)
 	timestamp = db.Column(db.DateTime)
 	lead = db.Boolean()
 
-	def __init__(self, url, lead, img_loc=""):
+	def __init__(self, url, lead, img_src=""):
 		self.url = url
-		self.img_loc = img_loc
+		self.img_src = img_src
 		self.lead = lead
 		self.timestamp = datetime.now()
 
@@ -21,8 +21,11 @@ class Link(db.Model):
 		return {
 			'id': self.id,
 			'url': self.url,
-			'img_loc': self.img_loc
+			'img_src': self.img_src
 		}
+
+	def set_image(self, img_src):
+		self.img_src=img_src
 
 	def __repr__(self):
 		return '<Link %r>' % self.url

@@ -39,14 +39,11 @@ config.module = {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
         loader: 'file',
     }, {
-        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-        loader: 'url?limit=10000&mimetype=image/svg+xml',
-    }, {
-        test: /\.png$/,
-        loader: 'file?name=[name].[ext]',
-    }, {
-        test: /\.jpg$/,
-        loader: 'file?name=[name].[ext]',
+      test: /\.(jpeg|png|gif|svg)$/i,
+      loaders: [
+        'file?hash=sha512&digest=hex&name=[hash].[ext]',
+        'image-webpack?bypassOnDebug&optimizationLevel=7&interlaced=false'
+      ]
     }
   ],
   postLoaders: []
@@ -56,7 +53,7 @@ config.output = {
   filename: '[name].bundle.js',
   chunkFilename: '[id].chunk.js',
   path: path.join(__dirname, 'static', 'js'),
-  publicPath: '/static/js',
+  publicPath: '/static/js/',
   devtoolModuleFilenameTemplate: '[resourcePath]',
   devtoolFallbackModuleFilenameTemplate: '[resourcePath]?[hash]'
 };
