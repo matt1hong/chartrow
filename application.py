@@ -43,12 +43,5 @@ parser = reqparse.RequestParser()
 from api.controllers import *
 
 
-
-manager = Manager(app)
-
-@manager.command
-def run():
-	socketio.run(app, port=5555, host='127.0.0.1')
-
 if __name__ == '__main__':
-	manager.run()
+	socketio.run(app, host='0.0.0.0')
