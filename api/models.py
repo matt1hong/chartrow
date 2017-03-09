@@ -6,13 +6,11 @@ class Link(db.Model):
 
 	id = db.Column(db.Integer, primary_key=True)
 	url = db.Column(db.String, unique=True)
-	img_src = db.Column(db.String)
-	timestamp = db.Column(db.DateTime)
 	lead = db.Boolean()
+	timestamp = db.Column(db.DateTime)
 
 	def __init__(self, url, lead, img_src=""):
 		self.url = url
-		self.img_src = img_src
 		self.lead = lead
 		self.timestamp = datetime.now()
 
@@ -20,12 +18,8 @@ class Link(db.Model):
 	def serialize(self):
 		return {
 			'id': self.id,
-			'url': self.url,
-			'img_src': self.img_src
+			'url': self.url
 		}
-
-	def set_image(self, img_src):
-		self.img_src=img_src
 
 	def __repr__(self):
 		return '<Link %r>' % self.url
