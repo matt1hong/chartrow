@@ -89,6 +89,11 @@ def promote():
 		return jsonify(success=True)
 	return jsonify(success=False)
 
+@application.route('/api/get_tags')
+def get_tags():
+	tags = Tag.query.all()
+	return jsonify(success=True, results=tags)
+
 @application.route('/api/delete', methods=['POST'])
 def delete():
 	incoming = request.get_json()

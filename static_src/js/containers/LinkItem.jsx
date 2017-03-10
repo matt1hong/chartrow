@@ -1,7 +1,7 @@
 import React from 'react'
 
 const style= {
-	headline: {
+	largeTitle: {
 		fontSize: 24,
 		fontFamily: 'Helvetica Neue'
 	},
@@ -27,8 +27,8 @@ class LinkItem extends React.Component {
 		return (
 			<div style={{textAlign:'left'}} onClick={this.props.onClick}>
 				{
-					!this.props.large ? 
-					<span style={style.headline}>{this.props.headline}</span>
+					!this.state.large ? 
+					<span style={style.title}>{this.props.headline}</span>
 					: null
 				}
 				{
@@ -40,8 +40,8 @@ class LinkItem extends React.Component {
 					: null
 				}
 				{
-					this.props.large ? 
-					<span style={style.title}>{this.props.headline}</span>
+					this.state.large ? 
+					<span style={style.largeTitle}>{this.props.headline}</span>
 					: null
 				}
 			</div>)

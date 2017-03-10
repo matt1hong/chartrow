@@ -7,6 +7,8 @@ import ReactCrop from 'react-image-crop'
 import ReactModal from 'react-modal'
 import axios from 'axios'
 import TweetFeed from './TweetFeed'
+import InlineEdit from 'react-edit-inline'
+import Chip from 'material-ui/Chip';
 
 import 'react-image-crop/dist/ReactCrop.css';
 
@@ -42,7 +44,9 @@ export default class Admin extends React.Component {
 			},
 			linkUrl: 'https://www.nytimes.com/interactive/2017/02/27/us/politics/most-important-problem-gallup-polling-question.html',
 			openModal: false,
-			lead: false
+			lead: false,
+			title: '',
+			tags: []
 		}
 		this.updateTweets = this.updateTweets.bind(this)
 		this.promoteLink = this.promoteLink.bind(this)
@@ -54,6 +58,15 @@ export default class Admin extends React.Component {
         });
         socket.on('tweet', this.updateTweets)
         this.getImages(this.state.linkUrl)
+        axios
+        	.get('/api/get_tags')
+        	.then((response) => {
+				let tags = response.data.results
+
+				this.setState({
+					tags: Array.concat(this.state.tags, tags)
+				})
+			})
 	}
 	updateTweets(data) {
 		const tweet = JSON.parse(data)
@@ -121,6 +134,12 @@ export default class Admin extends React.Component {
 				})
 			})
 	}
+	titleChanged(data){
+		this.setState(data)
+	}
+    customValidateText(text) {
+      return (text.length > 0 && text.length < 64);
+    }
 	render() {
 		return (
 			<div style={{textAlign:'center'}}>
@@ -146,8 +165,18 @@ export default class Admin extends React.Component {
 								      	})
 								      }}
 								    />
-								
-								
+									<InlineEdit
+										validate={this.customValidateText}
+										text={this.state.title}
+										paramName="title"
+										change={this.titleChanged.bind(this)}></InlineEdit>
+									<div style={{
+										flex:'wrap'
+									}}>
+										{this.state.tags.map((tag, key) => (
+											<Chip>{tag}</Chip>
+										))}
+									</div>
 									<RaisedButton
 										label="Promote"
 										onClick={this.promoteLink}></RaisedButton>
