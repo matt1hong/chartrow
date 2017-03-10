@@ -6,7 +6,7 @@ class Link(db.Model):
 
 	id = db.Column(db.Integer, primary_key=True)
 	url = db.Column(db.String, unique=True)
-	lead = db.Boolean()
+	lead = db.Column(db.Boolean)
 	timestamp = db.Column(db.DateTime)
 
 	def __init__(self, url, lead, img_src=""):

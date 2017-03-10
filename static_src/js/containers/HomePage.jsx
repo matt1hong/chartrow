@@ -39,19 +39,23 @@ export default class HomePage extends React.Component {
 
 	render() {
 	  	return (
+	  		<div>
+	  		<h1>Chartrow</h1>
 	    	<div style={{textAlign:'center'}}>
 				<StackGrid 
-					columnWidth="33.333%" 
+					columnWidth={400}
 					gutterWidth={12} 
 					gutterHeight={6}>
 					{ this.state.links.map((link, key) => (
 						<LinkItem 
 							key={key}
-							imgSrc={link.img_src}
+							large={link.lead}
+							imgSrc={link.id.toString()}
 							// url={link.url}
 							headline='Headline 1' />
 					))}
 				</StackGrid>
+	      	</div>
 	      	</div>
 	    );
 	}

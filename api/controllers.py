@@ -74,16 +74,15 @@ def promote():
 
 			if lead:
 				large = cropped.resize((400,int(400*size_ratio)), Image.ANTIALIAS)
-				img_src = '%r-400.jpeg' % link.id
+				img_src = '%r-400.png' % link.id
 				abs_src = '%s_src/images/%s' % (application.static_folder, img_src)
 				large.save(abs_src, quality=95)
 			
 			small = cropped.resize((70,int(70*size_ratio)), Image.ANTIALIAS)
-			img_src = '%r.jpeg' % link.id
+			img_src = '%r.png' % link.id
 			abs_src = '%s_src/images/%s' % (application.static_folder, img_src)
 			small.save(abs_src, quality=95)
 			
-			link.set_image(img_src)
 			db.session.add(link)
 			db.session.commit()
 
