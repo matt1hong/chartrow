@@ -48,7 +48,8 @@ export default class Admin extends React.Component {
 			lead: false,
 			title: 'Enter title',
 			tag: 'New tag',
-			tags: []
+			tags: [],
+			timestamp: 0
 		}
 		this.updateTweets = this.updateTweets.bind(this)
 	}
@@ -75,10 +76,11 @@ export default class Admin extends React.Component {
 			tweets: Array.concat(this.state.tweets, JSON.parse(data))
 		})
 	}
-	getImages(link) {
+	getImages(link, timestamp) {
 		this.setState({
 			imageLinks: [],
-			linkUrl: link
+			linkUrl: link,
+			timestamp: timestamp
 		})
 		axios
 			.get('/api/get_images?link='+encodeURIComponent(link))
@@ -106,7 +108,10 @@ export default class Admin extends React.Component {
 				url: this.state.linkUrl,
 				imgSrc: this.state.cropImage,
 				cropPixels: this.state.cropPixels,
-				lead: this.state.lead
+				lead: this.state.lead,
+				title: this.state.title,
+				tag: this.state.tag,
+				realTimestamp: this.state.timestamp
 			})
 			.then((response) => {
 				this.setState({

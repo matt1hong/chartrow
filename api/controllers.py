@@ -3,6 +3,7 @@ import jsonpickle
 import urllib
 import urllib.request
 import urllib.parse
+from datetime import datetime
 from application import application, twitter, socketio
 from api.models import *
 
@@ -15,13 +16,30 @@ from tweepy import Stream, TweepError
 from bs4 import BeautifulSoup
 from PIL import Image
 
-class TweetListener(StreamListener):
-    def on_data(self, data):
-        emit('tweet', data, broadcast=True)
-        return True
+class TweetListener2(StreamListener):
+	def on_data(self, data):
+		urls = data['entities']['urls']
+		if len(urls) > 0 and len(urls[0]['url']) > 0:
+			to_emit = {
+				url: urls[0]['expanded_url'],
+				text: data['text'],
+				timestamp_ms: data['timestamp_ms'],
+				user_name: data['user']['name'],
+				screen_name: data['user']['screen_name']
+			}
+			emit('tweet', data, broadcast=True)
+			return True
 
-    def on_error(self, status):
-        print(status)
+	def on_error(self, status):
+		print(status)
+
+class TweetListener(StreamListener):
+	def on_data(self, data):
+		emit('tweet', data, broadcast=True)
+		return True
+
+	def on_error(self, status):
+		print(status)
 
 listener = TweetListener()
 stream = Stream(twitter, listener)
@@ -29,7 +47,7 @@ stream = Stream(twitter, listener)
 @socketio.on('connected')
 def stream_tweets(message):
 	try:
-		return Response(stream.userstream(_with="following"), content_type='text/event-stream')
+		return Response(stream.filter(track=['trump']), content_type='text/event-stream')
 	except TweepError:
 		return jsonify(success=True)
 	except:
@@ -57,10 +75,12 @@ def get_images():
 def promote():
 	incoming = request.get_json()
 	lead = incoming['lead']
-
 	url = incoming['url']
+	title = incoming['title']
+	tag = incoming['tag']
+	real_timestamp = datetime.datetime.fromtimestamp(incoming['realTimestamp']/1000.0)
 	if db.session.query(Link).filter_by(url=url).count() < 1:
-		link = Link(url, lead)
+		link = Link(url, title, lead, tag, real_timestamp)
 		db.session.add(link)
 		db.session.commit()
 
