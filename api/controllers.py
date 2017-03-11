@@ -29,7 +29,7 @@ stream = Stream(twitter, listener)
 @socketio.on('connected')
 def stream_tweets(message):
 	try:
-		return Response(stream.filter(track=['fivethirtyeight']), content_type='text/event-stream')
+		return Response(stream.userstream(_with="following"), content_type='text/event-stream')
 	except TweepError:
 		return jsonify(success=True)
 	except:

@@ -10,10 +10,11 @@ class Link(db.Model):
 	timestamp = db.Column(db.DateTime)
 	tag = db.Column(db.String)
 
-	def __init__(self, url, lead, tag):
+	def __init__(self, url, lead, date, tag):
 		self.url = url
 		self.lead = lead
-		self.timestamp = datetime.now(),
+		self.timestamp = datetime.now()
+		self.date_published = date
 		self.tag = tag
 
 	@property

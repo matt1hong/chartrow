@@ -15,7 +15,8 @@ import 'react-image-crop/dist/ReactCrop.css';
 const style= {
 	td: {
 		home: {
-			width: '50%'
+			width: '50%',
+			verticalAlign: 'top'
 		},
 		modal: {
 			textAlign: 'center'
@@ -45,11 +46,11 @@ export default class Admin extends React.Component {
 			linkUrl: 'https://www.nytimes.com/interactive/2017/02/27/us/politics/most-important-problem-gallup-polling-question.html',
 			openModal: false,
 			lead: false,
-			title: '',
+			title: 'Enter title',
+			tag: 'New tag',
 			tags: []
 		}
 		this.updateTweets = this.updateTweets.bind(this)
-		this.promoteLink = this.promoteLink.bind(this)
 	}
 	componentDidMount() {
 		var socket = io.connect('http://' + document.domain + ':' + location.port);
@@ -137,6 +138,14 @@ export default class Admin extends React.Component {
 	titleChanged(data){
 		this.setState(data)
 	}
+	tagChanged(data){
+		this.setState(data)
+	}
+	tagSelected(event){
+		this.setState({
+			tag: event.target.value
+		})
+	}
     customValidateText(text) {
       return (text.length > 0 && text.length < 64);
     }
@@ -147,16 +156,14 @@ export default class Admin extends React.Component {
 				<table>
 					<tbody>
 						<tr>
-							<td>
+							<td rowSpan="6" style={{width:690}}>
 								<ReactCrop 
 								src={this.state.cropImage} 
 								onComplete={this.setCropSize.bind(this)}
 								/>
 							</td>
 							<td>
-								<div>
-									
-									<Checkbox
+								<Checkbox
 								      label="Lead article"
 								      checked={this.state.lead}
 								      onCheck={(event, checked) => {
@@ -165,36 +172,54 @@ export default class Admin extends React.Component {
 								      	})
 								      }}
 								    />
+							</td>
+						</tr>
+						<tr>
+							<td>
+								
 									<InlineEdit
 										validate={this.customValidateText}
 										text={this.state.title}
 										paramName="title"
 										change={this.titleChanged.bind(this)}></InlineEdit>
-									<div style={{
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<InlineEdit
+										validate={this.customValidateText}
+										text={this.state.tag}
+										paramName="tag"
+										change={this.tagChanged.bind(this)}></InlineEdit>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<div style={{
 										flex:'wrap'
 									}}>
 										{this.state.tags.map((tag, key) => (
-											<Chip>{tag}</Chip>
+											<Chip onTouchTap={this.tagChanged.bind(this)}>{tag}</Chip>
 										))}
 									</div>
-									<RaisedButton
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<RaisedButton
 										label="Promote"
-										onClick={this.promoteLink}></RaisedButton>
-									<RaisedButton
-										label="Delete"
-										onClick={this.deleteLink.bind(this)}></RaisedButton>
-									<br/><br/><br/><br/>
-								
-									<RaisedButton
+										onClick={this.promoteLink.bind(this)}></RaisedButton>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<RaisedButton
 									label="Close"
 									onClick={() => {
 										this.setState({
 											openModal: false
 										})
 									}}></RaisedButton>
-								
-								</div>
-								
 							</td>
 						</tr>
 					</tbody>
@@ -209,11 +234,14 @@ export default class Admin extends React.Component {
 								onSurf={this.getImages.bind(this)}></TweetFeed>
 						</td>
 						<td style={style.td.home}>
-						<GridList>
+						<GridList style={{width: 300}}>
 							{ 
 								this.state.imageLinks.map((link, k)=>(
 									<GridTile key={k} >
-										<img src={link} onClick={(e) => this.setCropImage(e.target.src)} />
+										<img
+											style={{height: "100%"}} 
+											src={link} 
+											onClick={(e) => this.setCropImage(e.target.src)} />
 									</GridTile>	
 								))
 							}
