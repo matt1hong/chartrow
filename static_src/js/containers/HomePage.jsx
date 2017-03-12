@@ -4,6 +4,7 @@ import axios from 'axios';
 import LinkItem from './LinkItem'
 import LinkCollection from './LinkCollection'
 import Header from './Header'
+import sizeMe from 'react-sizeme';
 
 const style={
 	key1: {
@@ -24,7 +25,7 @@ const columnWidth = 400
 const gutterWidth = 12
 const gutterHeight = 6
 
-export default class HomePage extends React.Component {
+class HomePage extends React.Component {
 
 	constructor() {
 		super()
@@ -48,6 +49,7 @@ export default class HomePage extends React.Component {
 	}
 
 	render() {
+		const { width, height } = this.props.size;
 	  	return (
 	  		<div style={{fontFamily: 'Helvetica Neue'}}>
 	    	<div style={{textAlign:'center'}}>
@@ -57,7 +59,7 @@ export default class HomePage extends React.Component {
 					title="CHARTROW"
 					subheader="Truths are errors to be exposed" />
 				<StackGrid 
-					columnWidth={columnWidth}
+					columnWidth={width < columnWidth ? width : columnWidth}
 					gutterWidth={gutterWidth} 
 					gutterHeight={gutterHeight}>
 					
@@ -70,7 +72,11 @@ export default class HomePage extends React.Component {
 								<LinkCollection
 									key={key}
 									title={tag}
-									links={taggedLinks}/>
+									links={taggedLinks}
+									small={
+										width < columnWidth * 2 + 1 * gutterWidth 
+										? true 
+										: false}/>
 							)
 						})
 					}
@@ -81,3 +87,5 @@ export default class HomePage extends React.Component {
 	    );
 	}
 }
+
+export default sizeMe({ monitorWidth: true })(HomePage)

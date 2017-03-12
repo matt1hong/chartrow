@@ -8,12 +8,14 @@ class LinkCollection extends React.Component {
 		return (
 			<div style={{width:400}}>
 				{this.props.links.map((link, key) => (
+
 					<LinkItem 
 						key={key}
 						imgSrc={link.id.toString()}
-						large={link.lead}
+						large={!this.props.small && link.lead}
 						// url={link.url}
-						headline='Headline 1'></LinkItem>
+						headline='Headline 1'>{console.log(!this.props.small && link.lead)}</LinkItem>
+					
 				))}
 			</div>
 		)
@@ -21,7 +23,8 @@ class LinkCollection extends React.Component {
 }
 
 LinkCollection.propTypes = {
-	links: React.PropTypes.array
+	links: React.PropTypes.array,
+	small: React.PropTypes.bool
 }
 
 export default LinkCollection

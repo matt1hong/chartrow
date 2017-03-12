@@ -14,10 +14,6 @@ const style= {
 class LinkItem extends React.Component {
 	constructor(props) {
 		super(props)
-		console.log(this.props.large)
-		this.state = {
-			large: this.props.large
-		}
 		this.imgImports = {
 			small: require(`../../images/${this.props.imgSrc}.png`),
 			large: require(`../../images/${this.props.imgSrc}-400.png`),
@@ -27,20 +23,20 @@ class LinkItem extends React.Component {
 		return (
 			<div style={{textAlign:'left'}} onClick={this.props.onClick}>
 				{
-					!this.state.large ? 
+					!this.props.large ? 
 					<span style={style.title}>{this.props.headline}</span>
 					: null
 				}
 				{
 					this.props.imgSrc ? 
-						<img src={this.state.large ? 
+						<img src={this.props.large ? 
 								this.imgImports.large
 								: this.imgImports.small
 						} style={{float:'right'}}/>
 					: null
 				}
 				{
-					this.state.large ? 
+					this.props.large ? 
 					<span style={style.largeTitle}>{this.props.headline}</span>
 					: null
 				}
