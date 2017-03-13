@@ -9,6 +9,7 @@ import axios from 'axios'
 import TweetFeed from './TweetFeed'
 import InlineEdit from 'react-edit-inline'
 import Chip from 'material-ui/Chip';
+import {Tabs, Tab} from 'material-ui/Tabs';
 
 import 'react-image-crop/dist/ReactCrop.css';
 
@@ -29,6 +30,7 @@ export default class Admin extends React.Component {
 		super()
 		this.state= {
 			tweets: [],
+			existingPosts: [],
 			imageLinks: [],
 			cropImage: '',
 			cropRatio: {
@@ -71,10 +73,21 @@ export default class Admin extends React.Component {
 			})
 	}
 	updateTweets(data) {
-		const tweet = JSON.parse(data)
-		this.setState({
-			tweets: Array.concat(this.state.tweets, JSON.parse(data))
-		})
+		if (Object.keys(data).length) {
+			this.setState({
+				tweets: Array.concat(this.state.tweets, data)
+			})
+		}
+		
+	}
+	getLinks(){
+		axios
+			.get('/api/get_links')
+			.then((response) => {
+				this.setState({
+					existingPosts: response.data.results
+				})
+			})
 	}
 	getImages(link, timestamp) {
 		this.setState({
@@ -234,12 +247,26 @@ export default class Admin extends React.Component {
 				<tbody>
 					<tr>
 						<td style={style.td.home} rowSpan="2">
-							<TweetFeed 
-								tweets={this.state.tweets}
-								onSurf={this.getImages.bind(this)}></TweetFeed>
+							<Tabs>
+							    <Tab label="Twitter" >
+								      <TweetFeed 
+									tweets={this.state.tweets}
+									onSurf={this.getImages.bind(this)}></TweetFeed>
+							   
+							    </Tab>
+							    <Tab label="Item Two" >
+							      <div>
+							        <h2>Tab Two</h2>
+							        <p>
+							          This is another example tab.
+							        </p>
+							      </div>
+							    </Tab>
+							  </Tabs>
+							
 						</td>
 						<td style={style.td.home}>
-						<GridList style={{width: 300}}>
+						<GridList style={{width: 450}} cols={3}>
 							{ 
 								this.state.imageLinks.map((link, k)=>(
 									<GridTile key={k} >

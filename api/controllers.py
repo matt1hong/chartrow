@@ -1,5 +1,6 @@
 import sys
 import jsonpickle
+import json
 import urllib
 import urllib.request
 import urllib.parse
@@ -16,30 +17,29 @@ from tweepy import Stream, TweepError
 from bs4 import BeautifulSoup
 from PIL import Image
 
-class TweetListener2(StreamListener):
-	def on_data(self, data):
-		urls = data['entities']['urls']
-		if len(urls) > 0 and len(urls[0]['url']) > 0:
-			to_emit = {
-				url: urls[0]['expanded_url'],
-				text: data['text'],
-				timestamp_ms: data['timestamp_ms'],
-				user_name: data['user']['name'],
-				screen_name: data['user']['screen_name']
-			}
-			emit('tweet', data, broadcast=True)
-			return True
-
-	def on_error(self, status):
-		print(status)
-
 class TweetListener(StreamListener):
-	def on_data(self, data):
-		emit('tweet', data, broadcast=True)
+	def on_status(self, data):
+		# import pprint; pprint.pprint(data.entities)
+		# data = json.loads(data)
+		urls = data.entities['urls']
+		if len(urls) > 0 and len(urls[0]['expanded_url']) > 0:
+			to_emit = {
+				'url': urls[0]['expanded_url'],
+				'text': data.text,
+				'timestamp_ms': data.timestamp_ms,
+				'user_name': data.user.name,
+				'screen_name': data.user.screen_name
+			}
+			print('Success')
+		else:
+			print('Failure')
+			to_emit = {}
+		emit('tweet', to_emit)
 		return True
 
 	def on_error(self, status):
 		print(status)
+
 
 listener = TweetListener()
 stream = Stream(twitter, listener)
@@ -47,7 +47,7 @@ stream = Stream(twitter, listener)
 @socketio.on('connected')
 def stream_tweets(message):
 	try:
-		return Response(stream.filter(track=['trump']), content_type='text/event-stream')
+		return Response(stream.filter(track=['hillary clinton']), content_type='text/event-stream')
 	except TweepError:
 		return jsonify(success=True)
 	except:
