@@ -20,26 +20,35 @@ class LinkItem extends React.Component {
 		if (this.props.lead) {
 			this.imgImports.large = require(`../../images/${this.props.imgSrc}-400.png`)
 		}
-		this.small = this.props.small || !this.props.lead || this.props.index
+		this.state = {
+			small: this.props.small || !this.props.lead || this.props.index
+		}
+	}
+	componentWillUpdate(nextProps, nextState) {
+		if (this.props.small !== nextProps.small) {
+			this.setState({
+				small: nextProps.small || !nextProps.lead || nextProps.index
+			})
+		}
 	}
 	render() {
 		return (
 			<div style={{textAlign:'left', overflow:'hidden', marginBottom: 6}} onClick={this.props.onClick}>
 				{
-					this.small ? 
+					this.state.small? 
 					<span style={style.title}>{this.props.headline}</span>
 					: null
 				}
 				{
 					this.props.imgSrc ? 
-						<img src={this.small ? 
+						<img src={this.state.small? 
 								this.imgImports.small
 								: this.imgImports.large
 						} style={{float:'right'}}/>
 					: null
 				}
 				{
-					!this.small ? 
+					!this.state.small? 
 					<span style={style.largeTitle}>{this.props.headline}</span>
 					: null
 				}
