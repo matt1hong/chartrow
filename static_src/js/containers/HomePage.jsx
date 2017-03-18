@@ -25,6 +25,8 @@ const columnWidth = 400
 const gutterWidth = 12
 const gutterHeight = 6
 
+const sort = (x, y) => new Date(x.real_date) - new Date(y.real_date)
+
 class HomePage extends React.Component {
 
 	constructor() {
@@ -40,9 +42,10 @@ class HomePage extends React.Component {
 			.get('/api/get_links')
 			.then((response) => {
 				let links = response.data.results
+				links.sort(sort)
 
 				this.setState({
-					links: Array.concat(this.state.links, links),
+					links: links,
 					tags: [...new Set(links.map((lnk) => { return lnk.tag }))]
 				})
 			})

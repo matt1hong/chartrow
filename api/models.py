@@ -2,7 +2,6 @@ from application import db
 from datetime import datetime
 
 class Tag(db.Model):
-	__tablename__ = "tags"
 
 	id = db.Column(db.Integer, primary_key = True)
 	name = db.Column(db.String, unique=True)
@@ -15,23 +14,22 @@ class Tag(db.Model):
 		return '<Tag %r>' % self.name
 
 class Link(db.Model):
-	__tablename__ = "links"
 
 	id = db.Column(db.Integer, primary_key=True)
 	url = db.Column(db.String, unique=True)
 	title = db.Column(db.String, unique=True)
 	lead = db.Column(db.Boolean)
-	timestamp = db.Column(db.DateTime)
-	real_timestamp = db.Column(db.DateTime)
+	date = db.Column(db.DateTime)
+	real_date = db.Column(db.DateTime)
 
-	tag_id = db.Column(db.Integer, db.ForeignKey('tags.id'))
+	tag_id = db.Column(db.Integer, db.ForeignKey('tag.id'))
 
-	def __init__(self, url, title, lead, date=datetime.now()):
+	def __init__(self, url, title, lead, real_date=datetime.now().isoformat()):
 		self.url = url
 		self.title = title
 		self.lead = lead
-		self.timestamp = datetime.now()
-		self.real_timestamp = date
+		self.date = datetime.now().isoformat()
+		self.real_date = real_date
 
 	@property
 	def serialize(self):
@@ -41,8 +39,8 @@ class Link(db.Model):
 			'title': self.title,
 			'lead': self.lead,
 			'tag': self.tag.name,
-			'timestamp': self.timestamp,
-			'real_timestamp': self.real_timestamp
+			'date': self.date,
+			'real_date': self.real_date
 		}
 
 	def __repr__(self):

@@ -258,7 +258,7 @@ export default class Admin extends React.Component {
 									hintText="Custom publication date" 
 									container="inline" 
 									value={this.state.date}
-        							onChange={this.handleDateChange}/>
+        							onChange={this.handleDateChange.bind(this)}/>
 							</td>
 						</tr>
 						<tr>

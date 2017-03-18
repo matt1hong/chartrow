@@ -95,12 +95,12 @@ def promote():
 	url = incoming['url']
 	title = incoming['title']
 	tag_query = incoming['tag']
-	real_timestamp = datetime.fromtimestamp(incoming['realTimestamp']/1000.0)
+	real_date = datetime.fromtimestamp(incoming['realTimestamp']/1000.0).isoformat()
 	if db.session.query(Link).filter_by(url=url).count() < 1:
 		tag = Tag.query.filter_by(name=tag_query).first()
 		if not tag:
 			tag = Tag(tag_query)
-		link = Link(url, title, lead, real_timestamp)
+		link = Link(url, title, lead, real_date)
 		tag.links.append(link)
 		db.session.add(link)
 		db.session.add(tag)

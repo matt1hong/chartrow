@@ -2,13 +2,8 @@ import React from 'react'
 import LinkItem from './LinkItem'
 import axios from 'axios';
 
-const sort = (x, y) => x.real_timestamp - y.real_timestamp
 
 class LinkCollection extends React.Component {
-	constructor(props) {
-		super(props)
-		this.sorted = [].concat(this.props.links).sort(sort)
-	}
 
 	render() {
 		return (
