@@ -43,7 +43,7 @@ class HomePage extends React.Component {
 
 				this.setState({
 					links: Array.concat(this.state.links, links),
-					tags: links.map((lnk) => { return lnk.tag })
+					tags: [...new Set(links.map((lnk) => { return lnk.tag }))]
 				})
 			})
 	}

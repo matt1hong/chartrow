@@ -33,7 +33,8 @@ export default class TweetFeed extends React.Component {
 			            	<div key={k}><a href={x.url} target="_blank">
 						        <li className="feeditem">{x.text}</li>
 						    </a>
-						        <a onClick={() => this.props.onSurf(x.url)}>Images</a>
+						        <a onClick={() => this.props.onSurf(x)}>Images</a>
+						        <a onClick={() => this.props.delete(x)}>Delete</a>
 							</div>
 					)}
 		          </ul>
@@ -45,5 +46,6 @@ export default class TweetFeed extends React.Component {
 
 TweetFeed.propTypes = {
 	tweets: React.PropTypes.array,
-	onSurf: React.PropTypes.func
+	onSurf: React.PropTypes.func,
+	delete: React.PropTypes.func
 }

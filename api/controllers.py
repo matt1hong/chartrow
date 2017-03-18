@@ -12,29 +12,34 @@ from flask import render_template, redirect, request, g, jsonify, session, Respo
 from flask_socketio import emit
 
 from tweepy.streaming import StreamListener
-from tweepy import Stream, TweepError
+from tweepy import Stream, TweepError, API
 
 from bs4 import BeautifulSoup
 from PIL import Image
+
+def transform_data(data):
+	urls = data.entities['urls']
+	to_emit = {}
+	if len(urls) > 0 and len(urls[0]['expanded_url']) > 0:
+		to_emit = {
+			'url': urls[0]['expanded_url'],
+			'text': data.text,
+			'timestamp_ms': data.created_at.timestamp(),
+			'user_name': data.user.name,
+			'screen_name': data.user.screen_name
+		}
+		print('Success')
+	else:
+		print('Failure')
+	return to_emit
+
 
 class TweetListener(StreamListener):
 	def on_status(self, data):
 		# import pprint; pprint.pprint(data.entities)
 		# data = json.loads(data)
-		urls = data.entities['urls']
-		if len(urls) > 0 and len(urls[0]['expanded_url']) > 0:
-			to_emit = {
-				'url': urls[0]['expanded_url'],
-				'text': data.text,
-				'timestamp_ms': data.timestamp_ms,
-				'user_name': data.user.name,
-				'screen_name': data.user.screen_name
-			}
-			print('Success')
-		else:
-			print('Failure')
-			to_emit = {}
-		emit('tweet', to_emit)
+		to_emit = transform_data(data)
+		emit('tweet', to_emit, broadcast=True)
 		return True
 
 	def on_error(self, status):
@@ -43,21 +48,33 @@ class TweetListener(StreamListener):
 
 listener = TweetListener()
 stream = Stream(twitter, listener)
+api = API(twitter)
 
-@socketio.on('connected')
-def stream_tweets(message):
+@socketio.on('connect')
+def stream_tweets():
 	try:
-		return Response(stream.filter(track=['hillary clinton']), content_type='text/event-stream')
+		print('Client connected')
+		return Response(stream.userstream(), content_type='text/event-stream')
 	except TweepError:
 		return jsonify(success=True)
 	except:
 		return jsonify(success=False)
 
 
+@socketio.on('disconnect')
+def disconnect():
+	print('Client disconnected')
+	return
+
 @application.route('/')
 def index():
 	return render_template('index.html')
 
+@application.route('/api/tweets')
+def tweets():
+	tweets = api.home_timeline(count=request.args.get('count'))
+	# import pdb; pdb.set_trace()
+	return jsonify(success=True, results=[transform_data(tweet) for tweet in tweets])
 
 @application.route('/api/get_images')
 def get_images():
@@ -65,9 +82,9 @@ def get_images():
 	r = urllib.request.build_opener(urllib.request.HTTPCookieProcessor()).open(url).read()
 	soup = BeautifulSoup(r, "html.parser")
 	meta_tags = soup.select('meta[property*="image"],meta[name*="image"]')
-	meta_content = [urllib.parse.urljoin(url, link['content']) for link in meta_tags]
+	meta_content = [urllib.parse.urljoin(url, link['content']) for link in meta_tags if link.has_attr('content')]
 	images = soup.select('img')
-	img_links = [urllib.parse.urljoin(url, link['src']) for link in images]
+	img_links = [urllib.parse.urljoin(url, link['src']) for link in images if link.has_attr('src')]
 	return jsonify(results=meta_content+img_links, success=True)
 
 
@@ -77,11 +94,16 @@ def promote():
 	lead = incoming['lead']
 	url = incoming['url']
 	title = incoming['title']
-	tag = incoming['tag']
-	real_timestamp = datetime.datetime.fromtimestamp(incoming['realTimestamp']/1000.0)
+	tag_query = incoming['tag']
+	real_timestamp = datetime.fromtimestamp(incoming['realTimestamp']/1000.0)
 	if db.session.query(Link).filter_by(url=url).count() < 1:
-		link = Link(url, title, lead, tag, real_timestamp)
+		tag = Tag.query.filter_by(name=tag_query).first()
+		if not tag:
+			tag = Tag(tag_query)
+		link = Link(url, title, lead, real_timestamp)
+		tag.links.append(link)
 		db.session.add(link)
+		db.session.add(tag)
 		db.session.commit()
 
 		crop_size = incoming['cropPixels']
@@ -109,10 +131,10 @@ def promote():
 		return jsonify(success=True)
 	return jsonify(success=False)
 
-@application.route('/api/get_tags')
-def get_tags():
+@application.route('/api/tags')
+def tags():
 	tags = Tag.query.all()
-	return jsonify(success=True, results=tags)
+	return jsonify(success=True, results=[tag.name for tag in tags])
 
 @application.route('/api/delete', methods=['POST'])
 def delete():

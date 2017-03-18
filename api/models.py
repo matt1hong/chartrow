@@ -1,6 +1,19 @@
 from application import db
 from datetime import datetime
 
+class Tag(db.Model):
+	__tablename__ = "tags"
+
+	id = db.Column(db.Integer, primary_key = True)
+	name = db.Column(db.String, unique=True)
+	links = db.relationship('Link', backref='tag', lazy='dynamic')
+
+	def __init__(self, name):
+		self.name = name
+
+	def __repr(self):
+		return '<Tag %r>' % self.name
+
 class Link(db.Model):
 	__tablename__ = "links"
 
@@ -10,13 +23,13 @@ class Link(db.Model):
 	lead = db.Column(db.Boolean)
 	timestamp = db.Column(db.DateTime)
 	real_timestamp = db.Column(db.DateTime)
-	tag = db.Column(db.String)
 
-	def __init__(self, url, title, lead, tag, date=datetime.now()):
+	tag_id = db.Column(db.Integer, db.ForeignKey('tags.id'))
+
+	def __init__(self, url, title, lead, date=datetime.now()):
 		self.url = url
 		self.title = title
 		self.lead = lead
-		self.tag = tag
 		self.timestamp = datetime.now()
 		self.real_timestamp = date
 
@@ -27,7 +40,7 @@ class Link(db.Model):
 			'url': self.url,
 			'title': self.title,
 			'lead': self.lead,
-			'tag': self.tag,
+			'tag': self.tag.name,
 			'timestamp': self.timestamp,
 			'real_timestamp': self.real_timestamp
 		}
@@ -36,14 +49,3 @@ class Link(db.Model):
 		return '<Link %r>' % self.url
 
 
-class Tag(db.Model):
-	__tablename__ = "tags"
-
-	id = db.Column(db.Integer, primary_key = True)
-	name = db.Column(db.String, unique=True)
-
-	def __init__(self, name):
-		self.name = name
-
-	def __repr(self):
-		return '<Tag %r>' % self.name

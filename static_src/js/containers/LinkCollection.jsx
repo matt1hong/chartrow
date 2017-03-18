@@ -2,7 +2,13 @@ import React from 'react'
 import LinkItem from './LinkItem'
 import axios from 'axios';
 
+const sort = (x, y) => x.real_timestamp - y.real_timestamp
+
 class LinkCollection extends React.Component {
+	constructor(props) {
+		super(props)
+		this.sorted = [].concat(this.props.links).sort(sort)
+	}
 
 	render() {
 		return (
@@ -11,10 +17,11 @@ class LinkCollection extends React.Component {
 
 					<LinkItem 
 						key={key}
+						index={key}
 						imgSrc={link.id.toString()}
-						large={!this.props.small && link.lead}
-						// url={link.url}
-						headline='Headline 1'>{console.log(!this.props.small && link.lead)}</LinkItem>
+						small={this.props.small}
+						lead={link.lead}
+						headline={link.title}></LinkItem>
 					
 				))}
 			</div>

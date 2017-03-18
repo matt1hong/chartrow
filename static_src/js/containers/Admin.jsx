@@ -1,6 +1,7 @@
 import React from 'react';
 import {GridList, GridTile} from 'material-ui/GridList';
 import RaisedButton from 'material-ui/RaisedButton'
+import DatePicker from 'material-ui/DatePicker';
 import Checkbox from 'material-ui/Checkbox';
 import Feed from './RSSFeed';
 import ReactCrop from 'react-image-crop'
@@ -32,6 +33,7 @@ export default class Admin extends React.Component {
 			tweets: [],
 			existingPosts: [],
 			imageLinks: [],
+			count: 30,
 			cropImage: '',
 			cropRatio: {
 				x: 0,
@@ -45,6 +47,7 @@ export default class Admin extends React.Component {
 				width: 0,
 				height: 0
 			},
+			date: null,
 			linkUrl: 'https://www.nytimes.com/interactive/2017/02/27/us/politics/most-important-problem-gallup-polling-question.html',
 			openModal: false,
 			lead: false,
@@ -57,29 +60,35 @@ export default class Admin extends React.Component {
 	}
 	componentDidMount() {
 		var socket = io.connect('http://' + document.domain + ':' + location.port);
-        socket.on('connect', function() {
-            socket.emit('connected', {data: 'I\'m connected!'});
-        });
         socket.on('tweet', this.updateTweets)
         this.getImages(this.state.linkUrl)
+        this.getExistingTweets()
         axios
-        	.get('/api/get_tags')
+        	.get('/api/tags')
         	.then((response) => {
 				let tags = response.data.results
 
 				this.setState({
-					tags: Array.concat(this.state.tags, tags)
+					tags: tags
 				})
 			})
 	}
 	updateTweets(data) {
 		if (Object.keys(data).length) {
 			this.setState({
-				tweets: Array.concat(this.state.tweets, data)
+				tweets: [data].concat(this.state.tweets)
 			})
 		}
 		
 	}
+	handleDateChange(event, date) {
+		if (date === this.state.date) {
+			this.setState({date:null})
+		} else {
+			this.setState({date});
+		}
+	    
+	};
 	getLinks(){
 		axios
 			.get('/api/get_links')
@@ -89,14 +98,34 @@ export default class Admin extends React.Component {
 				})
 			})
 	}
-	getImages(link, timestamp) {
-		this.setState({
-			imageLinks: [],
-			linkUrl: link,
-			timestamp: timestamp
-		})
+	getExistingTweets(){
 		axios
-			.get('/api/get_images?link='+encodeURIComponent(link))
+			.get(`/api/tweets?count=${this.state.count}`)
+			.then((response) => {
+				const results = response.data.results.filter((el) => {
+					return Object.keys(el).length
+				})
+				this.setState({
+					tweets: results
+				})
+			})
+	}
+	getImages(link) {
+		if (typeof(link) === 'string') {
+			this.setState({
+				imageLinks: [],
+				linkUrl: link,
+				timestamp: 0
+			})
+		} else {
+			this.setState({
+				imageLinks: [],
+				linkUrl: link.url,
+				timestamp: link.timestamp_ms
+			})
+		}
+		axios
+			.get('/api/get_images?link='+encodeURIComponent(this.state.linkUrl))
 			.then((response) => {
 				this.setState({
 					imageLinks: response.data.results
@@ -124,11 +153,12 @@ export default class Admin extends React.Component {
 				lead: this.state.lead,
 				title: this.state.title,
 				tag: this.state.tag,
-				realTimestamp: this.state.timestamp
+				realTimestamp: +this.state.date || this.state.timestamp
 			})
 			.then((response) => {
 				this.setState({
-					alert: 'Success!'
+					alert: 'Success!',
+					tags: [this.state.tag].concat(this.state.tags)
 				})
 			})
 			.catch((e) => {
@@ -161,7 +191,7 @@ export default class Admin extends React.Component {
 	}
 	tagSelected(event){
 		this.setState({
-			tag: event.target.value
+			tag: event.target.innerText
 		})
 	}
     customValidateText(text) {
@@ -174,7 +204,7 @@ export default class Admin extends React.Component {
 				<table>
 					<tbody>
 						<tr>
-							<td rowSpan="6" style={{width:690}}>
+							<td rowSpan="7" style={{width:690}}>
 								<ReactCrop 
 								src={this.state.cropImage} 
 								onComplete={this.setCropSize.bind(this)}
@@ -217,9 +247,18 @@ export default class Admin extends React.Component {
 										flex:'wrap'
 									}}>
 										{this.state.tags.map((tag, key) => (
-											<Chip onTouchTap={this.tagChanged.bind(this)}>{tag}</Chip>
+											<Chip key={key} onTouchTap={this.tagSelected.bind(this)}>{tag}</Chip>
 										))}
 									</div>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<DatePicker 
+									hintText="Custom publication date" 
+									container="inline" 
+									value={this.state.date}
+        							onChange={this.handleDateChange}/>
 							</td>
 						</tr>
 						<tr>
@@ -254,12 +293,14 @@ export default class Admin extends React.Component {
 									onSurf={this.getImages.bind(this)}></TweetFeed>
 							   
 							    </Tab>
-							    <Tab label="Item Two" >
+							    <Tab 
+							    	label="Item Two" 
+							    	onActive={this.getLinks.bind(this)}>
 							      <div>
-							        <h2>Tab Two</h2>
-							        <p>
-							          This is another example tab.
-							        </p>
+							        <TweetFeed 
+										tweets={this.state.existingPosts}
+										onSurf={this.getImages.bind(this)}
+										delete={this.deleteLink.bind(this)}></TweetFeed>
 							      </div>
 							    </Tab>
 							  </Tabs>
