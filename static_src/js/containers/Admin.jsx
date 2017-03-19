@@ -157,9 +157,13 @@ export default class Admin extends React.Component {
 			})
 			.then((response) => {
 				this.setState({
-					alert: 'Success!',
-					tags: [this.state.tag].concat(this.state.tags)
+					alert: 'Success!'
 				})
+				if (!(this.state.tag in this.state.tags)) {
+					this.setState({
+						tags: [this.state.tag].concat(this.state.tags)
+					})
+				}
 			})
 			.catch((e) => {
 				this.setState({
@@ -204,7 +208,7 @@ export default class Admin extends React.Component {
 				<table>
 					<tbody>
 						<tr>
-							<td rowSpan="7" style={{width:690}}>
+							<td rowSpan="7">
 								<ReactCrop 
 								src={this.state.cropImage} 
 								onComplete={this.setCropSize.bind(this)}

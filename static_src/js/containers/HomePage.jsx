@@ -25,7 +25,15 @@ const columnWidth = 400
 const gutterWidth = 12
 const gutterHeight = 6
 
-const sort = (x, y) => new Date(x.real_date) - new Date(y.real_date)
+const leadSort = (x, y) => +y.lead - +x.lead
+const dateSort = (x, y) => new Date(y.real_date) - new Date(x.real_date)
+const sort = function(x, y) {
+	let byLead = leadSort(x,y);
+	if (!byLead) {
+		return dateSort(x,y);
+	}
+	return byLead;
+}
 
 class HomePage extends React.Component {
 

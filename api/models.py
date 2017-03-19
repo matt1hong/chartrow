@@ -8,7 +8,7 @@ class Tag(db.Model):
 	links = db.relationship('Link', backref='tag', lazy='dynamic')
 
 	def __init__(self, name):
-		self.name = name
+		self.name = name.title()
 
 	def __repr(self):
 		return '<Tag %r>' % self.name
@@ -26,7 +26,7 @@ class Link(db.Model):
 
 	def __init__(self, url, title, lead, real_date=datetime.now().isoformat()):
 		self.url = url
-		self.title = title
+		self.title = title.title()
 		self.lead = lead
 		self.date = datetime.now().isoformat()
 		self.real_date = real_date
