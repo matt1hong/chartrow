@@ -2,10 +2,16 @@ import React from 'react'
 
 const style= {
 	largeTitle: {
-		fontSize: 24,
-		fontFamily: 'Helvetica Neue'
+		fontSize: 36,
+		fontFamily: 'Garamond',
+		fontWeight: 'bold'
 	},
-	title: {
+	mediumTitle: {
+		fontSize: 21,
+		fontFamily: 'Garamond',
+		fontWeight: 'bold'
+	},
+	smallTitle: {
 		fontSize: 15,
 		fontFamily: 'Helvetica Neue'
 	}
@@ -33,10 +39,10 @@ class LinkItem extends React.Component {
 	}
 	render() {
 		return (
-			<div style={{textAlign:'left', overflow:'hidden', marginBottom: 6}} onClick={this.props.onClick}>
+			<div style={{textAlign:'left', overflow:'hidden', marginBottom: 12}} onClick={this.props.onClick}>
 				{
-					this.state.small? 
-					<span style={style.title}>{this.props.headline}</span>
+					this.state.small ? 
+					<span style={this.props.lead && !this.props.index ? style.mediumTitle : style.smallTitle}>{this.props.headline}</span>
 					: null
 				}
 				{

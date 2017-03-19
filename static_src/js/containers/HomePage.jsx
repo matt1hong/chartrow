@@ -22,8 +22,8 @@ const style={
 }
 
 const columnWidth = 400
-const gutterWidth = 12
-const gutterHeight = 6
+const gutterWidth = 24
+const gutterHeight = 12
 
 const leadSort = (x, y) => +y.lead - +x.lead
 const dateSort = (x, y) => new Date(y.real_date) - new Date(x.real_date)
@@ -82,6 +82,7 @@ class HomePage extends React.Component {
 							return (
 								<LinkCollection
 									key={key}
+									index={key}
 									title={tag}
 									links={taggedLinks}
 									small={
