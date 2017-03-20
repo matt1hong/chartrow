@@ -1,46 +1,50 @@
 import React from 'react';
 import Tweet from './Tweet'
-
-
-const tweetData = {
-  id: 'XXX',
-  user: {
-    name: 'XXX',
-    screen_name: 'XXX',
-    profile_image_url: 'XXX'
-  },
-  text: 'XXX',
-  created_at: 'XXX',
-  favorite_count: 'XXX',
-  retweet_count: 'XXX',
-  entities: {
-    media: [],
-    urls: [],
-    user_mentions: [],
-    hashtags: [],
-    symbols: []
-  } 
-}
+import axios from 'axios'
+import {Card, CardActions, CardHeader, CardTitle, CardText} from 'material-ui/Card';
+import FlatButton from 'material-ui/FlatButton';
 
 export default class TweetFeed extends React.Component {
-	render() {
-		return (
-		      <div className="feedwidget widget">
-		        <div className="widget-content">
-		          <h2 ref="feed"> Twitter</h2>
-		          <ul>
-		            {this.props.tweets.map((x,k)=>
-			            	<div key={k}><a href={x.url} target="_blank">
-						        <li className="feeditem">{x.text}</li>
-						    </a>
-						        <a onClick={() => this.props.onSurf(x)}>Images</a>
-						        <a onClick={() => this.props.delete(x)}>Delete</a>
-							</div>
-					)}
-		          </ul>
-		        </div>
-		      </div>
-		    )
+
+  constructor() {
+  	super()
+  }
+
+  handleExpandChange (expanded) {
+    this.setState({expanded: expanded});
+  };
+
+  handleToggle (event, toggle) {
+    this.setState({expanded: toggle});
+  };
+
+  handleExpand () {
+    this.setState({expanded: true});
+  };
+
+  handleReduce () {
+    this.setState({expanded: false});
+  };
+
+  render() {
+    return (
+        <div>
+            {this.props.tweets.map((x,k)=>
+            	<Card key={k} style={{margin:'0 24 12'}}>
+			        <CardTitle title={x.text || x.title} />
+			        <CardText><a href={x.url} target="_blank">{x.url}</a></CardText>
+			        <CardActions>
+			          <FlatButton label="Images" onTouchTap={() => this.props.onSurf(x)} />
+			          {this.props.delete ?
+			          		<FlatButton label="Delete" onTouchTap={() => this.props.delete(x)} />
+			          		: null
+			          }
+			        </CardActions>
+			      </Card>
+			)}
+        </div>
+     
+      )
 	}
 }
 
