@@ -10,7 +10,13 @@ class Header extends React.Component {
     let style ={
 		'h1': {fontFamily: 'VT323', fontSize: 60, display:'inline', marginRight: 12},
 		'h2': {fontFamily: 'VT323', fontSize: 18, display:'inline'},
-		'container': {margin: '0 auto 12', width: headerWidth, textAlign: 'left'}
+		'container': {
+            margin: '0 auto', 
+            width: headerWidth, 
+            textAlign: 'left', 
+            borderBottom: 'solid black 1px',
+            paddingBottom: '12px'
+        }
 	}
     if (width < this.props.columnWidth * 2 + 1 * this.props.gutterWidth) {
     	style.container.width = this.props.columnWidth

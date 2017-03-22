@@ -4,12 +4,12 @@ const style= {
 	largeTitle: {
 		fontSize: 36,
 		fontFamily: 'Garamond',
-		fontWeight: 'bold'
+		// fontWeight: 'bold'
 	},
 	mediumTitle: {
-		fontSize: 21,
+		fontSize: 24,
 		fontFamily: 'Garamond',
-		fontWeight: 'bold'
+		// fontWeight: 'bold'
 	},
 	smallTitle: {
 		fontSize: 15,

@@ -68,7 +68,7 @@ class HomePage extends React.Component {
 	    			columnWidth={columnWidth}
 					gutterWidth={gutterWidth}
 					title="CHARTROW"
-					subheader="Truths are errors to be exposed" />
+					subheader="Truths are only errors to be exposed" />
 				<StackGrid 
 					columnWidth={width < columnWidth ? width : columnWidth}
 					gutterWidth={gutterWidth} 

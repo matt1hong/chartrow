@@ -30,7 +30,7 @@ export default class TweetFeed extends React.Component {
     return (
         <div>
             {this.props.tweets.map((x,k)=>
-            	<Card key={k} style={{margin:'0 24 12'}}>
+            	<Card key={k} style={{margin:'6 12 0'}}>
 			        <CardTitle title={x.text || x.title} />
 			        <CardText><a href={x.url} target="_blank">{x.url}</a></CardText>
 			        <CardActions>
