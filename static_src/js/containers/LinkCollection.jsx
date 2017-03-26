@@ -8,7 +8,7 @@ class LinkCollection extends React.Component {
 
 	render() {
 		return (
-			<div style={{width:400, textAlign: 'left', fontFamily: 'VT323'}}>
+			<div style={{width:this.props.width, textAlign: 'left', fontFamily: 'VT323'}}>
 				<h4 style={{color:'gray', fontWeight:'normal'}}>{this.props.title}</h4>
 				{this.props.links.map((link, key) => (
 
@@ -31,7 +31,8 @@ LinkCollection.propTypes = {
 	links: React.PropTypes.array,
 	small: React.PropTypes.bool,
 	index: React.PropTypes.number,
-	title: React.PropTypes.string
+	title: React.PropTypes.string,
+	width: React.PropTypes.number
 }
 
 export default LinkCollection

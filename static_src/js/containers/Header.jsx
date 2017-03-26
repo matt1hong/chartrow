@@ -19,7 +19,7 @@ class Header extends React.Component {
         }
 	}
     if (width < this.props.columnWidth * 2 + 1 * this.props.gutterWidth) {
-    	style.container.width = this.props.columnWidth
+    	style.container.width = width < this.props.columnWidth ? width : this.props.columnWidth
     	style.container.textAlign = 'center'
     	style.h1.margin = '0 auto'
     	style.h1.marginRight = null

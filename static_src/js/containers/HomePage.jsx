@@ -72,7 +72,8 @@ class HomePage extends React.Component {
 				<StackGrid 
 					columnWidth={width < columnWidth ? width : columnWidth}
 					gutterWidth={gutterWidth} 
-					gutterHeight={gutterHeight}>
+					gutterHeight={gutterHeight}
+					monitorImagesLoaded={true}>
 					
 					{
 						this.state.tags.map((tag, key)=>{
@@ -85,6 +86,7 @@ class HomePage extends React.Component {
 									index={key}
 									title={tag}
 									links={taggedLinks}
+									width={width < columnWidth ? width : columnWidth}
 									small={
 										width < columnWidth * 2 + 1 * gutterWidth 
 										? true 
