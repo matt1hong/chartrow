@@ -8,6 +8,9 @@ export default class TweetFeed extends React.Component {
 
   constructor() {
   	super()
+    this.state={
+      confirmDelete: false
+    }
   }
 
   handleExpandChange (expanded) {
@@ -26,19 +29,32 @@ export default class TweetFeed extends React.Component {
     this.setState({expanded: false});
   };
 
+  toDelete() {
+    this.setState({
+      confirmDelete: true
+    })
+  }
+
   render() {
     return (
         <div>
             {this.props.tweets.map((x,k)=>
-            	<Card key={k} style={{margin:'6 12 0'}}>
-			        <CardTitle title={x.text || x.title} />
-			        <CardText><a href={x.url} target="_blank">{x.url}</a></CardText>
+            	<Card key={k} style={{marginTop:6}} href={x.url}>
+              <a href={x.tweet || null} target="_blank" style={{textDecoration: 'none'}}>
+  			        <CardTitle title={x.text || x.title} titleStyle={{fontSize:14,lineHeight:1}} style={{padding:"16 16 8"}}>  
+                </CardTitle>
+              </a>
 			        <CardActions>
 			          <FlatButton label="Images" onTouchTap={() => this.props.onSurf(x)} />
-			          {this.props.delete ?
-			          		<FlatButton label="Delete" onTouchTap={() => this.props.delete(x)} />
+                <FlatButton label="Link" href={x.url} target="_blank" />
+			          {this.props.chosen === x.url && this.props.delete && !this.state.confirmDelete ?
+			          		<FlatButton label="Delete" onTouchTap={() => this.toDelete(x)} />
 			          		: null
 			          }
+                {this.props.chosen === x.url && this.state.confirmDelete && this.props.delete ?
+                    <FlatButton label="Confirm" onTouchTap={() => this.props.delete(x)} />
+                    : null
+                }
 			        </CardActions>
 			      </Card>
 			)}
@@ -51,5 +67,6 @@ export default class TweetFeed extends React.Component {
 TweetFeed.propTypes = {
 	tweets: React.PropTypes.array,
 	onSurf: React.PropTypes.func,
-	delete: React.PropTypes.func
+	delete: React.PropTypes.func,
+  chosen: React.PropTypes.string
 }

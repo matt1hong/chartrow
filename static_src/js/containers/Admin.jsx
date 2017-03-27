@@ -12,7 +12,8 @@ const style= {
 	td: {
 		home: {
 			width: '50%',
-			verticalAlign: 'top'
+			verticalAlign: 'top',
+			padding: 6
 		},
 		modal: {
 			textAlign: 'center'
@@ -29,14 +30,15 @@ export default class Admin extends React.Component {
 			imageLinks: [],
 			count: 30,
 			linkUrl: 'https://www.nytimes.com/interactive/2017/02/27/us/politics/most-important-problem-gallup-polling-question.html',
-			openModal: false
+			openModal: false,
+			confirmDelete: false
 		}
 		this.updateTweets = this.updateTweets.bind(this)
 	}
 	componentDidMount() {
 		var socket = io.connect('http://' + document.domain + ':' + location.port);
         socket.on('tweet', this.updateTweets)
-        this.getImages(this.state.linkUrl)
+        this.setTweet(this.state.linkUrl)
         this.getExistingTweets()
         axios
         	.get('/api/tags')
@@ -78,20 +80,23 @@ export default class Admin extends React.Component {
 				})
 			})
 	}
-	getImages(link) {
+	setTweet(link) {
 		if (typeof(link) === 'string') {
 			this.setState({
 				imageLinks: [],
 				linkUrl: link,
 				timestamp: 0
-			})
+			}, () => {this.getImages(link)})
 		} else {
 			this.setState({
 				imageLinks: [],
 				linkUrl: link.url,
 				timestamp: link.timestamp_ms
-			})
+			}, () => {this.getImages(link.url)})
 		}
+		console.log('settweet')
+	}
+	getImages(link) {
 		axios
 			.get('/api/get_images?link='+encodeURIComponent(this.state.linkUrl))
 			.then((response) => {
@@ -99,6 +104,7 @@ export default class Admin extends React.Component {
 					imageLinks: response.data.results
 				})
 			})
+		console.log('getimages')
 	}
 	setCropImage(src) {
 		this.setState({
@@ -108,13 +114,17 @@ export default class Admin extends React.Component {
 	}
 
 	deleteLink(){
+		let posts = this.state.existingPosts;
+		posts.splice(posts.indexOf(this.state.linkUrl), 1);
+		console.log(posts)
 		axios
 			.post('/api/delete', {
 				url: this.state.linkUrl
 			})
 			.then((response) => {
 				this.setState({
-					alert: 'Success!'
+					alert: 'Success!',
+					existingPosts: posts
 				})
 			})
 			.catch((e) => {
@@ -135,18 +145,19 @@ export default class Admin extends React.Component {
 			<div style={{textAlign:'center'}}>
 				<ReactModal isOpen={this.state.openModal} contentLabel="cropImage">
 					<PostIt 
+						linkUrl={this.state.linkUrl}
 						imgSrc={this.state.cropImage}
 						onClose={this.onClose.bind(this)}></PostIt>
 				</ReactModal>
 				<table style={{display:'inline-table', width:1200}}>
 					<tbody>
 						<tr>
-							<td style={style.td.home} rowSpan="2">
+							<td style={style.td.home}>
 								<Tabs>
 								    <Tab label="Twitter" >
-									      <TweetFeed 
-										tweets={this.state.tweets}
-										onSurf={this.getImages.bind(this)}></TweetFeed>
+									    <TweetFeed 
+											tweets={this.state.tweets}
+											onSurf={this.setTweet.bind(this)}></TweetFeed>
 								   
 								    </Tab>
 								    <Tab 
@@ -155,8 +166,10 @@ export default class Admin extends React.Component {
 								      <div>
 								        <TweetFeed 
 											tweets={this.state.existingPosts}
-											onSurf={this.getImages.bind(this)}
-											delete={this.deleteLink.bind(this)}></TweetFeed>
+											onSurf={this.setTweet.bind(this)}
+											delete={this.deleteLink.bind(this)}
+											confirmDelete={this.state.confirmDelete}
+											chosen={this.state.linkUrl}></TweetFeed>
 								      </div>
 								    </Tab>
 								  </Tabs>

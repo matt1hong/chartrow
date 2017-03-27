@@ -17,16 +17,26 @@ from tweepy import Stream, TweepError, API
 from bs4 import BeautifulSoup
 from PIL import Image
 
+user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'
+accept = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+
 def transform_data(data):
 	urls = data.entities['urls']
 	to_emit = {}
 	if len(urls) > 0 and len(urls[0]['expanded_url']) > 0:
+		txt = data.text
+		spl = txt.split()
+		links = [s for s in spl if s.startswith('http')]
+		for l in links:
+			txt = txt.replace(l, '')
+
 		to_emit = {
 			'url': urls[0]['expanded_url'],
-			'text': data.text,
+			'text': txt,
 			'timestamp_ms': data.created_at.timestamp(),
 			'user_name': data.user.name,
-			'screen_name': data.user.screen_name
+			'screen_name': data.user.screen_name,
+			'tweet': 'https://twitter.com/%s/status/%s'%(data.user.screen_name, data.id_str)
 		}
 		print('Success')
 	else:
@@ -79,7 +89,14 @@ def tweets():
 @application.route('/api/get_images')
 def get_images():
 	url = urllib.parse.unquote(request.args.get('link'))
-	r = urllib.request.build_opener(urllib.request.HTTPCookieProcessor()).open(url).read()
+	# import pdb; pdb.set_trace()
+	opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor())
+	opener.addheaders = [
+		('User-Agent', user_agent),
+		('Accept', accept)
+	]
+	r = opener.open(url).read()
+
 	soup = BeautifulSoup(r, "html.parser")
 	meta_tags = soup.select('meta[property*="image"],meta[name*="image"]')
 	meta_content = [urllib.parse.urljoin(url, link['content']) for link in meta_tags if link.has_attr('content')]

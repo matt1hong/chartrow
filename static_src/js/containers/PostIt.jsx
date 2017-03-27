@@ -59,8 +59,8 @@ class PostIt extends React.Component {
 	promoteLink(){
 		axios
 			.post('/api/promote', {
-				url: this.state.linkUrl,
-				imgSrc: this.state.cropImage,
+				url: this.props.linkUrl,
+				imgSrc: this.props.imgSrc,
 				cropPixels: this.state.cropPixels,
 				lead: this.state.lead,
 				title: this.state.title,
