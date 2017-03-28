@@ -7,6 +7,7 @@ import urllib.parse
 from datetime import datetime
 from application import application, twitter, socketio
 from api.models import *
+import requests
 
 from flask import render_template, redirect, request, g, jsonify, session, Response
 from flask_socketio import emit
@@ -89,15 +90,9 @@ def tweets():
 @application.route('/api/get_images')
 def get_images():
 	url = urllib.parse.unquote(request.args.get('link'))
-	# import pdb; pdb.set_trace()
-	opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor())
-	opener.addheaders = [
-		('User-Agent', user_agent),
-		('Accept', accept)
-	]
-	r = opener.open(url).read()
-
-	soup = BeautifulSoup(r, "html.parser")
+	# opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor())
+	header = {'User-Agent': user_agent,'Accept': accept}
+	soup = BeautifulSoup(requests.get(url, headers=header).text, "html.parser")
 	meta_tags = soup.select('meta[property*="image"],meta[name*="image"]')
 	meta_content = [urllib.parse.urljoin(url, link['content']) for link in meta_tags if link.has_attr('content')]
 	images = soup.select('img')
