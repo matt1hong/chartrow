@@ -18,7 +18,8 @@ class LinkCollection extends React.Component {
 						imgSrc={link.id.toString()}
 						small={!!this.props.index || this.props.small}
 						lead={link.lead}
-						headline={link.title}></LinkItem>
+						headline={link.title}
+						width={this.props.width}></LinkItem>
 					
 				))}
 				<Divider></Divider>

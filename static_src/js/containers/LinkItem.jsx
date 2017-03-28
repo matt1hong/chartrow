@@ -42,7 +42,11 @@ class LinkItem extends React.Component {
 			<div style={{textAlign:'left', overflow:'hidden', marginBottom: 12}} onClick={this.props.onClick}>
 				{
 					this.state.small ? 
-					<span style={this.props.lead && !this.props.index ? style.mediumTitle : style.smallTitle}>{this.props.headline}</span>
+					<span style={
+						Object.assign(
+							{maxWidth:this.props.width-70, display: "inline-block"}, 
+							this.props.lead && !this.props.index ? style.mediumTitle : style.smallTitle
+							)}>{this.props.headline}</span>
 					: null
 				}
 				{
@@ -69,7 +73,8 @@ LinkItem.propTypes = {
 	small: React.PropTypes.bool,
 	lead: React.PropTypes.bool,
 	onClick: React.PropTypes.func,
-	index: React.PropTypes.number
+	index: React.PropTypes.number,
+	width: React.PropTypes.number
 }
 
 export default LinkItem
