@@ -1,8 +1,28 @@
 import React from 'react';
 import Tweet from './Tweet'
-import axios from 'axios'
-import {Card, CardActions, CardHeader, CardTitle, CardText} from 'material-ui/Card';
-import FlatButton from 'material-ui/FlatButton';
+import * as colors from 'material-ui/styles/colors'
+import HotTub from 'material-ui/svg-icons/places/hot-tub';
+import BusinessCenter from 'material-ui/svg-icons/places/business-center';
+import BeachAccess from 'material-ui/svg-icons/places/beach-access';
+import GolfCourse from 'material-ui/svg-icons/places/golf-course';
+import Casino from 'material-ui/svg-icons/places/casino';
+import Pool from 'material-ui/svg-icons/places/pool';
+import FitnessCenter from 'material-ui/svg-icons/places/fitness-center';
+import Spa from 'material-ui/svg-icons/places/spa'
+
+const icons = [HotTub, BusinessCenter, BeachAccess, GolfCourse, Casino, Pool, FitnessCenter, Spa]
+const colorKeys = Object.keys(colors).filter((v) => v.indexOf('400') > -1);
+
+String.prototype.hashCode = function() {
+  var hash = 0, i, chr;
+  if (this.length === 0) return hash;
+  for (i = 0; i < this.length; i++) {
+    chr   = this.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return Math.abs(hash);
+};
 
 export default class TweetFeed extends React.Component {
 
@@ -39,24 +59,15 @@ export default class TweetFeed extends React.Component {
     return (
         <div>
             {this.props.tweets.map((x,k)=>
-            	<Card key={k} style={{marginTop:6}} href={x.url}>
-              <a href={x.tweet || null} target="_blank" style={{textDecoration: 'none'}}>
-  			        <CardTitle title={x.text || x.title} titleStyle={{fontSize:14,lineHeight:1}} style={{padding:"16 16 8"}}>  
-                </CardTitle>
-              </a>
-			        <CardActions>
-			          <FlatButton label="Images" onTouchTap={() => this.props.onSurf(x)} />
-                <FlatButton label="Link" href={x.url} target="_blank" />
-			          {this.props.chosen === x.url && this.props.delete && !this.state.confirmDelete ?
-			          		<FlatButton label="Delete" onTouchTap={() => this.toDelete(x)} />
-			          		: null
-			          }
-                {this.props.chosen === x.url && this.state.confirmDelete && this.props.delete ?
-                    <FlatButton label="Confirm" onTouchTap={() => this.props.delete(x)} />
-                    : null
-                }
-			        </CardActions>
-			      </Card>
+            	<Tweet
+                key={k} 
+                tweet={x} 
+                color={colors[colorKeys[x.text.hashCode()%colorKeys.length]]}
+                icon={icons[x.text.hashCode()%icons.length]}
+                onSurf={this.props.onSurf} 
+                delete={this.props.delete}
+                chosen={this.props.chosen}
+                confirmDelete={this.state.confirmDelete}></Tweet>
 			)}
         </div>
      

@@ -31,7 +31,8 @@ export default class Admin extends React.Component {
 			count: 30,
 			linkUrl: 'https://www.nytimes.com/interactive/2017/02/27/us/politics/most-important-problem-gallup-polling-question.html',
 			openModal: false,
-			confirmDelete: false
+			confirmDelete: false,
+			tags: []
 		}
 		this.updateTweets = this.updateTweets.bind(this)
 	}
@@ -140,14 +141,21 @@ export default class Admin extends React.Component {
 		})
 	}
 
+	addTag(tag){
+		this.setState({
+			tags: [tag].concat(this.state.tags)
+		})
+	}
+
 	render() {
 		return (
-			<div style={{textAlign:'center'}}>
+			<div style={{textAlign:'center', fontFamily: 'Helvetica Neue'}}>
 				<ReactModal isOpen={this.state.openModal} contentLabel="cropImage">
 					<PostIt 
 						linkUrl={this.state.linkUrl}
 						imgSrc={this.state.cropImage}
-						onClose={this.onClose.bind(this)}></PostIt>
+						onClose={this.onClose.bind(this)}
+						tags={this.state.tags}></PostIt>
 				</ReactModal>
 				<table style={{display:'inline-table', width:1200}}>
 					<tbody>
