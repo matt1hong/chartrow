@@ -58,17 +58,22 @@ export default class TweetFeed extends React.Component {
   render() {
     return (
         <div>
-            {this.props.tweets.map((x,k)=>
-            	<Tweet
-                key={k} 
-                tweet={x} 
-                color={colors[colorKeys[x.text.hashCode()%colorKeys.length]]}
-                icon={icons[x.text.hashCode()%icons.length]}
-                onSurf={this.props.onSurf} 
-                delete={this.props.delete}
-                chosen={this.props.chosen}
-                confirmDelete={this.state.confirmDelete}></Tweet>
-			)}
+            {this.props.tweets.map((x,k)=> {
+              let text = x.text || x.title;
+              return (
+                <Tweet
+                  key={k} 
+                  tweet={x} 
+                  color={colors[colorKeys[text.hashCode()%colorKeys.length]]}
+                  icon={icons[text.hashCode()%icons.length]}
+                  onSurf={this.props.onSurf} 
+                  delete={this.props.delete}
+                  toDelete={this.toDelete.bind(this)}
+                  chosen={this.props.chosen}
+                  confirmDelete={this.state.confirmDelete}></Tweet>
+                  )
+              })
+            }
         </div>
      
       )

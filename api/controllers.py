@@ -59,7 +59,7 @@ class TweetListener(StreamListener):
 
 listener = TweetListener()
 stream = Stream(twitter, listener)
-api = API(twitter)
+twitter_api = API(twitter)
 
 @socketio.on('connect')
 def stream_tweets():
@@ -83,8 +83,13 @@ def index():
 
 @application.route('/api/tweets')
 def tweets():
-	tweets = api.home_timeline(count=request.args.get('count'))
-	# import pdb; pdb.set_trace()
+	x = request.args.get('type').lower()
+	if x=='likes':
+		tweets = twitter_api.favorites(count=request.args.get('count'))
+	elif x=='recents':
+		tweets = twitter_api.home_timeline(count=request.args.get('count'))
+	else:
+		return jsonify(error=True), 400
 	return jsonify(success=True, results=[transform_data(tweet) for tweet in tweets])
 
 @application.route('/api/get_images')

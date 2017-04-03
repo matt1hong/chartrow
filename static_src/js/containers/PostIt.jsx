@@ -165,10 +165,6 @@ class PostIt extends React.Component {
 							/>
 						</td>
 						<td>
-							<RaisedButton
-								label="Close"
-								onClick={this.props.onClose}
-								style={{float:'right'}}></RaisedButton>
 						    <Stepper 
 						    	activeStep={this.state.stepIndex} orientation="vertical"
 						    	style={{width:500}}>
@@ -263,7 +259,6 @@ class PostIt extends React.Component {
 PostIt.propTypes ={
 	linkUrl: React.PropTypes.string,
 	imgSrc: React.PropTypes.string,
-	onClose: React.PropTypes.func,
 	tags: React.PropTypes.array
 }
 

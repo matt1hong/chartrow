@@ -42,13 +42,13 @@ export default class Tweet extends React.Component {
                   secondary={this.state.imageClicked}/>
                 <FlatButton 
                   label="Link" 
-                  onTouchTap={this.clickLink}
+                  onTouchTap={this.clickLink.bind(this)}
                   href={this.props.tweet.url} 
                   target="_blank" 
                   primary={!this.state.linkClicked} 
                   secondary={this.state.linkClicked}/>
                 {this.props.chosen === this.props.tweet.url && this.props.delete && !this.props.confirmDelete ?
-                    <FlatButton label="Delete" onTouchTap={() => this.toDelete(this.props.tweet)} />
+                    <FlatButton label="Delete" onTouchTap={() => this.props.toDelete(this.props.tweet)} />
                     : null
                 }
                 {this.props.chosen === this.props.tweet.url && this.props.confirmDelete && this.props.delete ?
@@ -65,8 +65,9 @@ Tweet.propTypes = {
   tweet: React.PropTypes.object,
   onSurf: React.PropTypes.func,
   delete: React.PropTypes.func,
+  toDelete: React.PropTypes.func,
   chosen: React.PropTypes.string,
   confirmDelete: React.PropTypes.bool,
   color: React.PropTypes.string,
-  icon: React.PropTypes.symbol
+  icon: React.PropTypes.func
 }
