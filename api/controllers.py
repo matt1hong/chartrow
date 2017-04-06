@@ -169,6 +169,12 @@ def get_links():
 	links = Link.query.limit(20).all()
 	return jsonify(success=False, results=[link.serialize for link in links])
 
+@application.route('/api/links/tagged')
+def tagged_links():
+	tag = Tag.query.filter_by(name=request.args.get('tag')).first()
+	links = Link.query.filter_by(tag=tag).limit(20).all()
+	return jsonify(success=False, results=[link.serialize for link in links])
+
 @application.route('/api/login', methods=['GET', 'POST'])
 def login():
 	pass

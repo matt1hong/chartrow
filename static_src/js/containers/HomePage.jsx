@@ -41,11 +41,16 @@ class HomePage extends React.Component {
 		super()
 		this.state = {
 			links: [],
-			tags: []
+			tags: [],
+			tag: ''
 		}
 	}
 
 	componentDidMount() {
+		this.getLinks()
+	}
+
+	getLinks() {
 		axios
 			.get('/api/get_links')
 			.then((response) => {
@@ -59,44 +64,90 @@ class HomePage extends React.Component {
 			})
 	}
 
+	componentWillUpdate(newProps, newState) {
+		if (newState.tag === '') {
+			this.getLinks()
+		} 
+	}
+
+	onHeaderClick(tag) {
+		axios
+			.get(`/api/links/tagged?tag=${tag}`)
+			.then((response) => this.onHeaderClickCallback(response, tag))
+	}
+
+	onHeaderClickCallback(response, tag) {
+		let links = response.data.results
+		links.sort(sort)
+
+		this.setState({
+			links: links,
+			tag: tag
+		})
+	}
+
 	render() {
 		const { width, height } = this.props.size;
+		let widthTagged = 400;
+		// let headerWidth = widthTagged;
+		// if (width < columnWidth * 2 + 1 * gutterWidth) {
+	 //    	widthTagged = width < columnWidth ? width : columnWidth
+	 //    } else if (width < columnWidth * 3 + 2 * gutterWidth) {
+	 //    	widthTagged = columnWidth * 2 + 1 * gutterWidth
+	 //    }
+		let stateTaggedLinks = 
+			this.state.links.filter((link) => {
+				return link.tag === this.state.tag
+			})
 	  	return (
 	  		<div style={{fontFamily: 'Helvetica Neue'}}>
-	    	<div style={{textAlign:'center'}}>
-	    		<Header 
-	    			columnWidth={columnWidth}
-					gutterWidth={gutterWidth}
-					title="CHARTROW"
-					subheader="Truths are only errors to be exposed" />
-				<StackGrid 
-					columnWidth={width < columnWidth ? width : columnWidth}
-					gutterWidth={gutterWidth} 
-					gutterHeight={gutterHeight}
-					monitorImagesLoaded={true}>
-					
+		    	<div style={{textAlign:'center'}}>
+		    		<Header 
+		    			columnWidth={columnWidth}
+						gutterWidth={gutterWidth}
+						tagged={this.state.tag !== ""}
+						title="Chartrow"
+						subheader="Truths are only errors to be exposed"
+						onClick={()=>{this.setState({tag:''})}} />
 					{
-						this.state.tags.map((tag, key)=>{
-							let taggedLinks = this.state.links.filter((link) => {
-								return link.tag === tag
-							})
-							return (
-								<LinkCollection
-									key={key}
-									index={key}
-									title={tag}
-									links={taggedLinks}
-									width={width < columnWidth ? width : columnWidth}
-									small={
-										width < columnWidth * 2 + 1 * gutterWidth 
-										? true 
-										: false}/>
-							)
-						})
+						this.state.tag === "" ?
+							<StackGrid 
+								columnWidth={width < columnWidth ? width : columnWidth}
+								gutterWidth={gutterWidth} 
+								gutterHeight={gutterHeight}
+								monitorImagesLoaded={true}>
+								{
+									this.state.tags.map((tag, key)=>{
+										let taggedLinks = this.state.links.filter((link) => {
+											return link.tag === tag
+										})
+										return (
+											<LinkCollection
+												key={key}
+												index={key}
+												title={tag}
+												links={taggedLinks}
+												width={width < columnWidth ? width : columnWidth}
+												small={
+													width < columnWidth * 2 + 1 * gutterWidth 
+													? true 
+													: false}
+												onHeaderClick={() => this.onHeaderClick(tag)}/>
+										)
+									})
+								}
+							</StackGrid>
+						: 	<LinkCollection
+								index={1}
+								title={this.state.tag}
+								links={stateTaggedLinks}
+								width={width < widthTagged ? width : widthTagged}
+								small={
+									width < widthTagged * 2 + 1 * gutterWidth 
+									? true 
+									: false}/>
 					}
-						
-				</StackGrid>
-	      	</div>
+		      	</div>
 	      	</div>
 	    );
 	}
