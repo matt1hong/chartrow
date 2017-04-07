@@ -41,7 +41,9 @@ export default class Admin extends React.Component {
 			openAddPhoto: false,
 			confirmDelete: false,
 			tags: [],
-			connected: false
+			addresses: [],
+			connected: false,
+			loaded: false
 		}
 		this.socket = null;
 		this.updateTweets = this.updateTweets.bind(this)
@@ -75,7 +77,6 @@ export default class Admin extends React.Component {
 		}
 		
 	}
-
 	getLinks(){
 		axios
 			.get('/api/get_links')
@@ -161,6 +162,30 @@ export default class Admin extends React.Component {
 		})
 	}
 
+	onChange(v) {
+		this.setState({
+			'addresses': v
+		})
+	}
+
+	getContent() {
+		this.setState({loaded:true, tweets:[]})
+		this.state.addresses.split('\n').map((value)=> {
+			axios
+				.get('/api/links/title?address=' + value)
+				.then((response)=> this.createTweet(response, value))
+		})	
+	}
+
+	createTweet(response, value) {
+		this.setState({
+			tweets: [{
+				title:response.data.result.title, 
+				url:value,
+				user_name: response.data.result.name}].concat(this.state.tweets)
+		})
+	}
+
 	addTag(tag){
 		this.setState({
 			tags: [tag].concat(this.state.tags)
@@ -213,6 +238,37 @@ export default class Admin extends React.Component {
 												onSurf={this.setTweet.bind(this)}></TweetFeed>
 								    	</div>
 								    </Tab>
+								    <Tab 
+								    	label="URL list" 
+								    	>
+								    	{
+								    		!this.state.loaded ? 
+								    			<div>
+											    <TextField
+											        floatingLabelText="Enter one address per line."
+												    multiLine={true}
+												    fullWidth={true}
+												    rows={2}
+												    onChange={(e) => this.onChange(e.target.value)}
+												    /> 
+												<RaisedButton 
+											    	label="Get content from these links" 
+											    	fullWidth={true} 
+											    	onClick={this.getContent.bind(this)}/>
+											    </div>
+											: 	<div style={{marginTop:6}}>
+													<RaisedButton 
+												    	label="Return to links" 
+												    	fullWidth={true} 
+												    	onClick={()=>this.setState({loaded: false})}/>
+													<TweetFeed 
+														tweets={this.state.tweets}
+														onSurf={this.setTweet.bind(this)}></TweetFeed>
+													
+											    </div>
+										}
+									</Tab>
+									    
 								    <Tab 
 								    	label="Published" 
 								    	onActive={this.getLinks.bind(this)}>

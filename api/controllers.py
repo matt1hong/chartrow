@@ -105,6 +105,15 @@ def get_images():
 	return jsonify(results=meta_content+img_links, success=True)
 
 
+@application.route('/api/links/title')
+def fetch_title():
+	url = request.args.get('address')
+	header = {'User-Agent': user_agent,'Accept': accept}
+	soup = BeautifulSoup(requests.get(url, headers=header).text, "html.parser")
+	title = soup.select('title')[0].text
+	return jsonify(result={"title":title, "name": urllib.parse.urlparse(url).netloc}, success=True)
+
+
 @application.route('/api/promote', methods=['POST'])
 def promote():
 	incoming = request.get_json()
