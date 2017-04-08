@@ -65,7 +65,7 @@ class HomePage extends React.Component {
 	}
 
 	componentWillUpdate(newProps, newState) {
-		if (newState.tag === '') {
+		if (newState.tag === '' && this.state.tag !== '') {
 			this.getLinks()
 		} 
 	}
@@ -87,14 +87,9 @@ class HomePage extends React.Component {
 	}
 
 	render() {
-		const { width, height } = this.props.size;
+		// const { width, height } = this.props.size;
+		const width = 1000
 		let widthTagged = 400;
-		// let headerWidth = widthTagged;
-		// if (width < columnWidth * 2 + 1 * gutterWidth) {
-	 //    	widthTagged = width < columnWidth ? width : columnWidth
-	 //    } else if (width < columnWidth * 3 + 2 * gutterWidth) {
-	 //    	widthTagged = columnWidth * 2 + 1 * gutterWidth
-	 //    }
 		let stateTaggedLinks = 
 			this.state.links.filter((link) => {
 				return link.tag === this.state.tag
@@ -153,4 +148,4 @@ class HomePage extends React.Component {
 	}
 }
 
-export default sizeMe({ monitorWidth: true })(HomePage)
+export default HomePage
