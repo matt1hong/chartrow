@@ -11,7 +11,8 @@ import RaisedButton from 'material-ui/RaisedButton'
 import FlatButton from 'material-ui/FlatButton'
 import DatePicker from 'material-ui/DatePicker';
 import Checkbox from 'material-ui/Checkbox';
-import InlineEdit from 'react-edit-inline'
+import TextField from 'material-ui/TextField';
+import InlineEdit from 'react-inline-edit'
 import Chip from 'material-ui/Chip';
 import axios from 'axios'
 import 'react-image-crop/dist/ReactCrop.css';
@@ -154,6 +155,12 @@ class PostIt extends React.Component {
 	    );
 	  }
 
+	onChange(v, name) {
+		nextState = {}
+		nextState[name] = v
+		this.setState(nextState)
+	}
+
  	render() {
  		return (<table style={{fontFamily: 'Helvetica Neue'}}>
 				<tbody>
@@ -170,7 +177,7 @@ class PostIt extends React.Component {
 						    	style={{width:500}}>
 					          <Step>
 					            <StepLabel>Headline</StepLabel>
-					            <StepContent>
+					            <StepContent >
 					            <div>
 					            	<Checkbox
 									      label="Lead article"
@@ -182,15 +189,16 @@ class PostIt extends React.Component {
 									      	})
 									      }}
 								    />
-					              	<InlineEdit
-										validate={this.customValidateText}
-										text={this.state.title}
-										style={
-											Object.assign(
-												this.state.lead ? {width:400, margin: "12 0"} : {width:330, margin: "12 0"},
-												this.state.lead ? style.largeTitle : style.smallTitle)}
-										paramName="title"
-										change={this.titleChanged.bind(this)}></InlineEdit>
+					              	<TextField
+					              		multiLine={true}
+					              		rows={2}
+					              		name="title"
+					              	 	onChange={(e) => this.onChange(e.target.value, 'title')}
+					              	 	textareaStyle={{lineHeight: 'normal'}}
+										style={Object.assign(
+											this.state.lead ? style.largeTitle : style.smallTitle,
+											this.state.lead ? {width:400} : {width:330})}
+									></TextField>
 									
 					              {this.renderStepActions(0)}
 					            </div></StepContent>
@@ -205,12 +213,11 @@ class PostIt extends React.Component {
 											<Chip key={key} onTouchTap={this.tagSelected.bind(this)}>{tag}</Chip>
 										))}
 									</div>
-									<InlineEdit
-										validate={this.customValidateText}
-										text={this.state.tag}
+									<TextField
 										style={{margin: "12 0"}}
-										paramName="tag"
-										change={this.tagChanged.bind(this)}></InlineEdit>
+										name="tag"
+										onChange={(e) => this.onChange(e.target.value, 'tag')}>
+									</TextField>
 								  	{this.renderStepActions(1)}
 					            </div></StepContent>
 					          </Step>

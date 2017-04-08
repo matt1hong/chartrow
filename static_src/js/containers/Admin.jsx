@@ -43,7 +43,8 @@ export default class Admin extends React.Component {
 			tags: [],
 			addresses: [],
 			connected: false,
-			loaded: false
+			loaded: false,
+			activeTab: 0
 		}
 		this.socket = null;
 		this.updateTweets = this.updateTweets.bind(this)
@@ -58,7 +59,12 @@ export default class Admin extends React.Component {
 					tags: tags
 				})
 			})
-		this.getExistingTweets('Likes')
+		this.getExistingTweets('Recents')
+	}
+	componentWillUpdate(nextProps, nextState) {
+		if (nextState.activeTab === 0 && this.state.activeTab !== 0) {
+			this.getExistingTweets('Recents');
+		}
 	}
 	startFeed() {
 		this.socket = io.connect('http://' + document.domain + ':' + location.port);
@@ -72,7 +78,7 @@ export default class Admin extends React.Component {
 	updateTweets(data) {
 		if (Object.keys(data).length) {
 			this.setState({
-				tweets: [data].concat(this.state.tweets)
+				tweets: this.state.tweets.concat([data])
 			})
 		}
 		
@@ -179,16 +185,16 @@ export default class Admin extends React.Component {
 
 	createTweet(response, value) {
 		this.setState({
-			tweets: [{
+			tweets: this.state.tweets.concat([{
 				title:response.data.result.title, 
 				url:value,
-				user_name: response.data.result.name}].concat(this.state.tweets)
+				user_name: response.data.result.name}])
 		})
 	}
 
 	addTag(tag){
 		this.setState({
-			tags: [tag].concat(this.state.tags)
+			tags: this.state.tags.concat([tag])
 		})
 	}
 
@@ -216,6 +222,7 @@ export default class Admin extends React.Component {
 		        <Dialog
 		          title="Dialog With Date Picker"
 		          open={this.state.openPostIt}
+		          contentStyle={{maxWidth: 'none'}}
 		          onRequestClose={this.onClose.bind(this)}
 		        >
         			<PostIt 
@@ -228,18 +235,20 @@ export default class Admin extends React.Component {
 						<tr>
 							<td style={style.td.home}>
 								<Tabs>
-								    <Tab label="Twitter" >
+								    <Tab label="Twitter" 
+								    	onActive={()=>this.setState({'activeTab': 0})}>
 								    	<div style={{marginTop:6}}>
 								    		<AdminNav
 								    			getTweets={this.getExistingTweets.bind(this)}
 								    			connected={this.state.connected}></AdminNav>
 								    		<TweetFeed 
-												tweets={this.state.tweets}
+												tweets={this.state.tweets.reverse()}
 												onSurf={this.setTweet.bind(this)}></TweetFeed>
 								    	</div>
 								    </Tab>
 								    <Tab 
 								    	label="URL list" 
+								    	onActive={()=>this.setState({'activeTab': 1})}
 								    	>
 								    	{
 								    		!this.state.loaded ? 
@@ -262,7 +271,7 @@ export default class Admin extends React.Component {
 												    	fullWidth={true} 
 												    	onClick={()=>this.setState({loaded: false})}/>
 													<TweetFeed 
-														tweets={this.state.tweets}
+														tweets={this.state.tweets.reverse()}
 														onSurf={this.setTweet.bind(this)}></TweetFeed>
 													
 											    </div>

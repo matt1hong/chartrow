@@ -9,11 +9,7 @@ const recentsIcon = <FontIcon className="material-icons">restore</FontIcon>;
 const favoritesIcon = <FontIcon className="material-icons">favorite</FontIcon>;
 const nearbyIcon = <IconLocationOn />;
 
-/**
- * A simple example of `BottomNavigation`, with three labels and icons
- * provided. The selected `BottomNavigationItem` is determined by application
- * state (for instance, by the URL).
- */
+
 class AdminNav extends Component {
   constructor() {
     super()
@@ -40,14 +36,14 @@ class AdminNav extends Component {
       <Paper zDepth={1}>
         <BottomNavigation selectedIndex={this.state.selectedIndex}>
           <BottomNavigationItem
-            label="Likes"
-            icon={favoritesIcon}
-            onTouchTap={() => {this.select(0); this.props.getTweets('Likes')}}
-          />
-          <BottomNavigationItem
             label="Recents"
             icon={recentsIcon}
-            onTouchTap={() => {this.select(1); this.props.getTweets('Recents')}}
+            onTouchTap={() => {this.select(0); this.props.getTweets('Recents')}}
+          />
+          <BottomNavigationItem
+            label="Likes"
+            icon={favoritesIcon}
+            onTouchTap={() => {this.select(1); this.props.getTweets('Likes')}}
           />
         </BottomNavigation>
         <Snackbar
