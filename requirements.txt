@@ -16,3 +16,5 @@ tweepy==3.5.0
 jsonpickle==0.9.4
 beautifulsoup4==4.5.3
 sqlalchemy-migrate==0.10.0
+Pillow==4.0.0
+psycopg2==2.6.2
