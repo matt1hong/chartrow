@@ -1,10 +1,11 @@
 from application import db
 from datetime import datetime
+from flask_login import UserMixin
 
 class Tag(db.Model):
 
 	id = db.Column(db.Integer, primary_key = True)
-	name = db.Column(db.String, unique=True)
+	name = db.Column(db.String, unique=True, nullable=False)
 	links = db.relationship('Link', backref='tag', lazy='dynamic')
 
 	def __init__(self, name):
@@ -16,11 +17,11 @@ class Tag(db.Model):
 class Link(db.Model):
 
 	id = db.Column(db.Integer, primary_key=True)
-	url = db.Column(db.String, unique=True)
-	title = db.Column(db.String, unique=True)
+	url = db.Column(db.String, unique=True, nullable=False)
+	title = db.Column(db.String, unique=True, nullable=False)
 	lead = db.Column(db.Boolean)
 	date = db.Column(db.DateTime)
-	real_date = db.Column(db.DateTime)
+	real_date = db.Column(db.DateTime, nullable=False)
 
 	tag_id = db.Column(db.Integer, db.ForeignKey('tag.id'))
 
@@ -45,5 +46,13 @@ class Link(db.Model):
 
 	def __repr__(self):
 		return '<Link %r>' % self.url
+
+class User(UserMixin, db.Model):
+
+	id = db.Column(db.Integer, primary_key = True)
+	name = db.Column(db.String, unique=True, nullable=False)
+
+	def __repr__(self):
+		return '<User %r>' % self.name
 
 

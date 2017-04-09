@@ -8,8 +8,8 @@ class Header extends React.Component {
     const numCols = 3
     let headerWidth = this.props.columnWidth * 3 + 2 * this.props.gutterWidth;
     let style ={
-		'h1': {fontFamily: 'VT323', fontSize: 60, display:'inline', marginRight: 12, cursor: 'pointer'},
-		'h2': {fontFamily: 'VT323', fontSize: 18, display:'inline'},
+		'h1': {fontFamily: 'VT323', fontSize: 60, display:'inline', marginRight: 8, cursor: 'pointer'},
+		'h4': {fontFamily: 'VT323', display:'inline'},
 		'container': {
             margin: '0 auto', 
             width: this.props.tagged ? this.props.columnWidth : headerWidth, 
@@ -25,9 +25,9 @@ class Header extends React.Component {
     	style.h1.marginRight = null
     	style.h1.fontSize = 30
     	style.h1.display = 'block'
-    	style.h2.margin = '0 auto'
-    	style.h2.display = 'block'
-    	style.h2.fontSize = 12
+    	style.h4.margin = '0 auto'
+    	style.h4.display = 'block'
+    	style.h4.fontSize = 12
     } else if (width < this.props.columnWidth * 3 + 2 * this.props.gutterWidth && !this.props.tagged) {
     	style.container.width = this.props.columnWidth * 2 + 1 * this.props.gutterWidth
     }
@@ -36,7 +36,7 @@ class Header extends React.Component {
     	<div>
     		<div style={style.container}>
 	    		<h1 style={style.h1} onClick={this.props.onClick}>{this.props.title}</h1>
-	    		<h2 style={style.h2}>{this.props.subheader}</h2>
+	    		<h4 style={style.h4}>{this.props.subheader}</h4>
 	    	</div>
     	</div>
     	

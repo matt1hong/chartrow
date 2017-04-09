@@ -37,10 +37,11 @@ const sort = function(x, y) {
 
 class HomePage extends React.Component {
 
-	constructor() {
-		super()
+	constructor(props) {
+		super(props)
 		this.state = {
 			links: [],
+			taggedLinks: {},
 			tags: [],
 			tag: ''
 		}
@@ -64,11 +65,11 @@ class HomePage extends React.Component {
 			})
 	}
 
-	componentWillUpdate(newProps, newState) {
-		if (newState.tag === '' && this.state.tag !== '') {
-			this.getLinks()
-		} 
-	}
+	// componentWillUpdate(newProps, newState) {
+	// 	if (newState.tag === '' && this.state.tag !== '') {
+	// 		this.getLinks()
+	// 	} 
+	// }
 
 	onHeaderClick(tag) {
 		axios
@@ -79,9 +80,10 @@ class HomePage extends React.Component {
 	onHeaderClickCallback(response, tag) {
 		let links = response.data.results
 		links.sort(sort)
-
+		let newTaggedLinks = this.state.taggedLinks
+		newTaggedLinks[tag] = links
 		this.setState({
-			links: links,
+			taggedLinks: newTaggedLinks,
 			tag: tag
 		})
 	}
@@ -102,7 +104,7 @@ class HomePage extends React.Component {
 						gutterWidth={gutterWidth}
 						tagged={this.state.tag !== ""}
 						title="Chartrow"
-						subheader="Truths are only errors to be exposed"
+						subheader="Truths are errors to be exposed"
 						onClick={()=>{this.setState({tag:''})}} />
 					{
 						this.state.tag === "" ?
@@ -135,7 +137,7 @@ class HomePage extends React.Component {
 						: 	<LinkCollection
 								index={1}
 								title={this.state.tag}
-								links={stateTaggedLinks}
+								links={this.state.taggedLinks[this.state.tag]}
 								width={width < widthTagged ? width : widthTagged}
 								small={
 									width < widthTagged * 2 + 1 * gutterWidth 

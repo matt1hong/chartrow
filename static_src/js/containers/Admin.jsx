@@ -14,6 +14,7 @@ import AddPhoto from 'material-ui/svg-icons/image/add-a-photo';
 import IconButton from 'material-ui/IconButton';
 import TextField from 'material-ui/TextField';
 
+
 const style= {
 	td: {
 		home: {
@@ -198,6 +199,16 @@ export default class Admin extends React.Component {
 		})
 	}
 
+	logout(){
+		axios
+			.get('/api/logout')
+			.then((response)=>{
+				if (response.data.success) {
+					window.location.href= "/"
+				}
+			})
+	}
+
 	render() {
 		return (
 			<div style={{textAlign:'center', fontFamily: 'Helvetica Neue'}}>
@@ -232,6 +243,20 @@ export default class Admin extends React.Component {
 				</Dialog>
 				<table style={{display:'inline-table', width:1200}}>
 					<tbody>
+						<tr>
+							<td style={{padding: 6}}>
+								<FlatButton
+							    	label="Home"
+							    	primary={true}
+							    	onTouchTap={()=> {window.location.href= "/"}}
+						   		/>
+								<RaisedButton
+							    	label="Logout"
+							    	secondary={true}
+							    	onTouchTap={this.logout}
+						   		/>
+						   	</td>
+					   	</tr>
 						<tr>
 							<td style={style.td.home}>
 								<Tabs>
@@ -291,33 +316,33 @@ export default class Admin extends React.Component {
 								  </Tabs>
 								
 							</td>
-							<td style={style.td.home}>
-							<GridList style={{width: 450}} cols={3}>
-								{	
-									this.state.linkUrl.length ?
-										<GridTile 
-											title={'Add image'}
-											actionIcon={
-												<IconButton 
-													onClick={()=>this.setState({openAddPhoto: true})}>
-													<AddPhoto color="white" />
-												</IconButton>
-											}
-										></GridTile>
-									: <GridTile />
-								}
-								
-								{ 
-									this.state.imageLinks.map((link, k)=>(
-										<GridTile key={k} >
-											<img
-												style={{height: "100%"}} 
-												src={link} 
-												onClick={(e) => this.setCropImage(e.target.src)} />
-										</GridTile>	
-									))
-								}
-	        				</GridList>
+							<td style={style.td.home} rowSpan={2}>
+								<GridList style={{width: 450}} cols={3}>
+									{	
+										this.state.linkUrl.length ?
+											<GridTile 
+												title={'Add image'}
+												actionIcon={
+													<IconButton 
+														onClick={()=>this.setState({openAddPhoto: true})}>
+														<AddPhoto color="white" />
+													</IconButton>
+												}
+											></GridTile>
+										: <GridTile />
+									}
+									
+									{ 
+										this.state.imageLinks.map((link, k)=>(
+											<GridTile key={k} >
+												<img
+													style={{height: "100%"}} 
+													src={link} 
+													onClick={(e) => this.setCropImage(e.target.src)} />
+											</GridTile>	
+										))
+									}
+		        				</GridList>
 	        				</td>
 						</tr>
 					</tbody>

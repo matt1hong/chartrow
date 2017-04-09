@@ -5,12 +5,13 @@ import urllib
 import urllib.request
 import urllib.parse
 from datetime import datetime
-from application import application, twitter, socketio
+from application import application, twitter, socketio, login_manager
 from api.models import *
 import requests
 
-from flask import render_template, redirect, request, g, jsonify, session, Response
+from flask import render_template, redirect, request, g, jsonify, session, Response, url_for
 from flask_socketio import emit
+from flask_login import logout_user, login_user, current_user
 
 from tweepy.streaming import StreamListener
 from tweepy import Stream, TweepError, API
@@ -39,9 +40,8 @@ def transform_data(data):
 			'screen_name': data.user.screen_name,
 			'tweet': 'https://twitter.com/%s/status/%s'%(data.user.screen_name, data.id_str)
 		}
-		print('Success')
 	else:
-		print('Failure')
+		pass
 	return to_emit
 
 
@@ -77,9 +77,49 @@ def disconnect():
 	print('Client disconnected')
 	return
 
+@login_manager.user_loader
+def load_user(id):
+	return User.query.get(int(id))
+
 @application.route('/')
 def index():
-	return render_template('index.html')
+	return render_template('index.html', page='home')
+
+@application.route('/admin')
+def admin():
+	if not current_user.is_anonymous:
+		return render_template('index.html', page='admin')
+	url = twitter.get_authorization_url()
+	session['request_token'] = twitter.request_token
+	return redirect(url)
+	
+
+@application.route('/api/login/authorized')
+def authorized():
+	if not current_user.is_anonymous:
+		return render_template('index.html', page='admin')
+	verifier = request.args.get('oauth_verifier')
+	if verifier is None:
+		return jsonify(error=True), 403
+	twitter.request_token = session['request_token']
+	del session['request_token']
+	session['twitter_token'] = twitter.get_access_token(verifier)
+	# import pdb;pdb.set_trace()
+	username = twitter.get_username()
+	if username == 'datavincillc':
+		user = User.query.filter_by(name=username).first()
+		if not user:
+			user = User(name=username)
+			db.session.add(user)
+			db.session.commit()
+		login_user(user, True)
+		return render_template('index.html', page='admin')
+	return render_template('index.html', page='home')
+
+@application.route('/api/logout')
+def logout():
+	logout_user()
+	return jsonify(success=True)
 
 @application.route('/api/tweets')
 def tweets():
@@ -183,15 +223,6 @@ def tagged_links():
 	tag = Tag.query.filter_by(name=request.args.get('tag')).first()
 	links = Link.query.filter_by(tag=tag).limit(20).all()
 	return jsonify(success=False, results=[link.serialize for link in links])
-
-@application.route('/api/login', methods=['GET', 'POST'])
-def login():
-	pass
-
-@application.route('/api/logout')
-def logout():
-	logout_user()
-	return jsonify(success=True)
 
 
 

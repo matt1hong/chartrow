@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Router, Route, hashHistory, Redirect, IndexRoute} from 'react-router';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import Home from './containers/HomePage'
@@ -12,13 +11,14 @@ injectTapEventPlugin();
 
 
 function init () {
-  let app = document.querySelectorAll('[data-section="app"]')[0];
+  let app = document.querySelector('section');
+  const theme = getMuiTheme();
   ReactDOM.render(
-  	<MuiThemeProvider muiTheme={getMuiTheme()}>
-		<Router history={hashHistory}>
-    		<Route path="/" component={Home}></Route>
-    		<Route path="admin" component={Admin}></Route>
-    	</Router>
+  	<MuiThemeProvider muiTheme={theme}>
+    	{ app.getAttribute('data-section') === 'admin' 
+        ? <Admin/>
+        : <Home/>
+      }
     </MuiThemeProvider>,
 	app
   );
