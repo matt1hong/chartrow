@@ -1,4 +1,3 @@
-#!/Users/Matt/.virtualenvs/chartrow/bin/python
 import imp
 from migrate.versioning import api
 from application import db
