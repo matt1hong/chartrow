@@ -12,7 +12,6 @@ import FlatButton from 'material-ui/FlatButton'
 import DatePicker from 'material-ui/DatePicker';
 import Checkbox from 'material-ui/Checkbox';
 import TextField from 'material-ui/TextField';
-import InlineEdit from 'react-inline-edit'
 import Chip from 'material-ui/Chip';
 import axios from 'axios'
 import 'react-image-crop/dist/ReactCrop.css';

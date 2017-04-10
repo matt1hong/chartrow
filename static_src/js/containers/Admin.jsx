@@ -79,7 +79,7 @@ export default class Admin extends React.Component {
 	updateTweets(data) {
 		if (Object.keys(data).length) {
 			this.setState({
-				tweets: this.state.tweets.concat([data])
+				tweets: this.state.tweets.concat([data]).reverse()
 			})
 		}
 		
@@ -189,13 +189,13 @@ export default class Admin extends React.Component {
 			tweets: this.state.tweets.concat([{
 				title:response.data.result.title, 
 				url:value,
-				user_name: response.data.result.name}])
+				user_name: response.data.result.name}]).reverse()
 		})
 	}
 
 	addTag(tag){
 		this.setState({
-			tags: this.state.tags.concat([tag])
+			tags: this.state.tags.concat([tag]).reverse()
 		})
 	}
 
@@ -231,17 +231,18 @@ export default class Admin extends React.Component {
 			          	onChange={(e)=>{this.setState({imageLink: e.target.value})}}/>
 		        </Dialog>
 		        <Dialog
-		          title="Dialog With Date Picker"
-		          open={this.state.openPostIt}
-		          contentStyle={{maxWidth: 'none'}}
-		          onRequestClose={this.onClose.bind(this)}
+		        	autoScrollBodyContent
+		        	repositionOnUpdate={false}
+			        open={this.state.openPostIt}
+			        contentStyle={{maxWidth: 'none', transform: 'translate(0px, 30px)'}}
+			        onRequestClose={this.onClose.bind(this)}
 		        >
         			<PostIt 
 						linkUrl={this.state.linkUrl}
 						imgSrc={this.state.cropImage}
 						tags={this.state.tags}></PostIt>
 				</Dialog>
-				<table style={{display:'inline-table', width:1200}}>
+				<table style={{display:'inline-table'}}>
 					<tbody>
 						<tr>
 							<td style={{padding: 6}}>
@@ -267,7 +268,7 @@ export default class Admin extends React.Component {
 								    			getTweets={this.getExistingTweets.bind(this)}
 								    			connected={this.state.connected}></AdminNav>
 								    		<TweetFeed 
-												tweets={this.state.tweets.reverse()}
+												tweets={this.state.tweets}
 												onSurf={this.setTweet.bind(this)}></TweetFeed>
 								    	</div>
 								    </Tab>
@@ -296,7 +297,7 @@ export default class Admin extends React.Component {
 												    	fullWidth={true} 
 												    	onClick={()=>this.setState({loaded: false})}/>
 													<TweetFeed 
-														tweets={this.state.tweets.reverse()}
+														tweets={this.state.tweets}
 														onSurf={this.setTweet.bind(this)}></TweetFeed>
 													
 											    </div>
@@ -317,7 +318,7 @@ export default class Admin extends React.Component {
 								
 							</td>
 							<td style={style.td.home} rowSpan={2}>
-								<GridList style={{width: 450}} cols={3}>
+								<GridList cols={4}>
 									{	
 										this.state.linkUrl.length ?
 											<GridTile 

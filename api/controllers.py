@@ -56,6 +56,12 @@ class TweetListener(StreamListener):
 	def on_error(self, status):
 		print(status)
 
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
 
 listener = TweetListener()
 stream = Stream(twitter, listener)
@@ -139,10 +145,15 @@ def get_images():
 	header = {'User-Agent': user_agent,'Accept': accept}
 	soup = BeautifulSoup(requests.get(url, headers=header).text, "html.parser")
 	meta_tags = soup.select('meta[property*="image"],meta[name*="image"]')
-	meta_content = [urllib.parse.urljoin(url, link['content']) for link in meta_tags if link.has_attr('content')]
+	meta_content = [
+		urllib.parse.urljoin(url, link['content']) 
+			for link in meta_tags 
+			if link.has_attr('content') and not is_number(link['content'])
+	]
 	images = soup.select('img')
-	img_links = [urllib.parse.urljoin(url, link['src']) for link in images if link.has_attr('src')]
-	return jsonify(results=meta_content+img_links, success=True)
+	img_links = [urllib.parse.urljoin(url, link['src']) for link in images if link.has_attr('src') and 'gif' not in link['src'].lower()]
+
+	return jsonify(results=list(set(meta_content+img_links)), success=True)
 
 
 @application.route('/api/links/title')
