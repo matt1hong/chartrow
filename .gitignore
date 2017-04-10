@@ -1,5 +1,7 @@
 node_modules
 static
+db_repository
+static_src/images
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
