@@ -2,7 +2,6 @@ import React from 'react';
 import {GridList, GridTile} from 'material-ui/GridList';
 import RaisedButton from 'material-ui/RaisedButton'
 import FlatButton from 'material-ui/FlatButton'
-import Feed from './RSSFeed';
 import Dialog from 'material-ui/Dialog';
 import ReactModal from 'react-modal'
 import axios from 'axios'

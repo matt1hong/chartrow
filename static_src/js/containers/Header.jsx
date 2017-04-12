@@ -35,7 +35,7 @@ class Header extends React.Component {
     return (
     	<div>
     		<div style={style.container}>
-                <img style={{height:36, float: 'left', marginTop: 13}} src={require('../../cat.jpg')} />
+                <img style={{height:35}} src={require('../../cat.jpg')} />
 	    		<h1 style={style.h1} onClick={this.props.onClick}>{this.props.title}</h1>
 	    		<h4 style={style.h4}>{this.props.subheader}</h4>
 	    	</div>
