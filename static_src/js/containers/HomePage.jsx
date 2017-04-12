@@ -104,7 +104,7 @@ class HomePage extends React.Component {
 						gutterWidth={gutterWidth}
 						tagged={this.state.tag !== ""}
 						title="Chartrow"
-						subheader="Truths are errors to be exposed"
+						subheader="A catalog of data visualizations"
 						onClick={()=>{this.setState({tag:''})}} />
 					{
 						this.state.tag === "" ?

@@ -39,10 +39,15 @@ config.module = {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
         loader: 'file',
     }, {
-      test: /\.(jpeg|png|gif|svg)$/i,
+      test: /\.(png)$/i,
       loaders: [
         'file?hash=sha512&digest=hex&name=[hash].[ext]',
         'image-webpack?bypassOnDebug&optimizationLevel=7&interlaced=false'
+      ]
+    }, {
+      test: /\.(jpg)$/i,
+      loaders: [
+        'file'
       ]
     }
   ],

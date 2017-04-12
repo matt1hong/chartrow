@@ -8,7 +8,7 @@ class Header extends React.Component {
     const numCols = 3
     let headerWidth = this.props.columnWidth * 3 + 2 * this.props.gutterWidth;
     let style ={
-		'h1': {fontFamily: 'VT323', fontSize: 60, display:'inline', marginRight: 8, cursor: 'pointer'},
+		'h1': {fontFamily: 'VT323', fontSize: 60, display:'inline', margin: '0 6', cursor: 'pointer'},
 		'h4': {fontFamily: 'VT323', display:'inline'},
 		'container': {
             margin: '0 auto', 
@@ -35,6 +35,7 @@ class Header extends React.Component {
     return (
     	<div>
     		<div style={style.container}>
+                <img style={{height:36, float: 'left', marginTop: 13}} src={require('../../cat.jpg')} />
 	    		<h1 style={style.h1} onClick={this.props.onClick}>{this.props.title}</h1>
 	    		<h4 style={style.h4}>{this.props.subheader}</h4>
 	    	</div>
