@@ -64,6 +64,7 @@ export default class TweetFeed extends React.Component {
                 <Tweet
                   key={k} 
                   tweet={x} 
+                  lastSeen={this.props.lastSeen}
                   color={colors[colorKeys[text.hashCode()%colorKeys.length]]}
                   icon={icons[text.hashCode()%icons.length]}
                   onSurf={this.props.onSurf} 
@@ -84,5 +85,6 @@ TweetFeed.propTypes = {
 	tweets: React.PropTypes.array,
 	onSurf: React.PropTypes.func,
 	delete: React.PropTypes.func,
-  chosen: React.PropTypes.string
+  chosen: React.PropTypes.string,
+  lastSeen: React.PropTypes.string
 }

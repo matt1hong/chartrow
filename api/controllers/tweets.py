@@ -1,7 +1,7 @@
 from application import application, twitter, socketio, login_manager
 from api.models import *
 
-from flask import jsonify, Response, request, url_for, redirect, session
+from flask import jsonify, Response, request, url_for, redirect, session, stream_with_context
 from flask_socketio import emit
 
 from tweepy.streaming import StreamListener
@@ -30,14 +30,23 @@ def transform_data(data):
 	return to_emit
 
 
+
 class TweetListener(StreamListener):
+	def __init__(self, sid):
+		StreamListener.__init__(self)
+		self.sid = sid
+
 	def on_status(self, data):
 		to_emit = transform_data(data)
-		emit('tweet', to_emit, broadcast=True)
+		with application.test_request_context('/'):
+			socketio.emit('tweet', to_emit, broadcast=True)
 		return True
 
 	def on_error(self, status):
-		print(status)
+		if status == 401:
+			print('SocketIO disconnected') 
+			socketio.server.disconnect(self.sid) 
+		socketio.emit('error', status, broadcast=True)
 
 def is_number(s):
     try:
@@ -46,15 +55,17 @@ def is_number(s):
     except ValueError:
         return False
 
-listener = TweetListener()
 twitter_api = API(twitter)
+streams = []
 
 @socketio.on('connect')
 def stream_tweets():
+	listener = TweetListener(request.sid)
+	stream = Stream(twitter, listener)
+	streams.append(stream)
 	try:
-		print('Client connected')
-		with Stream(twitter, listener) as stream: 
-			return Response(stream.userstream(), content_type='text/event-stream')
+		print('Client connected') 
+		stream.userstream(async=True)
 	except TweepError:
 		return jsonify(success=True)
 	except:
@@ -63,6 +74,8 @@ def stream_tweets():
 
 @socketio.on('disconnect')
 def disconnect():
+	for stream in streams:
+		stream.disconnect()
 	print('Client disconnected')
 	return
 

@@ -36,7 +36,7 @@ const style= {
 class PostIt extends React.Component {
 
 	constructor() {
-		super()
+		super(props)
 		const dimensions = {
 			x: 0,
 			y: 0,
@@ -48,7 +48,7 @@ class PostIt extends React.Component {
 			cropPixels: Object.assign({}, dimensions),
 			date: null,
 			lead: false,
-			title: 'Enter title',
+			title: this.props.headline,
 			tag: 'New tag',
 			timestamp: 0,
 			stepIndex: 0
@@ -265,7 +265,8 @@ class PostIt extends React.Component {
 PostIt.propTypes ={
 	linkUrl: React.PropTypes.string,
 	imgSrc: React.PropTypes.string,
-	tags: React.PropTypes.array
+	tags: React.PropTypes.array,
+	headline: React.PropTypes.string
 }
 
 export default PostIt

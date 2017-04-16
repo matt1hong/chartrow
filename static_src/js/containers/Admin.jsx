@@ -35,6 +35,7 @@ export default class Admin extends React.Component {
 			existingPosts: [],
 			imageLinks: [],
 			imageLink: '',
+			headline: '',
 			count: 30,
 			linkUrl: '',
 			openPostIt: false,
@@ -44,7 +45,9 @@ export default class Admin extends React.Component {
 			addresses: [],
 			connected: false,
 			loaded: false,
-			activeTab: 0
+			activeTab: 0,
+			lastSeen: '',
+			error: false
 		}
 		this.socket = null;
 		this.updateTweets = this.updateTweets.bind(this)
@@ -59,6 +62,13 @@ export default class Admin extends React.Component {
 					tags: tags
 				})
 			})
+		axios
+			.get('/api/auth/last_seen')
+			.then((response) => {
+				this.setState({
+					lastSeen: response.data.result
+				})
+			})
 		this.getExistingTweets('Recents')
 	}
 	componentWillUpdate(nextProps, nextState) {
@@ -69,8 +79,9 @@ export default class Admin extends React.Component {
 	startFeed() {
 		this.socket = io.connect('http://' + document.domain + ':' + location.port);
         this.socket.on('tweet', this.updateTweets)
-        this.socket.on('connect', ()=>{this.setState({connected: true})});
+        this.socket.on('connect', ()=>{this.setState({connected: true, error: false})});
         this.socket.on('disconnect', ()=>{this.setState({connected: false})});
+        this.socket.on('error', ()=>{this.setState({error: true})});
 	}
 	endFeed() {
 		this.socket ? this.socket.disconnect() : null;
@@ -115,13 +126,15 @@ export default class Admin extends React.Component {
 			this.setState({
 				imageLinks: [],
 				linkUrl: link,
-				timestamp: 0
+				timestamp: 0,
+				headline: ''
 			}, () => {this.getImages(link)})
 		} else {
 			this.setState({
 				imageLinks: [],
 				linkUrl: link.url,
-				timestamp: link.timestamp_ms
+				timestamp: link.timestamp_ms,
+				headline: link.text
 			}, () => {this.getImages(link.url)})
 		}
 	}
@@ -239,7 +252,8 @@ export default class Admin extends React.Component {
         			<PostIt 
 						linkUrl={this.state.linkUrl}
 						imgSrc={this.state.cropImage}
-						tags={this.state.tags}></PostIt>
+						tags={this.state.tags}
+						headline={this.state.headline}></PostIt>
 				</Dialog>
 				<table style={{display:'inline-table'}}>
 					<tbody>
@@ -268,7 +282,8 @@ export default class Admin extends React.Component {
 								    			connected={this.state.connected}></AdminNav>
 								    		<TweetFeed 
 												tweets={this.state.tweets}
-												onSurf={this.setTweet.bind(this)}></TweetFeed>
+												onSurf={this.setTweet.bind(this)}
+												lastSeen={this.state.lastSeen}></TweetFeed>
 								    	</div>
 								    </Tab>
 								    <Tab 
@@ -297,7 +312,8 @@ export default class Admin extends React.Component {
 												    	onClick={()=>this.setState({loaded: false})}/>
 													<TweetFeed 
 														tweets={this.state.tweets}
-														onSurf={this.setTweet.bind(this)}></TweetFeed>
+														onSurf={this.setTweet.bind(this)}
+														lastSeen={this.state.lastSeen}></TweetFeed>
 													
 											    </div>
 										}
@@ -311,7 +327,8 @@ export default class Admin extends React.Component {
 											onSurf={this.setTweet.bind(this)}
 											delete={this.deleteLink.bind(this)}
 											confirmDelete={this.state.confirmDelete}
-											chosen={this.state.linkUrl}></TweetFeed>
+											chosen={this.state.linkUrl}
+											lastSeen={this.state.lastSeen}></TweetFeed>
 								    </Tab>
 								  </Tabs>
 								

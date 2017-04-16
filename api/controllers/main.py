@@ -4,8 +4,7 @@ from api.models import *
 
 from flask import render_template, redirect, session, url_for
 from flask_login import current_user
-import tweepy
-
+from tweepy import OAuthHandler
 
 from api.controllers.auth import *
 from api.controllers.links import *
@@ -24,6 +23,7 @@ def admin():
 	
 @application.route('/oauth')
 def oauth():
+	twitter = OAuthHandler(application.config['TWITTER_KEY'], application.config['TWITTER_SECRET'])
 	try:
 		url = twitter.get_authorization_url()
 		session['request_token'] = twitter.request_token 

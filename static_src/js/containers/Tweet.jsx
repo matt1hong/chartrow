@@ -23,13 +23,14 @@ export default class Tweet extends React.Component {
 
   render() {
     const SvgIcon = this.props.icon;
+    const isNew = new Date(this.props.tweet.timestamp_ms * 1000) < new Date(this.props.lastSeen);
     return (
             <Card style={{marginTop:6}} href={this.props.tweet.url}>
               <a href={this.props.tweet.tweet || null} target="_blank" style={{textDecoration: 'none'}}>
                 <CardTitle title={
                   <div>
                     <SvgIcon style={{color: this.props.color, float: 'left', marginRight: 6}}/>
-                    <div><span style={{fontWeight: 'bold', color: this.props.color}}>{this.props.tweet.user_name} </span> 
+                    <div><span style={{fontWeight: isNew ? 'bold' : 'normal', color: this.props.color}}>{this.props.tweet.user_name} </span> 
                     {this.props.tweet.text || this.props.tweet.title} 
                   </div></div>} titleStyle={{fontSize:14,lineHeight:1}} style={{padding:"16 16 8"}}>  
                 </CardTitle>
@@ -69,5 +70,6 @@ Tweet.propTypes = {
   chosen: React.PropTypes.string,
   confirmDelete: React.PropTypes.bool,
   color: React.PropTypes.string,
-  icon: React.PropTypes.func
+  icon: React.PropTypes.func,
+  lastSeen: React.PropTypes.string
 }
