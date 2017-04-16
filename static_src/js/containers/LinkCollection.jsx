@@ -11,7 +11,7 @@ class LinkCollection extends React.Component {
 			<div style={{width:this.props.width, textAlign: 'left', fontFamily: 'VT323', margin: '0 auto'}}>
 				<h4 
 					style={{color:'gray', fontWeight:'normal', marginBottom: '0.66em', cursor: 'pointer'}}
-					onClick={this.props.onHeaderClick}>{this.props.title}</h4>
+					onClick={this.props.onHeaderClick}>{this.props.title || ""}</h4>
 				{this.props.links.map((link, key) => (
 
 					<LinkItem 

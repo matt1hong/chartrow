@@ -51,6 +51,7 @@ class User(UserMixin, db.Model):
 
 	id = db.Column(db.Integer, primary_key = True)
 	name = db.Column(db.String, unique=True, nullable=False)
+	last_seen = db.Column(db.DateTime)
 
 	def __repr__(self):
 		return '<User %r>' % self.name

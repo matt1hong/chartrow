@@ -8,26 +8,28 @@ class Header extends React.Component {
     const numCols = 3
     let headerWidth = this.props.columnWidth * 3 + 2 * this.props.gutterWidth;
     let style ={
-		'h1': {fontFamily: 'VT323', fontSize: 60, display:'inline', margin: '0 6', cursor: 'pointer'},
+		'h1': {fontFamily: 'VT323', fontSize: 60, display:'inline', marginRight: 6, cursor: 'pointer', fontWeight: 'bold'},
 		'h4': {fontFamily: 'VT323', display:'inline'},
+        'menu': {fontFamily: 'VT323', float: 'left', margin: "6 0 0"},
 		'container': {
             margin: '0 auto', 
             width: this.props.tagged ? this.props.columnWidth : headerWidth, 
             textAlign: 'left', 
             borderBottom: 'solid black 1px',
-            paddingBottom: '12px'
-        }
+            paddingBottom: '30px'
+        },
+        'image': {height:36, marginRight: 6}
 	}
     if (width < this.props.columnWidth * 2 + 1 * this.props.gutterWidth || this.props.tagged) {
     	style.container.width = width < this.props.columnWidth ? width : this.props.columnWidth
     	style.container.textAlign = 'center'
-    	style.h1.margin = '0 auto'
-    	style.h1.marginRight = null
-    	style.h1.fontSize = 30
-    	style.h1.display = 'block'
+    	style.h1.marginRight = 0
+    	style.h1.fontSize = 36
     	style.h4.margin = '0 auto'
     	style.h4.display = 'block'
     	style.h4.fontSize = 12
+        style.image.height = 24
+        style.menu.fontSize = 10
     } else if (width < this.props.columnWidth * 3 + 2 * this.props.gutterWidth && !this.props.tagged) {
     	style.container.width = this.props.columnWidth * 2 + 1 * this.props.gutterWidth
     }
@@ -35,9 +37,14 @@ class Header extends React.Component {
     return (
     	<div>
     		<div style={style.container}>
-                <img style={{height:35}} src={require('../../cat.jpg')} />
-	    		<h1 style={style.h1} onClick={this.props.onClick}>{this.props.title}</h1>
-	    		<h4 style={style.h4}>{this.props.subheader}</h4>
+                <div>
+    	    		<span style={style.h1} onClick={this.props.onClick}>
+                        <img style={style.image} src={require('../../cat.jpg')} />
+                        {this.props.title}
+                    </span>
+    	    		<span style={style.h4}>{this.props.subheader}</span>
+                </div>
+                <span style={style.menu}>Trends • People • Cause-and-effects • Maps | Annotated charts • Infographics • Comic strips • Slide shows • Movies • Articles</span>
 	    	</div>
     	</div>
     	

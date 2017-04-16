@@ -9,24 +9,17 @@ from flask_oauthlib.client import OAuth
 from flask_socketio import SocketIO
 
 from utils import DecimalEncoder
-
+from config import DevConfig
 from tweepy import OAuthHandler
 
 
 
-#Variables that contains the user credentials to access Twitter API 
-consumer_key = 'ZQgQejG6uuceFPx4lnz3d8ttp'
-consumer_secret = 'YRX7rHhsXZnWEYuhCq0asMQWHINyhs6gH3GmT398tmcnooKTjJ'
-
-
-twitter = OAuthHandler(consumer_key, consumer_secret)
-
-
 
 application = Flask(__name__)
-application.config.from_object('config')
+application.config.from_object(DevConfig)
 application.json_encoder = DecimalEncoder
 
+twitter = OAuthHandler(application.config['TWITTER_KEY'], application.config['TWITTER_SECRET'])
 socketio = SocketIO(application)
 db = SQLAlchemy(application)
 login_manager = LoginManager(application)
@@ -37,7 +30,7 @@ parser = reqparse.RequestParser()
 
 
 
-from api.controllers import *
+from api.controllers.main import *
 
 
 if __name__ == '__main__':

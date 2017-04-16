@@ -51,7 +51,7 @@ export default class Admin extends React.Component {
 	}
 	componentDidMount() {
 		axios
-        	.get('/api/tags')
+        	.get('/api/links/tags')
         	.then((response) => {
 				let tags = response.data.results
 
@@ -85,7 +85,7 @@ export default class Admin extends React.Component {
 	}
 	getLinks(){
 		axios
-			.get('/api/get_links')
+			.get('/api/links')
 			.then((response) => {
 				this.setState({
 					existingPosts: response.data.results
@@ -127,7 +127,7 @@ export default class Admin extends React.Component {
 	}
 	getImages(link) {
 		axios
-			.get('/api/get_images?link='+encodeURIComponent(this.state.linkUrl))
+			.get('/api/links/external/images?link='+encodeURIComponent(this.state.linkUrl))
 			.then((response) => {
 				this.setState({
 					imageLinks: response.data.results
@@ -145,7 +145,7 @@ export default class Admin extends React.Component {
 		let posts = this.state.existingPosts;
 		posts.splice(posts.map((el)=>el.url).indexOf(this.state.linkUrl), 1);
 		axios
-			.post('/api/delete', {
+			.post('/api/links/delete', {
 				url: this.state.linkUrl
 			})
 			.then((response) => {
@@ -178,7 +178,7 @@ export default class Admin extends React.Component {
 		this.setState({loaded:true, tweets:[]})
 		this.state.addresses.split('\n').map((value)=> {
 			axios
-				.get('/api/links/title?address=' + value)
+				.get('/api/links/external/page_title?address=' + value)
 				.then((response)=> this.createTweet(response, value))
 		})	
 	}
@@ -200,7 +200,7 @@ export default class Admin extends React.Component {
 
 	logout(){
 		axios
-			.get('/api/logout')
+			.get('/api/auth/logout')
 			.then((response)=>{
 				if (response.data.success) {
 					window.location.href= "/"

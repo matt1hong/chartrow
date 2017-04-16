@@ -53,7 +53,7 @@ class HomePage extends React.Component {
 
 	getLinks() {
 		axios
-			.get('/api/get_links')
+			.get('/api/links')
 			.then((response) => {
 				let links = response.data.results
 				links.sort(sort)
@@ -89,8 +89,7 @@ class HomePage extends React.Component {
 	}
 
 	render() {
-		// const { width, height } = this.props.size;
-		const width = 1000
+		const { width, height } = this.props.size;
 		let widthTagged = 400;
 		let stateTaggedLinks = 
 			this.state.links.filter((link) => {
@@ -103,12 +102,21 @@ class HomePage extends React.Component {
 		    			columnWidth={columnWidth}
 						gutterWidth={gutterWidth}
 						tagged={this.state.tag !== ""}
-						title="Chartrow"
-						subheader="The data visualization catalog"
+						title="CHARTROW"
+						subheader="THE DATA VISUALIZATION CATALOG"
 						onClick={()=>{this.setState({tag:''})}} />
 					{
-						this.state.tag === "" ?
-							<StackGrid 
+						this.state.tag === "" ? (
+							width < columnWidth * 2 + 1 * gutterWidth ? 
+								<LinkCollection
+									index={1}
+									links={this.state.links}
+									width={width < widthTagged ? width : widthTagged}
+									small={
+										width < widthTagged * 2 + 1 * gutterWidth 
+										? true 
+										: false}/>
+							: <StackGrid 
 								columnWidth={width < columnWidth ? width : columnWidth}
 								gutterWidth={gutterWidth} 
 								gutterHeight={gutterHeight}
@@ -133,7 +141,7 @@ class HomePage extends React.Component {
 										)
 									})
 								}
-							</StackGrid>
+								</StackGrid>)
 						: 	<LinkCollection
 								index={1}
 								title={this.state.tag}
@@ -150,4 +158,4 @@ class HomePage extends React.Component {
 	}
 }
 
-export default HomePage
+export default sizeMe({ monitorWidth: true })(HomePage)
