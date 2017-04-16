@@ -25,11 +25,11 @@ class Link(db.Model):
 
 	tag_id = db.Column(db.Integer, db.ForeignKey('tag.id'))
 
-	def __init__(self, url, title, lead, real_date=datetime.now().isoformat()):
+	def __init__(self, url, title, lead, real_date=datetime.utcnow().isoformat()):
 		self.url = url
 		self.title = title.capitalize()
 		self.lead = lead
-		self.date = datetime.now().isoformat()
+		self.date = datetime.utcnow().isoformat()
 		self.real_date = real_date
 
 	@property

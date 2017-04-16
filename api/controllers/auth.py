@@ -27,7 +27,7 @@ def authorized():
 			user = User(name=username)
 			db.session.add(user)
 			db.session.commit()
-		date_now = datetime.now()
+		date_now = datetime.utcnow()
 		user.last_seen = date_now
 		db.session.commit()
 		login_user(user, True)
@@ -39,15 +39,8 @@ def logout():
 	logout_user()
 	return jsonify(success=True)
 
-@application.route('/api/auth/last_seen', methods=['GET', 'POST'])
+@application.route('/api/auth/last_seen')
 def last_seen():
-	if request.method == 'GET':
-		last_seen = current_user.last_seen.isoformat()
-		return jsonify(success=True, result=last_seen)
-	elif request.method == 'POST':
-		date_now = datetime.now()
-		current_user.last_seen = date_now
-		db.session.commit()
-		return jsonify(success=True, result=date_now)
-	return jsonify(error=True), 403
+	last_seen = current_user.last_seen.isoformat()
+	return jsonify(success=True, result=last_seen)
 

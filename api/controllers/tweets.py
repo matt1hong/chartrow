@@ -76,6 +76,7 @@ def stream_tweets():
 def disconnect():
 	for stream in streams:
 		stream.disconnect()
+		del stream
 	print('Client disconnected')
 	return
 
