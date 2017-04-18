@@ -23,7 +23,8 @@ export default class Tweet extends React.Component {
 
   render() {
     const SvgIcon = this.props.icon;
-    const isNew = new Date(this.props.tweet.timestamp_ms * 1000) < new Date(this.props.lastSeen);
+    const lastSeen = this.props.lastSeen;
+    const isNew = new Date(this.props.tweet.timestamp_ms * 1000) > new Date(lastSeen.substring(0, lastSeen.indexOf('.'))+'-04:00');
     return (
             <Card style={{marginTop:6}} href={this.props.tweet.url}>
               <a href={this.props.tweet.tweet || null} target="_blank" style={{textDecoration: 'none'}}>

@@ -206,9 +206,12 @@ export default class Admin extends React.Component {
 	}
 
 	addTag(tag){
-		this.setState({
-			tags: this.state.tags.concat([tag]).reverse()
-		})
+		if (!(tag in this.state.tags)) {
+			this.setState({
+				tags: this.state.tags.concat([tag]).reverse()
+			})
+		}
+		
 	}
 
 	logout(){
@@ -253,7 +256,8 @@ export default class Admin extends React.Component {
 						linkUrl={this.state.linkUrl}
 						imgSrc={this.state.cropImage}
 						tags={this.state.tags}
-						headline={this.state.headline}></PostIt>
+						headline={this.state.headline}
+						addTag={this.addTag.bind(this)}></PostIt>
 				</Dialog>
 				<table style={{display:'inline-table'}}>
 					<tbody>

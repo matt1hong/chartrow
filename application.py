@@ -1,4 +1,5 @@
 import sys
+import os
 
 from flask import Flask, render_template, session, redirect, request, url_for, g, jsonify
 from flask_restful import reqparse, Resource, Api
@@ -9,15 +10,18 @@ from flask_oauthlib.client import OAuth
 from flask_socketio import SocketIO
 
 from utils import DecimalEncoder
-from config import DevConfig
+from config import DevConfig, ProdConfig
 from tweepy import OAuthHandler
 
 
 
 
 application = Flask(__name__)
-application.config.from_object(DevConfig)
 application.json_encoder = DecimalEncoder
+if os.environ['FLASK_DEBUG']:
+	application.config.from_object(DevConfig)
+elif os.environ['FLASK_DEBUG']:
+	application.config.from_object(ProdConfig)
 
 twitter = OAuthHandler(application.config['TWITTER_KEY'], application.config['TWITTER_SECRET'])
 socketio = SocketIO(application)

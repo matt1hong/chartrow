@@ -48,12 +48,6 @@ class TweetListener(StreamListener):
 			socketio.server.disconnect(self.sid) 
 		socketio.emit('error', status, broadcast=True)
 
-def is_number(s):
-    try:
-        float(s)
-        return True
-    except ValueError:
-        return False
 
 twitter_api = API(twitter)
 streams = []

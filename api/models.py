@@ -2,11 +2,28 @@ from application import db
 from datetime import datetime
 from flask_login import UserMixin
 
-class Tag(db.Model):
-
+class TagGroup(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
 	name = db.Column(db.String, unique=True, nullable=False)
-	links = db.relationship('Link', backref='tag', lazy='dynamic')
+	tags = db.relationship('Tag', backref='tag_group', lazy='dynamic')
+
+	def __init__(self, name):
+		self.name = name.capitalize()
+
+	def __repr(self):
+		return '<TagGroup %r>' % self.name
+
+
+tagged = db.Table('tagged', 
+	db.Column('tag_id', db.Integer, db.ForeignKey('tag.id')),
+	db.Column('link_id', db.Integer, db.ForeignKey('link.id')))
+
+
+class Tag(db.Model):
+	id = db.Column(db.Integer, primary_key = True)
+	name = db.Column(db.String, unique=True, nullable=False)
+	links = db.relationship('Link', secondary=tagged, backref='tag', lazy='dynamic')
+	group_id = db.Column(db.Integer, db.ForeignKey('tag_group.id'))
 
 	def __init__(self, name):
 		self.name = name.capitalize()
@@ -14,8 +31,8 @@ class Tag(db.Model):
 	def __repr(self):
 		return '<Tag %r>' % self.name
 
-class Link(db.Model):
 
+class Link(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	url = db.Column(db.String, unique=True, nullable=False)
 	title = db.Column(db.String, unique=True, nullable=False)
@@ -46,9 +63,9 @@ class Link(db.Model):
 
 	def __repr__(self):
 		return '<Link %r>' % self.url
+		
 
 class User(UserMixin, db.Model):
-
 	id = db.Column(db.Integer, primary_key = True)
 	name = db.Column(db.String, unique=True, nullable=False)
 	last_seen = db.Column(db.DateTime)

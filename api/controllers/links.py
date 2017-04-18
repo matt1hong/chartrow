@@ -16,6 +16,13 @@ from api.models import *
 user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'
 accept = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
 
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
 @application.route('/api/links')
 def get_links():
 	links = Link.query.limit(20).all()
@@ -29,8 +36,21 @@ def tagged_links():
 
 @application.route('/api/links/tags')
 def tags():
+	if db.session.query(TagGroup).count() == 0:
+		topic = TagGroup('Topic')
+		genre = TagGroup('Genre')
+		theme = TagGroup('Theme')
+		for x in ['Annotated charts', 'Infographics', 'Comic strips', 'Slide shows', 'Movies', 'Articles']:
+			tag = Tag(x)
+			db.session.add(tag)
+			genre.tags.append(tag)
+		for x in ['Trends', 'People', 'Cause-and-effects', 'Maps']:
+			tag = Tag(x)
+			db.session.add(tag)
+			theme.tags.append(tag)
+		db.session.commit()
 	tags = Tag.query.all()
-	return jsonify(success=True, results=[tag.name for tag in tags])
+	return jsonify(success=True, results=[[tag.tag_group.name, tag.name] for tag in tags])
 
 @application.route('/api/links/delete', methods=['POST'])
 def delete():
@@ -53,12 +73,16 @@ def promote():
 	real_date = datetime.fromtimestamp(incoming['realTimestamp']/1000.0).isoformat()
 	if db.session.query(Link).filter_by(url=url).count() < 1:
 		tag = Tag.query.filter_by(name=tag_query).first()
+		tag_group = TagGroup.query.filter_by(name='Topic')
 		if not tag:
 			tag = Tag(tag_query)
+			db.session.add(tag)
+		tag_group.tags.append(tag)
+
 		link = Link(url, title, lead, real_date)
 		tag.links.append(link)
+
 		db.session.add(link)
-		db.session.add(tag)
 		db.session.commit()
 
 		crop_size = incoming['cropPixels']

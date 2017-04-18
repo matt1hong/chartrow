@@ -13,8 +13,40 @@ import DatePicker from 'material-ui/DatePicker';
 import Checkbox from 'material-ui/Checkbox';
 import TextField from 'material-ui/TextField';
 import Chip from 'material-ui/Chip';
+import Avatar from 'material-ui/Avatar';
 import axios from 'axios'
 import 'react-image-crop/dist/ReactCrop.css';
+import * as colors from 'material-ui/styles/colors'
+import CheckCircle from 'material-ui/svg-icons/action/check-circle'
+
+const colorKeys = Object.keys(colors).filter((v) => v.indexOf('400') > -1);
+
+String.prototype.hashCode = function() {
+  var hash = 0, i, chr;
+  if (this.length === 0) return hash;
+  for (i = 0; i < this.length; i++) {
+    chr   = this.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return Math.abs(hash);
+};
+
+function arrEquals( one, two )
+{
+    if( one.length != two.length )
+    {
+        return false;
+    }
+    for( var i = 0; i < one.length; i++ )
+    {
+        if( one[i] != two[i] )
+        {
+            return false;
+        }
+    }
+    return true;
+}
 
 const style= {
 	largeTitle: {
@@ -35,7 +67,7 @@ const style= {
 
 class PostIt extends React.Component {
 
-	constructor() {
+	constructor(props) {
 		super(props)
 		const dimensions = {
 			x: 0,
@@ -50,6 +82,7 @@ class PostIt extends React.Component {
 			lead: false,
 			title: this.props.headline,
 			tag: 'New tag',
+			workingTags: [],
 			timestamp: 0,
 			stepIndex: 0
 		}
@@ -65,18 +98,19 @@ class PostIt extends React.Component {
       return (text.length > 0 && text.length < 64);
     }
 
-   	titleChanged(data){
-		this.setState(data)
-	}
-
-	tagChanged(data){
-		this.setState(data)
-	}
-
 	tagSelected(event){
-		this.setState({
-			tag: event.target.innerText
-		})
+		let tag = event.target.innerText
+		tag = tag.split(': ')
+		if (tag in this.state.workingTags) {
+			const index = this.state.workingTags.indexOf(tag);
+			this.setState({
+				workingTags: this.state.workingTags.splice(index, 1)
+			})
+		} else {
+			this.setState({
+				workingTags: this.state.workingTags.concat([tag])
+			})
+		}
 	}
 
 	promoteLink(){
@@ -87,16 +121,13 @@ class PostIt extends React.Component {
 				cropPixels: this.state.cropPixels,
 				lead: this.state.lead,
 				title: this.state.title,
-				tag: this.state.tag,
+				tags: this.state.workingTags,
 				realTimestamp: +this.state.date || this.state.timestamp
 			})
 			.then((response) => {
 				this.setState({
 					alert: 'Success!'
 				})
-				if (!(this.state.tag in this.props.tags)) {
-					this.props.addTag(this.state.tag)
-				}
 			})
 			.catch((e) => {
 				this.setState({
@@ -154,8 +185,21 @@ class PostIt extends React.Component {
 	    );
 	  }
 
+	addNewTag(){
+		if (!(this.state.tag in this.state.workingTags) && this.state.tag in this.props.tags) {
+			this.setState({
+				workingTags: this.state.workingTags.concat([(event.target.innerText, 'Topic')])
+			})
+		} else if (!(this.state.tag in this.props.tags)) {
+			this.props.addTag((this.state.tag, 'Topic'))
+			this.setState({
+				workingTags: this.state.workingTags.concat([(this.state.tag, 'Topic')])
+			})
+		}
+	}
+
 	onChange(v, name) {
-		nextState = {}
+		let nextState = {}
 		nextState[name] = v
 		this.setState(nextState)
 	}
@@ -209,7 +253,16 @@ class PostIt extends React.Component {
 								  	<div style={{
 										display: 'flex',flexWrap: 'wrap',margin: "12 0", height:80, overflow:"auto"}}>
 										{this.props.tags.map((tag, key) => (
-											<Chip key={key} onTouchTap={this.tagSelected.bind(this)}>{tag}</Chip>
+											<Chip 
+												key={key} 
+												className={tag[0]}
+												backgroundColor={colors[colorKeys[tag[0].hashCode()%colorKeys.length]]}
+												onTouchTap={this.tagSelected.bind(this)}>
+													{ this.state.workingTags.filter((el)=>arrEquals(el, tag)).length > 0 ? 
+														<Avatar icon={<CheckCircle />} />
+														: null }
+													{`${tag[0]}: ${tag[1]}`}
+											</Chip>
 										))}
 									</div>
 									<TextField
@@ -217,6 +270,12 @@ class PostIt extends React.Component {
 										name="tag"
 										onChange={(e) => this.onChange(e.target.value, 'tag')}>
 									</TextField>
+									<FlatButton
+							            label="Add tag"
+							            disableTouchRipple={true}
+							            disableFocusRipple={true}
+							            onTouchTap={this.addNewTag.bind(this)}
+							          />
 								  	{this.renderStepActions(1)}
 					            </div></StepContent>
 					          </Step>
@@ -266,7 +325,8 @@ PostIt.propTypes ={
 	linkUrl: React.PropTypes.string,
 	imgSrc: React.PropTypes.string,
 	tags: React.PropTypes.array,
-	headline: React.PropTypes.string
+	headline: React.PropTypes.string,
+	addTag: React.PropTypes.func
 }
 
 export default PostIt
