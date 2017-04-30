@@ -18,9 +18,9 @@ from tweepy import OAuthHandler
 
 application = Flask(__name__)
 application.json_encoder = DecimalEncoder
-if os.environ['FLASK_DEBUG']:
+if os.environ['FLASK_DEBUG']=='1':
 	application.config.from_object(DevConfig)
-elif os.environ['FLASK_DEBUG']:
+elif os.environ['FLASK_DEBUG']=='0':
 	application.config.from_object(ProdConfig)
 
 twitter = OAuthHandler(application.config['TWITTER_KEY'], application.config['TWITTER_SECRET'])
