@@ -6,6 +6,7 @@ from flask_socketio import emit
 
 from tweepy.streaming import StreamListener
 from tweepy import Stream, TweepError, API
+import socket
 
 def transform_data(data):
 	urls = data.entities['urls']
@@ -39,7 +40,12 @@ class TweetListener(StreamListener):
 	def on_status(self, data):
 		to_emit = transform_data(data)
 		with application.test_request_context('/'):
-			socketio.emit('tweet', to_emit, broadcast=True)
+			try:
+				socketio.emit('tweet', to_emit, broadcast=True)
+			except socket.timeout:
+				print("Socket timed out. Disconnecting...")
+				socketio.server.disconnect(self.sid) 
+				return False
 		return True
 
 	def on_error(self, status):
@@ -63,6 +69,7 @@ def stream_tweets():
 	except TweepError:
 		return jsonify(success=True)
 	except:
+		print('TweepError on stream_tweets')
 		return jsonify(success=False)
 
 

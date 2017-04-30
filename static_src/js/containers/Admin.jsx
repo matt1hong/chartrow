@@ -120,6 +120,9 @@ export default class Admin extends React.Component {
 					tweets: results
 				})
 			})
+			.catch((response)=> {
+				console.log(response)
+			})
 	}
 	setTweet(link) {
 		if (typeof(link) === 'string') {

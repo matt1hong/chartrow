@@ -188,12 +188,12 @@ class PostIt extends React.Component {
 	addNewTag(){
 		if (!(this.state.tag in this.state.workingTags) && this.state.tag in this.props.tags) {
 			this.setState({
-				workingTags: this.state.workingTags.concat([(event.target.innerText, 'Topic')])
+				workingTags: this.state.workingTags.concat([['Topic',event.target.innerText]])
 			})
 		} else if (!(this.state.tag in this.props.tags)) {
-			this.props.addTag((this.state.tag, 'Topic'))
+			this.props.addTag(['Topic', this.state.tag])
 			this.setState({
-				workingTags: this.state.workingTags.concat([(this.state.tag, 'Topic')])
+				workingTags: this.state.workingTags.concat([['Topic', this.state.tag]])
 			})
 		}
 	}
@@ -237,6 +237,7 @@ class PostIt extends React.Component {
 					              		rows={2}
 					              		name="title"
 					              	 	onChange={(e) => this.onChange(e.target.value, 'title')}
+					              	 	value={this.state.title}
 					              	 	textareaStyle={{lineHeight: 'normal'}}
 										style={Object.assign(
 											this.state.lead ? style.largeTitle : style.smallTitle,
@@ -251,7 +252,7 @@ class PostIt extends React.Component {
 					            <StepContent>
 					            <div>
 								  	<div style={{
-										display: 'flex',flexWrap: 'wrap',margin: "12 0", height:80, overflow:"auto"}}>
+										display: 'flex',flexWrap: 'wrap',margin: "12 0", height:120, overflow:"auto"}}>
 										{this.props.tags.map((tag, key) => (
 											<Chip 
 												key={key} 

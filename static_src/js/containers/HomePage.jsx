@@ -5,6 +5,7 @@ import LinkItem from './LinkItem'
 import LinkCollection from './LinkCollection'
 import Header from './Header'
 import sizeMe from 'react-sizeme';
+import $ from 'jquery';
 
 const style={
 	key1: {
@@ -43,15 +44,27 @@ class HomePage extends React.Component {
 			links: [],
 			taggedLinks: {},
 			tags: [],
+			topicTags: [],
 			tag: ''
 		}
 	}
 
 	componentDidMount() {
-		this.getLinks()
+		$(window).on('hashchange', (function() {
+			this.setState({
+				tag: window.location.hash.replace('#', '')
+			})
+		}).bind(this))
 	}
 
 	getLinks() {
+	    axios
+            .get('/api/links/tags')
+            .then((response)=>{
+                this.setState({
+                    tags: response.data.results
+                })
+            })
 		axios
 			.get('/api/links')
 			.then((response) => {
@@ -60,7 +73,7 @@ class HomePage extends React.Component {
 
 				this.setState({
 					links: links,
-					tags: [...new Set(links.map((lnk) => { return lnk.tag }))]
+					topicTags: [...new Set(links.map((lnk) => { return lnk.tag }))]
 				})
 			})
 	}
@@ -96,15 +109,17 @@ class HomePage extends React.Component {
 				return link.tag === this.state.tag
 			})
 	  	return (
-	  		<div style={{fontFamily: 'Helvetica Neue'}}>
-		    	<div style={{textAlign:'center'}}>
-		    		<Header 
+	  		<div style={{fontFamily: 'Helvetica Neue', padding: '0 12'}} id="container">
+	  		   
+		    	<div style={{textAlign:'center'}} id="home">
+		    		<Header
 		    			columnWidth={columnWidth}
 						gutterWidth={gutterWidth}
 						tagged={this.state.tag !== ""}
 						title="CHARTROW"
 						subheader="THE DATA VISUALIZATION CATALOG"
-						onClick={()=>{this.setState({tag:''})}} />
+						onClick={()=>{this.setState({tag:''})}}
+						onFilterClick={this.onHeaderClick.bind(this)} />
 					{
 						this.state.tag === "" ? (
 							width < columnWidth * 2 + 1 * gutterWidth ? 
@@ -122,7 +137,7 @@ class HomePage extends React.Component {
 								gutterHeight={gutterHeight}
 								monitorImagesLoaded={true}>
 								{
-									this.state.tags.map((tag, key)=>{
+									this.state.topicTags.map((tag, key)=>{
 										let taggedLinks = this.state.links.filter((link) => {
 											return link.tag === tag
 										})

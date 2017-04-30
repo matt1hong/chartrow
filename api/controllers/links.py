@@ -26,7 +26,7 @@ def is_number(s):
 @application.route('/api/links')
 def get_links():
 	links = Link.query.limit(20).all()
-	return jsonify(success=False, results=[link.serialize for link in links])
+	return jsonify(success=True, results=[link.serialize for link in links])
 
 @application.route('/api/links/tagged')
 def tagged_links():
@@ -40,7 +40,7 @@ def tags():
 		topic = TagGroup('Topic')
 		genre = TagGroup('Genre')
 		theme = TagGroup('Theme')
-		for x in ['Annotated charts', 'Infographics', 'Comic strips', 'Slide shows', 'Movies', 'Articles']:
+		for x in ['Annotated charts', 'Posters', 'Comic strips', 'Slide shows', 'Movies', 'Articles']:
 			tag = Tag(x)
 			db.session.add(tag)
 			genre.tags.append(tag)

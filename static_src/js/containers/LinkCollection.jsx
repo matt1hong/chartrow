@@ -12,18 +12,20 @@ class LinkCollection extends React.Component {
 				<h4 
 					style={{color:'gray', fontWeight:'normal', marginBottom: '0.66em', cursor: 'pointer'}}
 					onClick={this.props.onHeaderClick}>{this.props.title || ""}</h4>
-				{this.props.links.map((link, key) => (
-
-					<LinkItem 
-						key={key}
-						index={key}
-						imgSrc={link.id.toString()}
-						small={!!this.props.index || this.props.small}
-						lead={link.lead}
-						headline={link.title}
-						width={this.props.width}></LinkItem>
+				{this.props.links ? 
+					this.props.links.map((link, key) => (
+						<LinkItem 
+							key={key}
+							index={key}
+							imgSrc={link.id.toString()}
+							small={!!this.props.index || this.props.small}
+							lead={link.lead}
+							headline={link.title}
+							width={this.props.width}></LinkItem>
 					
-				))}
+					))
+					: null
+				}
 				<Divider></Divider>
 			</div>
 		)
