@@ -40,11 +40,11 @@ def tags():
 		topic = TagGroup('Topic')
 		genre = TagGroup('Genre')
 		theme = TagGroup('Theme')
-		for x in ['Annotated charts', 'Posters', 'Comic strips', 'Slide shows', 'Movies', 'Articles']:
+		for x in ['Annotated charts', 'Posters', 'Comic strips', 'Slide shows', 'Movies', 'Articles', 'Trackers']:
 			tag = Tag(x)
 			db.session.add(tag)
 			genre.tags.append(tag)
-		for x in ['Trends', 'People', 'Cause-and-effects', 'Maps']:
+		for x in ['Trends', 'Outliers', 'Networks', 'Averages', 'Categories']:
 			tag = Tag(x)
 			db.session.add(tag)
 			theme.tags.append(tag)
