@@ -67,7 +67,7 @@ def tags():
 			tag = Tag(x)
 			db.session.add(tag)
 			genre.tags.append(tag)
-		for x in ['Trends', 'Outliers', 'Networks', 'Averages', 'Categories']:
+		for x in ['Trends', 'Outliers', 'Networks', 'Averages', 'Groups']:
 			tag = Tag(x)
 			db.session.add(tag)
 			theme.tags.append(tag)
