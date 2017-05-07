@@ -14,14 +14,15 @@ class LinkCollection extends React.Component {
 					onClick={this.props.onHeaderClick}>{this.props.title || ""}</h4>
 				{this.props.links ? 
 					this.props.links.map((link, key) => (
-						<LinkItem 
-							key={key}
-							index={key}
-							imgSrc={link.id.toString()}
-							small={!!this.props.index || this.props.small}
-							lead={link.lead}
-							headline={link.title}
-							width={this.props.width}></LinkItem>
+						<a key={key} href={link.url} target="_blank">
+							<LinkItem 
+								index={key}
+								imgSrc={link.id.toString()}
+								small={!!this.props.index || this.props.small}
+								lead={link.lead}
+								headline={link.title}
+								width={this.props.width}></LinkItem>
+						</a>
 					
 					))
 					: null

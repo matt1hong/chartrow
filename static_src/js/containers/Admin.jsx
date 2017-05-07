@@ -96,7 +96,7 @@ export default class Admin extends React.Component {
 	}
 	getLinks(){
 		axios
-			.get('/api/links')
+			.get('/api/links/all')
 			.then((response) => {
 				this.setState({
 					existingPosts: response.data.results

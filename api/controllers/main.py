@@ -15,6 +15,10 @@ from api.controllers.tweets import *
 def index():
 	return render_template('index.html', page='home')
 
+@application.route('/staging')
+def staging():
+	return render_template('index.html', page='staging')
+
 @application.route('/admin')
 def admin():
 	if not current_user.is_anonymous and session.get('twitter_token'):

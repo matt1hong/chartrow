@@ -6,6 +6,7 @@ import LinkCollection from './LinkCollection'
 import Header from './Header'
 import sizeMe from 'react-sizeme';
 import $ from 'jquery';
+import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 const style={
 	key1: {
@@ -36,6 +37,9 @@ const sort = function(x, y) {
 	return byLead;
 }
 
+const genres = ['Annotated charts', 'Posters', 'Comic strips', 'Slide shows', 'Movies', 'Articles', 'Trackers']
+const themes = ['Trends', 'Outliers', 'Networks', 'Averages', 'Categories']
+
 class HomePage extends React.Component {
 
 	constructor(props) {
@@ -55,6 +59,7 @@ class HomePage extends React.Component {
 				tag: window.location.hash.replace('#', '')
 			})
 		}).bind(this))
+		this.getLinks()
 	}
 
 	getLinks() {
@@ -66,14 +71,14 @@ class HomePage extends React.Component {
                 })
             })
 		axios
-			.get('/api/links')
+			.get('/api/links/' + (this.props.staging ? 'all' : ''))
 			.then((response) => {
 				let links = response.data.results
 				links.sort(sort)
 
 				this.setState({
 					links: links,
-					topicTags: [...new Set(links.map((lnk) => { return lnk.tag }))]
+					topicTags: [...new Set(links.map((lnk) => { return lnk.topic }))]
 				})
 			})
 	}
@@ -92,22 +97,49 @@ class HomePage extends React.Component {
 
 	onHeaderClickCallback(response, tag) {
 		let links = response.data.results
-		links.sort(sort)
-		let newTaggedLinks = this.state.taggedLinks
-		newTaggedLinks[tag] = links
-		this.setState({
-			taggedLinks: newTaggedLinks,
-			tag: tag
-		})
+		if (links.length > 0) {
+			links.sort(sort)
+			let newTaggedLinks = this.state.taggedLinks
+			newTaggedLinks[tag] = links
+			this.setState({
+				taggedLinks: newTaggedLinks,
+				tag: tag
+			})
+		}
+	}
+
+	renderCollections(width) {
+		let widthTagged = 400;
+		if (this.state.tag === "") {
+			if (width < columnWidth * 2 + 2 * gutterWidth) { 
+				return (
+					<LinkCollection
+						key={0}
+						index={1}
+						links={this.state.links}
+						width={width < widthTagged ? width : widthTagged}
+						small={
+							width < widthTagged * 2 + 2 * gutterWidth 
+							? true 
+							: false}/>)
+			}
+		} else {
+			return (
+				<LinkCollection
+					key={2}
+					index={1}
+					title={this.state.tag}
+					links={this.state.taggedLinks[this.state.tag]}
+					width={width < widthTagged ? width : widthTagged}
+					small={
+						width < widthTagged * 2 + 2 * gutterWidth 
+						? true 
+						: false}/>)
+		}
 	}
 
 	render() {
 		const { width, height } = this.props.size;
-		let widthTagged = 400;
-		let stateTaggedLinks = 
-			this.state.links.filter((link) => {
-				return link.tag === this.state.tag
-			})
 	  	return (
 	  		<div style={{fontFamily: 'Helvetica Neue', padding: '0 12'}} id="container">
 	  		   
@@ -119,27 +151,25 @@ class HomePage extends React.Component {
 						title="CHARTROW"
 						subheader="THE DATA VISUALIZATION CATALOG"
 						onClick={()=>{this.setState({tag:''})}}
-						onFilterClick={this.onHeaderClick.bind(this)} />
+						onFilterClick={this.onHeaderClick.bind(this)}
+						genres={genres}
+						themes={themes} />
+			      <div>
 					{
-						this.state.tag === "" ? (
-							width < columnWidth * 2 + 1 * gutterWidth ? 
-								<LinkCollection
-									index={1}
-									links={this.state.links}
-									width={width < widthTagged ? width : widthTagged}
-									small={
-										width < widthTagged * 2 + 1 * gutterWidth 
-										? true 
-										: false}/>
-							: <StackGrid 
-								columnWidth={width < columnWidth ? width : columnWidth}
-								gutterWidth={gutterWidth} 
-								gutterHeight={gutterHeight}
-								monitorImagesLoaded={true}>
-								{
+						this.renderCollections(width)
+					}
+					{
+						<StackGrid 
+							key={1}
+							columnWidth={width < columnWidth ? width : columnWidth}
+							gutterWidth={gutterWidth} 
+							gutterHeight={gutterHeight}
+							monitorImagesLoaded={true}>
+							{
+								this.state.tag === "" && !(width < columnWidth * 2 + 2 * gutterWidth) ?
 									this.state.topicTags.map((tag, key)=>{
 										let taggedLinks = this.state.links.filter((link) => {
-											return link.tag === tag
+											return link.topic === tag
 										})
 										return (
 											<LinkCollection
@@ -149,28 +179,25 @@ class HomePage extends React.Component {
 												links={taggedLinks}
 												width={width < columnWidth ? width : columnWidth}
 												small={
-													width < columnWidth * 2 + 1 * gutterWidth 
+													width < columnWidth * 2 + 2 * gutterWidth 
 													? true 
 													: false}
 												onHeaderClick={() => this.onHeaderClick(tag)}/>
 										)
 									})
-								}
-								</StackGrid>)
-						: 	<LinkCollection
-								index={1}
-								title={this.state.tag}
-								links={this.state.taggedLinks[this.state.tag]}
-								width={width < widthTagged ? width : widthTagged}
-								small={
-									width < widthTagged * 2 + 1 * gutterWidth 
-									? true 
-									: false}/>
+								: null
+							}
+							</StackGrid>
 					}
+				</div>
 		      	</div>
 	      	</div>
 	    );
 	}
+}
+
+HomePage.propTypes = {
+	staging: React.PropTypes.bool
 }
 
 export default sizeMe({ monitorWidth: true })(HomePage)

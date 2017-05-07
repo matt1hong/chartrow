@@ -39,7 +39,7 @@ class LinkItem extends React.Component {
 	}
 	render() {
 		return (
-			<div style={{textAlign:'left', overflow:'hidden', marginBottom: 12}} onClick={this.props.onClick}>
+			<div style={{textAlign:'left', overflow:'hidden', marginBottom: 12}}>
 				{
 					this.state.small ? 
 					<span style={
@@ -72,7 +72,6 @@ LinkItem.propTypes = {
 	imgSrc: React.PropTypes.string,
 	small: React.PropTypes.bool,
 	lead: React.PropTypes.bool,
-	onClick: React.PropTypes.func,
 	index: React.PropTypes.number,
 	width: React.PropTypes.number
 }

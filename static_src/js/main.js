@@ -15,10 +15,17 @@ function init () {
   const theme = getMuiTheme();
   ReactDOM.render(
   	<MuiThemeProvider muiTheme={theme}>
-    	{ app.getAttribute('data-section') === 'admin' 
-        ? <Admin/>
-        : <Home/>
+      <div>
+    	{ 
+        app.getAttribute('data-section') === 'admin' ? <Admin/> : null
       }
+      { 
+        app.getAttribute('data-section') === 'staging' ? <Home staging/> : null
+      }
+      { 
+        app.getAttribute('data-section') === 'home' ? <Home/> : null
+      }
+      </div>
     </MuiThemeProvider>,
 	app
   );

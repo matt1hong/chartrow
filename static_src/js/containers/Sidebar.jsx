@@ -45,7 +45,7 @@ const styles = {
 class Sidebar extends React.Component {
 	render(){
 		return (
-            <div id='outer-container' style={{position: 'fixed', top: 0, left: 0}}>
+            <div id='outer-container' style={{position: 'absolute', top: 0, left: 0}}>
 
     			<Menu 
                     customBurgerIcon={false}
@@ -55,33 +55,27 @@ class Sidebar extends React.Component {
                     styles={styles} 
                     onStateChange={this.props.isMenuOpen}>
                     {
-                        this.props.tags
-                            .filter((tag, key)=>{
-                                return tag[0] === 'Theme'
-                            })
-                            .map((tag,key)=>{
-                                return (<a 
-                                    className="menu-item"
-                                    id={tag[1]}
-                                	key={key}
-                                	onClick={()=>this.props.onFilterClick(tag[1])}>
-                                	{tag[1]}</a>)
-                            })
+                        this.props.themes
+                                .map((tag,key)=>{
+                                    return (<a 
+                                        className="menu-item"
+                                        id={tag}
+                                    	key={key}
+                                    	onClick={()=>this.props.onFilterClick(tag)}>
+                                    	{tag}</a>)
+                                })
                     } 
                     <hr />
                     {
-                        this.props.tags
-                            .filter((tag, key)=>{
-                                return tag[0] === 'Genre'
-                            })
-                            .map((tag,key)=>{
-                                return (<a 
-                                    className="menu-item"
-                                    id={tag[1]}
-                                	key={key}
-                                	onClick={()=>this.props.onFilterClick(tag[1])}>
-                                	{tag[1]}</a>)
-                            })
+                        this.props.genres
+                                .map((tag,key)=>{
+                                    return (<a 
+                                        className="menu-item"
+                                        id={tag}
+                                    	key={key}
+                                    	onClick={()=>this.props.onFilterClick(tag)}>
+                                    	{tag}</a>)
+                                })
                     }
     			</Menu>
             </div>)
@@ -92,7 +86,9 @@ Sidebar.propTypes = {
 	tags: React.PropTypes.array,
 	onFilterClick: React.PropTypes.func,
     isOpen: React.PropTypes.bool,
-    isMenuOpen: React.PropTypes.func
+    isMenuOpen: React.PropTypes.func,
+    genres: React.PropTypes.array,
+    themes: React.PropTypes.array
 }
 
 export default Sidebar;

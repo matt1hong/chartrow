@@ -84,7 +84,9 @@ class PostIt extends React.Component {
 			tag: 'New tag',
 			workingTags: [],
 			timestamp: 0,
-			stepIndex: 0
+			stepIndex: 0,
+			alert: 'Promote',
+			disablePromoteButton: false
 		}
 	}
 	setCropSize(crop, pixelCrop) {
@@ -114,6 +116,9 @@ class PostIt extends React.Component {
 	}
 
 	promoteLink(){
+		this.setState({
+			disablePromoteButton: true
+		})
 		axios
 			.post('/api/links/promote', {
 				url: this.props.linkUrl,
@@ -131,7 +136,7 @@ class PostIt extends React.Component {
 			})
 			.catch((e) => {
 				this.setState({
-					alert: e
+					disablePromoteButton: false
 				})
 			})
 	}
@@ -304,9 +309,10 @@ class PostIt extends React.Component {
 						            onTouchTap={this.handlePrev.bind(this)}
 						          />
 					              <RaisedButton
-									label="Promote"
+									label={this.state.alert}
 									onClick={this.promoteLink.bind(this)}
-									secondary={true}></RaisedButton>
+									secondary={true}
+									disabled={this.state.disablePromoteButton}></RaisedButton>
 								</div>
     							
 					            </StepContent>

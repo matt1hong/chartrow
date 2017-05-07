@@ -23,16 +23,36 @@ def is_number(s):
     except ValueError:
         return False
 
-@application.route('/api/links')
-def get_links():
+@application.route('/api/links/')
+def links():
+	links = Link.query.filter_by(published=True).limit(20).all()
+	return jsonify(success=True, results=[link.serialize for link in links])
+
+@application.route('/api/links/all')
+def all_links():
 	links = Link.query.limit(20).all()
 	return jsonify(success=True, results=[link.serialize for link in links])
 
 @application.route('/api/links/tagged')
 def tagged_links():
 	tag = Tag.query.filter_by(name=request.args.get('tag')).first()
-	links = Link.query.filter_by(tag=tag).limit(20).all()
-	return jsonify(success=False, results=[link.serialize for link in links])
+	if tag:
+		links = tag.links[:20]
+		return jsonify(success=True, results=[link.serialize for link in links])
+	else:
+		return jsonify(success=True, results=[])
+	return jsonify(error=True), 403
+
+
+@application.route('/api/links/publish_all')
+def publish_links():
+	links = Link.query.filter_by(published=False).all()
+	if links.count() > 0:
+		for link in links:
+			link.published = True
+		db.session.commit()
+		return jsonify(success=True)
+	return jsonify(error=True)
 
 @application.route('/api/links/tags')
 def tags():
@@ -40,6 +60,9 @@ def tags():
 		topic = TagGroup('Topic')
 		genre = TagGroup('Genre')
 		theme = TagGroup('Theme')
+		db.session.add(topic)
+		db.session.add(genre)
+		db.session.add(theme)
 		for x in ['Annotated charts', 'Posters', 'Comic strips', 'Slide shows', 'Movies', 'Articles', 'Trackers']:
 			tag = Tag(x)
 			db.session.add(tag)
@@ -69,20 +92,23 @@ def promote():
 	lead = incoming['lead']
 	url = incoming['url']
 	title = incoming['title']
-	tag_query = incoming['tag']
+	tags = incoming['tags']
+
 	real_date = datetime.fromtimestamp(incoming['realTimestamp']/1000.0).isoformat()
 	if db.session.query(Link).filter_by(url=url).count() < 1:
-		tag = Tag.query.filter_by(name=tag_query).first()
-		tag_group = TagGroup.query.filter_by(name='Topic')
-		if not tag:
-			tag = Tag(tag_query)
-			db.session.add(tag)
-		tag_group.tags.append(tag)
-
 		link = Link(url, title, lead, real_date)
-		tag.links.append(link)
-
 		db.session.add(link)
+		
+		for t in tags:
+			tag_query = t[1]
+			tag = Tag.query.filter_by(name=tag_query).first()
+			if not tag and t[0] == 'Topic':
+				tag = Tag(tag_query)
+				db.session.add(tag)
+				tag_group = TagGroup.query.filter_by(name='Topic').first()
+				tag_group.tags.append(tag)
+			tag.links.append(link)
+
 		db.session.commit()
 
 		crop_size = incoming['cropPixels']

@@ -22,11 +22,18 @@ tagged = db.Table('tagged',
 class Tag(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
 	name = db.Column(db.String, unique=True, nullable=False)
-	links = db.relationship('Link', secondary=tagged, backref='tag', lazy='dynamic')
+	links = db.relationship('Link', secondary=tagged, backref='tags', lazy='dynamic')
 	group_id = db.Column(db.Integer, db.ForeignKey('tag_group.id'))
 
 	def __init__(self, name):
 		self.name = name.capitalize()
+
+	@property
+	def serialize(self):
+		return {
+			'name': self.name,
+			'group': self.tag_group.name
+		}
 
 	def __repr(self):
 		return '<Tag %r>' % self.name
@@ -39,8 +46,7 @@ class Link(db.Model):
 	lead = db.Column(db.Boolean)
 	date = db.Column(db.DateTime)
 	real_date = db.Column(db.DateTime, nullable=False)
-
-	tag_id = db.Column(db.Integer, db.ForeignKey('tag.id'))
+	published = db.Column(db.Boolean)
 
 	def __init__(self, url, title, lead, real_date=datetime.utcnow().isoformat()):
 		self.url = url
@@ -48,15 +54,20 @@ class Link(db.Model):
 		self.lead = lead
 		self.date = datetime.utcnow().isoformat()
 		self.real_date = real_date
+		self.published = False
 
 	@property
 	def serialize(self):
+		for t in self.tags:
+			if t.tag_group.name == 'Topic':
+				topic = t.name
 		return {
 			'id': self.id,
 			'url': self.url,
 			'title': self.title,
 			'lead': self.lead,
-			'tag': self.tag.name,
+			'tags': [tag.serialize for tag in self.tags],
+			'topic': topic,
 			'date': self.date,
 			'real_date': self.real_date
 		}
