@@ -13,16 +13,16 @@ from api.controllers.tweets import *
 
 @application.route('/')
 def index():
-	return render_template('index.html', page='home')
+	return render_template('index.html', page='home', debug=application.config['DEBUG'])
 
 @application.route('/staging')
 def staging():
-	return render_template('index.html', page='staging')
+	return render_template('index.html', page='staging', debug=application.config['DEBUG'])
 
 @application.route('/admin')
 def admin():
 	if not current_user.is_anonymous and session.get('twitter_token'):
-		return render_template('index.html', page='admin')
+		return render_template('index.html', page='admin', debug=application.config['DEBUG'])
 	return redirect(url_for('oauth'))
 	
 @application.route('/oauth')

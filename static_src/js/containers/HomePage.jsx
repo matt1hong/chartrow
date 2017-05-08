@@ -63,13 +63,6 @@ class HomePage extends React.Component {
 	}
 
 	getLinks() {
-	    axios
-            .get('/api/links/tags')
-            .then((response)=>{
-                this.setState({
-                    tags: response.data.results
-                })
-            })
 		axios
 			.get('/api/links/' + (this.props.staging ? 'all' : ''))
 			.then((response) => {
@@ -82,12 +75,6 @@ class HomePage extends React.Component {
 				})
 			})
 	}
-
-	// componentWillUpdate(newProps, newState) {
-	// 	if (newState.tag === '' && this.state.tag !== '') {
-	// 		this.getLinks()
-	// 	} 
-	// }
 
 	onHeaderClick(tag) {
 		axios

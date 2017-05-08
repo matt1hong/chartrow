@@ -35,44 +35,49 @@ def all_links():
 
 @application.route('/api/links/tagged')
 def tagged_links():
-	tag = Tag.query.filter_by(name=request.args.get('tag')).first()
-	if tag:
-		links = tag.links[:20]
+	tlinks = Link.query.filter(Link.tags.any(name=request.args.get('tag')))
+	links = tlinks.filter_by(published=True).limit(20).all()
+	if len(links) > 0:
 		return jsonify(success=True, results=[link.serialize for link in links])
 	else:
 		return jsonify(success=True, results=[])
 	return jsonify(error=True), 403
 
 
-@application.route('/api/links/publish_all')
+@application.route('/api/links/publish_all', methods=['POST'])
 def publish_links():
 	links = Link.query.filter_by(published=False).all()
-	if links.count() > 0:
+	if len(links) > 0:
 		for link in links:
 			link.published = True
 		db.session.commit()
 		return jsonify(success=True)
-	return jsonify(error=True)
+	return jsonify(error=True), 403
 
 @application.route('/api/links/tags')
 def tags():
-	if db.session.query(TagGroup).count() == 0:
-		topic = TagGroup('Topic')
-		genre = TagGroup('Genre')
-		theme = TagGroup('Theme')
-		db.session.add(topic)
-		db.session.add(genre)
-		db.session.add(theme)
-		for x in ['Annotated charts', 'Posters', 'Comic strips', 'Slide shows', 'Movies', 'Articles', 'Trackers']:
-			tag = Tag(x)
-			db.session.add(tag)
-			genre.tags.append(tag)
-		for x in ['Trends', 'Outliers', 'Networks', 'Averages', 'Groups']:
-			tag = Tag(x)
-			db.session.add(tag)
-			theme.tags.append(tag)
-		db.session.commit()
 	tags = Tag.query.all()
+	if len(tags) > 0:
+		return jsonify(success=True, results=[[tag.tag_group.name, tag.name] for tag in tags])
+	return jsonify(error=True), 403
+
+@application.route('/api/links/create_tags', methods=['POST'])
+def create_tags():
+	topic = TagGroup('Topic')
+	genre = TagGroup('Genre')
+	theme = TagGroup('Theme')
+	db.session.add(topic)
+	db.session.add(genre)
+	db.session.add(theme)
+	for x in ['Annotated charts', 'Posters', 'Comic strips', 'Slide shows', 'Movies', 'Articles', 'Trackers']:
+		tag = Tag(x)
+		db.session.add(tag)
+		genre.tags.append(tag)
+	for x in ['Trends', 'Outliers', 'Networks', 'Averages', 'Groups']:
+		tag = Tag(x)
+		db.session.add(tag)
+		theme.tags.append(tag)
+	db.session.commit()
 	return jsonify(success=True, results=[[tag.tag_group.name, tag.name] for tag in tags])
 
 @application.route('/api/links/delete', methods=['POST'])

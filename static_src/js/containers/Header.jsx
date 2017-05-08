@@ -70,6 +70,13 @@ class Header extends React.Component {
                     </div>)
     }
 
+    onFilterClick(tag) {
+        this.props.onFilterClick(tag);
+        this.setState({
+            isOpen: false
+        })
+    }
+
     renderHeaderMenu(width) {
         const style={fontFamily: 'VT323', float: 'left', margin: "6 0 0"}
         if (!(width < this.props.columnWidth * 3 + 2 * this.props.gutterWidth || this.props.tagged)) {
@@ -77,9 +84,9 @@ class Header extends React.Component {
                     {
                         this.props.themes.map((tag,key)=>{
                                 if (key === 0) {
-                                    return <span style={{cursor: 'pointer'}} key={key} onClick={()=>this.props.onFilterClick(tag)}>{tag}</span>
+                                    return <span style={{cursor: 'pointer'}} key={key} onClick={()=>this.onFilterClick(tag)}>{tag}</span>
                                 } else {
-                                    return <span style={{cursor: 'pointer'}} key={key}> • <span onClick={()=>this.props.onFilterClick(tag)}>{tag}</span></span>
+                                    return <span style={{cursor: 'pointer'}} key={key}> • <span onClick={()=>this.onFilterClick(tag)}>{tag}</span></span>
                                 }
                             })
                     } 
@@ -87,9 +94,9 @@ class Header extends React.Component {
                     {
                         this.props.genres.map((tag,key)=>{
                                 if (key === 0) {
-                                    return <span style={{cursor: 'pointer'}} key={key} onClick={()=>this.props.onFilterClick(tag)}>{tag}</span>
+                                    return <span style={{cursor: 'pointer'}} key={key} onClick={()=>this.onFilterClick(tag)}>{tag}</span>
                                 } else {
-                                    return <span style={{cursor: 'pointer'}} key={key}> • <span onClick={()=>this.props.onFilterClick(tag)}>{tag}</span></span>
+                                    return <span style={{cursor: 'pointer'}} key={key}> • <span onClick={()=>this.onFilterClick(tag)}>{tag}</span></span>
                                 }
                             })
                     } 
@@ -134,7 +141,7 @@ class Header extends React.Component {
                         </CSSTransitionGroup>
                         <Sidebar 
                             tags={this.state.tags}
-                            onFilterClick={this.props.onFilterClick}
+                            onFilterClick={this.onFilterClick.bind(this)}
                             isOpen={this.state.isOpen}
                             isMenuOpen={this.isMenuOpen.bind(this)}
                             themes={this.props.themes}

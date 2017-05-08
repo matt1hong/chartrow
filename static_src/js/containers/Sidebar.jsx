@@ -129,14 +129,15 @@ class Sidebar extends React.Component {
                     <span style={{fontWeight: 'bold'}}>Themes</span>
                     {
                         this.props.themes
-                                .map((tag,key)=>{
-                                    return (<a 
-                                        className="menu-item"
-                                        id={tag}
-                                    	key={key}
-                                    	onClick={()=>this.props.onFilterClick(tag)}>
-                                    	{tag}</a>)
-                                })
+                            .map((tag,key)=>{
+                                return (<a 
+                                    className="menu-item"
+                                    id={tag}
+                                	key={key}
+                                    style={{cursor: 'pointer'}}
+                                	onClick={()=>this.props.onFilterClick(tag)}>
+                                	{tag}</a>)
+                            })
                     } 
                     <br/>
                     <span style={{fontWeight: 'bold'}}>Genres</span>
@@ -147,6 +148,7 @@ class Sidebar extends React.Component {
                                     className="menu-item"
                                     id={tag}
                                 	key={key}
+                                    style={{cursor: 'pointer'}}
                                 	onClick={()=>this.props.onFilterClick(tag)}>
                                 	{tag}</a>)
                             })
@@ -168,7 +170,7 @@ class Sidebar extends React.Component {
                     <br/>
                     <br/>
                     <span>
-                        We do not link to content behind paywalls. For NYT content, visit <a href="collection.marijerooze.nl">collection.marijerooze.nl</a>.
+                        In the spirit of open data we do not link to content behind paywalls. For NYT content, visit <a href="collection.marijerooze.nl">collection.marijerooze.nl</a>.
                     </span>
                     </div>
     			</Menu>

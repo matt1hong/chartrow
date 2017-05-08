@@ -227,6 +227,19 @@ export default class Admin extends React.Component {
 			})
 	}
 
+	publishAll(){
+		axios
+			.post('/api/links/publish_all')
+			.then((response)=>{
+				if (response.data.success) {
+					window.location.href= "/"
+				}
+			})
+			.catch((response)=>{
+				console.log(response.data)
+			})
+	}
+
 	render() {
 		return (
 			<div style={{textAlign:'center', fontFamily: 'Helvetica Neue'}}>
@@ -266,16 +279,26 @@ export default class Admin extends React.Component {
 					<tbody>
 						<tr>
 							<td style={{padding: 6}}>
-								<FlatButton
-							    	label="Home"
-							    	primary={true}
-							    	onTouchTap={()=> {window.location.href= "/"}}
-						   		/>
+								
+						   		
 								<RaisedButton
 							    	label="Logout"
 							    	secondary={true}
 							    	onTouchTap={this.logout}
 						   		/>
+						   		&nbsp;&nbsp;
+						   		<RaisedButton
+							    	label="Publish"
+							    	primary={true}
+							    	onTouchTap={this.publishAll}
+						   		/>
+						   		&nbsp;&nbsp;
+						   		<FlatButton
+							    	label="Stage"
+							    	primary={true}
+							    	onTouchTap={()=> {window.open("/staging")}}
+						   		/>
+						   		
 						   	</td>
 					   	</tr>
 						<tr>

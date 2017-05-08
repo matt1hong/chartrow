@@ -12,6 +12,15 @@ injectTapEventPlugin();
 
 function init () {
   let app = document.querySelector('section');
+  let debug = app.getAttribute('data-debug') === 'True' ? true : false;
+  if (!debug) {
+    if(!window.console) window.console = {};
+    var methods = ["log", "debug", "warn", "info"];
+    for(var i=0;i<methods.length;i++){
+        console[methods[i]] = function(){};
+    }
+  }
+
   const theme = getMuiTheme();
   ReactDOM.render(
   	<MuiThemeProvider muiTheme={theme}>
