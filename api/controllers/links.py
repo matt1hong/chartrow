@@ -24,7 +24,7 @@ def is_number(s):
         return False
 
 @application.route('/api/links/')
-def links():
+def get_links():
 	links = Link.query.filter_by(published=True).limit(20).all()
 	return jsonify(success=True, results=[link.serialize for link in links])
 
@@ -61,24 +61,33 @@ def tags():
 		return jsonify(success=True, results=[[tag.tag_group.name, tag.name] for tag in tags])
 	return jsonify(error=True), 403
 
-@application.route('/api/links/create_tags', methods=['POST'])
 def create_tags():
-	topic = TagGroup('Topic')
-	genre = TagGroup('Genre')
-	theme = TagGroup('Theme')
-	db.session.add(topic)
-	db.session.add(genre)
-	db.session.add(theme)
+	topic = TagGroup.query.filter_by(name='Topic').first()
+	if not topic:
+		topic = TagGroup('Topic')
+		db.session.add(topic)
+	genre = TagGroup.query.filter_by(name='Genre').first()
+	if not genre:
+		genre = TagGroup('Genre')
+		db.session.add(genre)
+	theme = TagGroup.query.filter_by(name='Theme').first()
+	if not theme:
+		theme = TagGroup('Theme')
+		db.session.add(theme)
 	for x in ['Annotated charts', 'Posters', 'Comic strips', 'Slide shows', 'Movies', 'Articles', 'Trackers']:
-		tag = Tag(x)
-		db.session.add(tag)
-		genre.tags.append(tag)
+		tag = Tag.query.filter_by(name=x)
+		if not tag:
+			tag = Tag(x)
+			db.session.add(tag)
+			genre.tags.append(tag)
 	for x in ['Trends', 'Outliers', 'Networks', 'Averages', 'Groups']:
-		tag = Tag(x)
-		db.session.add(tag)
-		theme.tags.append(tag)
+		tag = Tag.query.filter_by(name=x)
+		if not tag:
+			tag = Tag(x)
+			db.session.add(tag)
+			theme.tags.append(tag)
 	db.session.commit()
-	return jsonify(success=True, results=[[tag.tag_group.name, tag.name] for tag in tags])
+	return
 
 @application.route('/api/links/delete', methods=['POST'])
 def delete():
