@@ -78,7 +78,7 @@ export default class Admin extends React.Component {
 		}
 	}
 	startFeed() {
-		this.socket = io.connect({transports: ['websocket']});
+		this.socket = io.connect();
         this.socket.on('tweet', this.updateTweets)
         this.socket.on('connect', ()=>{this.setState({connected: true, error: false})});
         this.socket.on('disconnect', ()=>{this.setState({connected: false})});
