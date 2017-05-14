@@ -24,7 +24,7 @@ elif os.environ['FLASK_DEBUG']=='0':
 	application.config.from_object(ProdConfig)
 
 twitter = OAuthHandler(application.config['TWITTER_KEY'], application.config['TWITTER_SECRET'])
-socketio = SocketIO(application)
+socketio = SocketIO(application, engineio_logger=True)
 db = SQLAlchemy(application)
 login_manager = LoginManager(application)
 
@@ -38,4 +38,4 @@ from api.controllers.main import *
 
 
 if __name__ == '__main__':
-	socketio.run(application, host='0.0.0.0', debug=application.config['DEBUG'], engineio_logger=True)
+	socketio.run(application, host='0.0.0.0', debug=application.config['DEBUG'])
