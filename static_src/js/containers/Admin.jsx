@@ -88,7 +88,9 @@ export default class Admin extends React.Component {
 		this.socket ? this.socket.disconnect() : null;
 	}
 	updateTweets(data) {
+		console.log('update tweet')
 		if (Object.keys(data).length) {
+			console.log('yes')
 			this.setState({
 				tweets: this.state.tweets.reverse().concat([data]).reverse()
 			})
