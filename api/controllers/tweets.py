@@ -19,8 +19,9 @@ def transform_data(data):
 			txt = txt.replace(l, '')
 
 		to_emit = {
+			'id': data.id_str,
 			'url': urls[0]['expanded_url'],
-			'text': txt,
+			'title': txt,
 			'timestamp_ms': data.created_at.timestamp(),
 			'user_name': data.user.name,
 			'screen_name': data.user.screen_name,
@@ -81,14 +82,36 @@ def disconnect():
 	print('Client disconnected')
 	return
 
+@application.route('/api/tweets/unlike', methods=['POST'])
+def unlike():
+	incoming = request.get_json()
+	i = incoming['id']
+	try:
+		twitter_api.destroy_favorite(int(i))
+		return jsonify(success=True)
+	except:
+		return jsonify(error=True)
+
+@application.route('/api/tweets/tweet', methods=['POST'])
+def tweet():
+	incoming = request.get_json()
+	tweet = incoming['tweet']
+	try:
+		tweet_text = '%s %s' % (tweet['title'].strip(), tweet['url'].strip())
+		print(tweet_text)
+		twitter_api.update_status(tweet_text)
+		return jsonify(success=True)
+	except:
+		return jsonify(error=True)
+
 @application.route('/api/tweets')
 def tweets():
 	x = request.args.get('type').lower()
 	try:
 		if x=='likes':
-			tweets = twitter_api.favorites(count=request.args.get('count'))
+			tweets = twitter_api.favorites(page=request.args.get('page'))
 		elif x=='recents':
-			tweets = twitter_api.home_timeline(count=request.args.get('count'))
+			tweets = twitter_api.home_timeline(page=request.args.get('page'))
 		else:
 			return jsonify(error=True), 400
 	except:

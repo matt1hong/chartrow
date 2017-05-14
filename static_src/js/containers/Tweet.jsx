@@ -26,39 +26,51 @@ export default class Tweet extends React.Component {
     const lastSeen = this.props.lastSeen;
     const isNew = new Date(this.props.tweet.timestamp_ms * 1000) > new Date(lastSeen.substring(0, lastSeen.indexOf('.'))+'-04:00');
     return (
-            <Card style={{marginTop:6}} href={this.props.tweet.url}>
-              <a href={this.props.tweet.tweet || null} target="_blank" style={{textDecoration: 'none'}}>
-                <CardTitle title={
-                  <div>
-                    <SvgIcon style={{color: this.props.color, float: 'left', marginRight: 6}}/>
-                    <div><span style={{fontWeight: isNew ? 'bold' : 'normal', color: this.props.color}}>{this.props.tweet.user_name} </span> 
-                    {this.props.tweet.text || this.props.tweet.title} 
-                  </div></div>} titleStyle={{fontSize:14,lineHeight:1}} style={{padding:"16 16 8"}}>  
-                </CardTitle>
-              </a>
-              <CardActions>
-                <FlatButton 
-                  label="Images" 
-                  onTouchTap={() => {this.clickImage(); this.props.onSurf(this.props.tweet);}} 
-                  primary={!this.state.imageClicked} 
-                  secondary={this.state.imageClicked}/>
-                <FlatButton 
-                  label="Link" 
-                  onTouchTap={this.clickLink.bind(this)}
-                  href={this.props.tweet.url} 
-                  target="_blank" 
-                  primary={!this.state.linkClicked} 
-                  secondary={this.state.linkClicked}/>
-                {this.props.chosen === this.props.tweet.url && this.props.delete && !this.props.confirmDelete ?
-                    <FlatButton label="Delete" onTouchTap={() => this.props.toDelete(this.props.tweet)} />
-                    : null
-                }
-                {this.props.chosen === this.props.tweet.url && this.props.confirmDelete && this.props.delete ?
-                    <FlatButton label="Confirm" onTouchTap={() => this.props.delete(this.props.tweet)} />
-                    : null
-                }
-              </CardActions>
-            </Card>
+      <Card style={{marginTop:6}} href={this.props.tweet.url}>
+        <a href={this.props.tweet.tweet || null} target="_blank" style={{textDecoration: 'none'}}>
+          <CardTitle title={
+            <div>
+              <SvgIcon style={{color: this.props.color, float: 'left', marginRight: 6}}/>
+              <div><span style={{fontWeight: isNew ? 'bold' : 'normal', color: this.props.color}}>{this.props.tweet.user_name} </span> 
+              {this.props.tweet.title} 
+            </div></div>} titleStyle={{fontSize:14,lineHeight:1}} style={{padding:"16 16 8"}}>  
+          </CardTitle>
+        </a>
+        <CardActions>
+          <FlatButton 
+            label="Images" 
+            onTouchTap={() => {this.clickImage(); this.props.onSurf(this.props.tweet);}} 
+            primary={true}
+            // primary={!this.state.imageClicked} 
+            // secondary={this.state.imageClicked}/>
+            />
+          <FlatButton 
+            label="Link" 
+            onTouchTap={this.clickLink.bind(this)}
+            href={this.props.tweet.url} 
+            target="_blank" 
+            primary={true}
+            // primary={!this.state.linkClicked} 
+            // secondary={this.state.linkClicked}/>
+            />
+          {this.props.chosen === this.props.tweet.url && this.props.delete && !this.props.confirmDelete ?
+              <FlatButton label="Delete" onTouchTap={() => this.props.toDelete(this.props.tweet)} />
+              : null
+          }
+          {this.props.chosen === this.props.tweet.url && this.props.confirmDelete && this.props.delete ?
+              <FlatButton label="Confirm" onTouchTap={() => this.props.delete(this.props.tweet)} />
+              : null
+          }
+          {this.props.unlike ?
+              <FlatButton label="Unlike" onTouchTap={() => this.props.unlike(this.props.tweet)} />
+              : null
+          }
+          {this.props.tweetOut ?
+              <FlatButton label="Tweet" onTouchTap={() => this.props.tweetOut(this.props.tweet)} />
+              : null
+          }
+        </CardActions>
+      </Card>
       )}
      
 }
@@ -72,5 +84,7 @@ Tweet.propTypes = {
   confirmDelete: React.PropTypes.bool,
   color: React.PropTypes.string,
   icon: React.PropTypes.func,
-  lastSeen: React.PropTypes.string
+  lastSeen: React.PropTypes.string,
+  unlike: React.PropTypes.func,
+  tweetOut: React.PropTypes.func
 }

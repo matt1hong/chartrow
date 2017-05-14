@@ -25,18 +25,18 @@ def is_number(s):
 
 @application.route('/api/links/')
 def get_links():
-	links = Link.query.filter_by(published=True).limit(20).all()
+	links = Link.query.filter_by(published=True).limit(50).all()
 	return jsonify(success=True, results=[link.serialize for link in links])
 
 @application.route('/api/links/all')
 def all_links():
-	links = Link.query.limit(20).all()
+	links = Link.query.limit(50).all()
 	return jsonify(success=True, results=[link.serialize for link in links])
 
 @application.route('/api/links/tagged')
 def tagged_links():
 	tlinks = Link.query.filter(Link.tags.any(name=request.args.get('tag')))
-	links = tlinks.filter_by(published=True).limit(20).all()
+	links = tlinks.filter_by(published=True).all()
 	if len(links) > 0:
 		return jsonify(success=True, results=[link.serialize for link in links])
 	else:

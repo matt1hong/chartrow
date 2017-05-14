@@ -38,4 +38,4 @@ from api.controllers.main import *
 
 
 if __name__ == '__main__':
-	socketio.run(application, host='0.0.0.0', debug=application.config['DEBUG'])
+	socketio.run(application, host='0.0.0.0', debug=application.config['DEBUG'], engineio_logger=True)

@@ -4,6 +4,7 @@ const style= {
 	largeTitle: {
 		fontSize: 36,
 		fontFamily: 'Garamond',
+		display: 'inline-block'
 		// fontWeight: 'bold'
 	},
 	mediumTitle: {

@@ -36,7 +36,7 @@ export default class Admin extends React.Component {
 			imageLinks: [],
 			imageLink: '',
 			headline: '',
-			count: 30,
+			page: 0,
 			linkUrl: '',
 			openPostIt: false,
 			openAddPhoto: false,
@@ -47,7 +47,8 @@ export default class Admin extends React.Component {
 			loaded: false,
 			activeTab: 0,
 			lastSeen: '',
-			error: false
+			error: false,
+			tweetType: 'recents'
 		}
 		this.socket = null;
 		this.updateTweets = this.updateTweets.bind(this)
@@ -77,7 +78,7 @@ export default class Admin extends React.Component {
 		}
 	}
 	startFeed() {
-		this.socket = io.connect('http://' + document.domain + ':' + location.port);
+		this.socket = io.connect('http://' + location.hostname+(location.port ? ':'+location.port: ''));
         this.socket.on('tweet', this.updateTweets)
         this.socket.on('connect', ()=>{this.setState({connected: true, error: false})});
         this.socket.on('disconnect', ()=>{this.setState({connected: false})});
@@ -89,7 +90,7 @@ export default class Admin extends React.Component {
 	updateTweets(data) {
 		if (Object.keys(data).length) {
 			this.setState({
-				tweets: this.state.tweets.concat([data]).reverse()
+				tweets: this.state.tweets.reverse().concat([data]).reverse()
 			})
 		}
 		
@@ -103,22 +104,36 @@ export default class Admin extends React.Component {
 				})
 			})
 	}
-	getExistingTweets(type){
+	getExistingTweets(type, callback){
+		if (!type) {
+			type = this.state.tweetType
+		}
+		let concat = type === this.state.tweetType ? true : false
+		this.setState({
+			tweetType: type
+		})
 		if (type.toLowerCase() === 'likes') {
 			this.endFeed();
 		} else if (type.toLowerCase() === 'recents') {
 			this.startFeed();
 		}
 		axios
-			.get(`/api/tweets?type=${type}&count=${this.state.count}`)
+			.get(`/api/tweets?type=${type}&page=${this.state.page}`)
 			.then((response) => {
 
 				const results = response.data.results.filter((el) => {
 					return Object.keys(el).length
 				})
-				this.setState({
-					tweets: results
-				})
+				if (concat) {
+					this.setState({
+						tweets: this.state.tweets.concat(results)
+					})
+				} else {
+					this.setState({
+						tweets: results
+					})
+				}
+				if (callback) callback()
 			})
 			.catch((response)=> {
 				console.log(response)
@@ -137,7 +152,7 @@ export default class Admin extends React.Component {
 				imageLinks: [],
 				linkUrl: link.url,
 				timestamp: link.timestamp_ms,
-				headline: link.text
+				headline: link.title
 			}, () => {this.getImages(link.url)})
 		}
 	}
@@ -201,7 +216,7 @@ export default class Admin extends React.Component {
 
 	createTweet(response, value) {
 		this.setState({
-			tweets: this.state.tweets.concat([{
+			tweets: this.state.tweets.reverse().concat([{
 				title:response.data.result.title, 
 				url:value,
 				user_name: response.data.result.name}]).reverse()
@@ -211,7 +226,7 @@ export default class Admin extends React.Component {
 	addTag(tag){
 		if (!(tag in this.state.tags)) {
 			this.setState({
-				tags: this.state.tags.concat([tag]).reverse()
+				tags: this.state.tags.reverse().concat([tag]).reverse()
 			})
 		}
 		
@@ -237,6 +252,31 @@ export default class Admin extends React.Component {
 			})
 			.catch((response)=>{
 				console.log(response.data)
+			})
+	}
+
+	incrementPage(callback){
+		this.setState({
+			page: this.state.page + 1
+		}, callback)
+	}
+
+	unlike(x){
+		let tweets = this.state.tweets
+		tweets.splice(tweets.indexOf(x),1)
+		axios
+			.post('/api/tweets/unlike', {id: x.id})
+			.then((response)=>{
+				this.setState({
+					tweets: tweets
+				})
+			})
+	}
+
+	tweet(x) {
+		axios
+			.post('/api/tweets/tweet', {tweet: x})
+			.then((response)=>{
 			})
 	}
 
@@ -313,7 +353,12 @@ export default class Admin extends React.Component {
 								    		<TweetFeed 
 												tweets={this.state.tweets}
 												onSurf={this.setTweet.bind(this)}
-												lastSeen={this.state.lastSeen}></TweetFeed>
+												lastSeen={this.state.lastSeen}
+												loadTweets={this.getExistingTweets.bind(this)}
+												incrementPage={this.incrementPage.bind(this)}
+												tweetType={this.state.tweetType}
+												unlike={this.unlike.bind(this)}
+												tweet={this.tweet.bind(this)}></TweetFeed>
 								    	</div>
 								    </Tab>
 								    <Tab 
@@ -343,7 +388,8 @@ export default class Admin extends React.Component {
 													<TweetFeed 
 														tweets={this.state.tweets}
 														onSurf={this.setTweet.bind(this)}
-														lastSeen={this.state.lastSeen}></TweetFeed>
+														lastSeen={this.state.lastSeen}
+														tweetType="urls"></TweetFeed>
 													
 											    </div>
 										}
@@ -358,7 +404,9 @@ export default class Admin extends React.Component {
 											delete={this.deleteLink.bind(this)}
 											confirmDelete={this.state.confirmDelete}
 											chosen={this.state.linkUrl}
-											lastSeen={this.state.lastSeen}></TweetFeed>
+											lastSeen={this.state.lastSeen}
+											tweetType="published"
+											tweet={this.tweet.bind(this)}></TweetFeed>
 								    </Tab>
 								  </Tabs>
 								

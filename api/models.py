@@ -50,7 +50,7 @@ class Link(db.Model):
 
 	def __init__(self, url, title, lead, real_date=datetime.utcnow().isoformat()):
 		self.url = url
-		self.title = title.capitalize()
+		self.title = title
 		self.lead = lead
 		self.date = datetime.utcnow().isoformat()
 		self.real_date = real_date

@@ -9,6 +9,7 @@ import Casino from 'material-ui/svg-icons/places/casino';
 import Pool from 'material-ui/svg-icons/places/pool';
 import FitnessCenter from 'material-ui/svg-icons/places/fitness-center';
 import Spa from 'material-ui/svg-icons/places/spa'
+import Infinite from 'react-infinite';
 
 const icons = [HotTub, BusinessCenter, BeachAccess, GolfCourse, Casino, Pool, FitnessCenter, Spa]
 const colorKeys = Object.keys(colors).filter((v) => v.indexOf('400') > -1);
@@ -29,7 +30,8 @@ export default class TweetFeed extends React.Component {
   constructor() {
   	super()
     this.state={
-      confirmDelete: false
+      confirmDelete: false,
+      isInfiniteLoading: false
     }
   }
 
@@ -55,11 +57,30 @@ export default class TweetFeed extends React.Component {
     })
   }
 
+  onInfiniteLoad(){
+    console.log('load')
+    if (this.props.incrementPage) {
+      this.props.incrementPage()
+      this.props.loadTweets(null, this.stopSpinner.bind(this))
+    }
+  }
+
+  stopSpinner(){
+    this.setState({
+      isInfiniteLoading: false
+    })
+  }
+
   render() {
     return (
-        <div>
+        <Infinite 
+          containerHeight={600} 
+          elementHeight={100}
+          // onInfiniteLoad={this.onInfiniteLoad.bind(this)}
+          infiniteLoadBeginEdgeOffset={10}
+          isInfiniteLoading={this.state.isInfiniteLoading}>
             {this.props.tweets.map((x,k)=> {
-              let text = x.text || x.title;
+              let text = x.title;
               return (
                 <Tweet
                   key={k} 
@@ -71,11 +92,14 @@ export default class TweetFeed extends React.Component {
                   delete={this.props.delete}
                   toDelete={this.toDelete.bind(this)}
                   chosen={this.props.chosen}
-                  confirmDelete={this.state.confirmDelete}></Tweet>
+                  confirmDelete={this.state.confirmDelete}
+                  unlike={this.props.tweetType.toLowerCase() === 'likes' ? this.props.unlike : null}
+                  tweetOut={this.props.tweet}
+                  ></Tweet>
                   )
               })
             }
-        </div>
+        </Infinite>
      
       )
 	}
@@ -86,5 +110,10 @@ TweetFeed.propTypes = {
 	onSurf: React.PropTypes.func,
 	delete: React.PropTypes.func,
   chosen: React.PropTypes.string,
-  lastSeen: React.PropTypes.string
+  lastSeen: React.PropTypes.string,
+  loadTweets: React.PropTypes.func,
+  incrementPage: React.PropTypes.func,
+  tweetType: React.PropTypes.string,
+  unlike: React.PropTypes.func,
+  tweet: React.PropTypes.func
 }
