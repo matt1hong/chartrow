@@ -78,7 +78,7 @@ export default class Admin extends React.Component {
 		}
 	}
 	startFeed() {
-		this.socket = io.connect();
+		this.socket = io.connect('http://' + location.hostname+(location.port ? ':'+location.port: ''));
         this.socket.on('tweet', this.updateTweets)
         this.socket.on('connect', ()=>{this.setState({connected: true, error: false})});
         this.socket.on('disconnect', ()=>{this.setState({connected: false})});
@@ -88,9 +88,7 @@ export default class Admin extends React.Component {
 		this.socket ? this.socket.disconnect() : null;
 	}
 	updateTweets(data) {
-		console.log('update tweet')
 		if (Object.keys(data).length) {
-			console.log('yes')
 			this.setState({
 				tweets: this.state.tweets.reverse().concat([data]).reverse()
 			})
