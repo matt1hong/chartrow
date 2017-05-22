@@ -5,7 +5,7 @@ import urllib.parse
 from datetime import datetime
 
 from flask import render_template, request, jsonify
-from application import application, login_manager, s3_bucket
+from application import application, s3_bucket
 
 import requests
 from bs4 import BeautifulSoup

@@ -3,12 +3,8 @@ from application import application
 from api.models import *
 
 from flask import render_template, redirect, session, url_for
-from flask_login import current_user
-from tweepy import OAuthHandler
 
-from api.controllers.auth import *
 from api.controllers.links import *
-from api.controllers.tweets import *
 
 
 @application.route('/')

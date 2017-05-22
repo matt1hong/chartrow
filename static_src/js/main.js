@@ -25,9 +25,6 @@ function init () {
   ReactDOM.render(
   	<MuiThemeProvider muiTheme={theme}>
       <div>
-    	{ 
-        app.getAttribute('data-section') === 'admin' ? <Admin/> : null
-      }
       { 
         app.getAttribute('data-section') === 'staging' ? <Home staging/> : null
       }
