@@ -58,9 +58,11 @@ class Link(db.Model):
 
 	@property
 	def serialize(self):
+		topic = ''
 		for t in self.tags:
 			if t.tag_group.name == 'Topic':
 				topic = t.name
+				break
 		return {
 			'id': self.id,
 			'url': self.url,

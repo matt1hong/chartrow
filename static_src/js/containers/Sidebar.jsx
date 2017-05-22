@@ -131,7 +131,7 @@ class Sidebar extends React.Component {
                         this.props.themes
                             .map((tag,key)=>{
                                 return (<a 
-                                    className="menu-item"
+                                    className="menu-item button"
                                     id={tag}
                                 	key={key}
                                     style={{cursor: 'pointer'}}
@@ -145,7 +145,7 @@ class Sidebar extends React.Component {
                         this.props.genres
                             .map((tag,key)=>{
                                 return (<a 
-                                    className="menu-item"
+                                    className="menu-item button"
                                     id={tag}
                                 	key={key}
                                     style={{cursor: 'pointer'}}
@@ -165,12 +165,12 @@ class Sidebar extends React.Component {
                         
                     </form>
                     <span>
-                        For submissions, contact the creator <a href="https://twitter.com/madeon_young">@madeon_young</a>. We welcome blog posts.
+                        For submissions, contact the creator <a href="https://twitter.com/ChartrowCOM">@ChartrowCOM</a>. We welcome your blog posts!
                     </span>
                     <br/>
                     <br/>
                     <span>
-                        In the spirit of open data we do not link to content behind paywalls. For NYT content, visit <a href="collection.marijerooze.nl">collection.marijerooze.nl</a>.
+                        We will not link to content behind paywalls. For NYT content, visit <a href="collection.marijerooze.nl">collection.marijerooze.nl</a>.
                     </span>
                     </div>
     			</Menu>

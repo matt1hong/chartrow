@@ -116,29 +116,36 @@ class PostIt extends React.Component {
 	}
 
 	promoteLink(){
-		this.setState({
-			disablePromoteButton: true
-		})
-		axios
-			.post('/api/links/promote', {
-				url: this.props.linkUrl,
-				imgSrc: this.props.imgSrc,
-				cropPixels: this.state.cropPixels,
-				lead: this.state.lead,
-				title: this.state.title,
-				tags: this.state.workingTags,
-				realTimestamp: +this.state.date || this.state.timestamp
+		
+		if (this.state.cropPixels.width < 70 || (this.state.cropPixels.width < 400 && this.state.lead)) {
+			this.setState({
+				alert: 'Bad image'
 			})
-			.then((response) => {
-				this.setState({
-					alert: 'Success!'
+		} else {
+			this.setState({
+				disablePromoteButton: true
+			})
+			axios
+				.post('/api/links/promote', {
+					url: this.props.linkUrl,
+					imgSrc: this.props.imgSrc,
+					cropPixels: this.state.cropPixels,
+					lead: this.state.lead,
+					title: this.state.title,
+					tags: this.state.workingTags,
+					realTimestamp: +this.state.date || this.state.timestamp
 				})
-			})
-			.catch((e) => {
-				this.setState({
-					disablePromoteButton: false
+				.then((response) => {
+					this.setState({
+						alert: 'Success!'
+					})
 				})
-			})
+				.catch((e) => {
+					this.setState({
+						disablePromoteButton: false
+					})
+				})
+		}
 	}
 	
 	handleDateChange(event, date) {

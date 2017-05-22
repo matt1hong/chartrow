@@ -19,22 +19,4 @@ def index():
 def staging():
 	return render_template('index.html', page='staging', debug=application.config['DEBUG'])
 
-@application.route('/admin')
-def admin():
-	if not current_user.is_anonymous and session.get('twitter_token'):
-		return render_template('index.html', page='admin', debug=application.config['DEBUG'])
-	return redirect(url_for('oauth'))
-	
-@application.route('/oauth')
-def oauth():
-	twitter = OAuthHandler(application.config['TWITTER_KEY'], application.config['TWITTER_SECRET'])
-	try:
-		url = twitter.get_authorization_url()
-		session['request_token'] = twitter.request_token 
-	except:
-		print('Request token error')
-		url = url_for('index')
-	return redirect(url)
-
-
 

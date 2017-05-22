@@ -22,10 +22,10 @@ class LinkItem extends React.Component {
 	constructor(props) {
 		super(props)
 		this.imgImports = {
-			small: require(`../../images/${this.props.imgSrc}.png`)
+			small: `https://s3.amazonaws.com/chartrow-test/${this.props.imgSrc}.png`
 		}
 		if (this.props.lead) {
-			this.imgImports.large = require(`../../images/${this.props.imgSrc}-400.png`)
+			this.imgImports.large = `https://s3.amazonaws.com/chartrow-test/${this.props.imgSrc}-400.png`
 		}
 		this.state = {
 			small: this.props.small || !this.props.lead || this.props.index
@@ -43,7 +43,7 @@ class LinkItem extends React.Component {
 			<div style={{textAlign:'left', overflow:'hidden', marginBottom: 12}}>
 				{
 					this.state.small ? 
-					<span style={
+					<span className="button" style={
 						Object.assign(
 							{maxWidth:this.props.width-70, display: "inline-block"}, 
 							this.props.lead && !this.props.index ? style.mediumTitle : style.smallTitle
@@ -60,7 +60,7 @@ class LinkItem extends React.Component {
 				}
 				{
 					!this.state.small? 
-					<span style={style.largeTitle}>{this.props.headline}</span>
+					<span className="button" style={style.largeTitle}>{this.props.headline}</span>
 					: null
 				}
 			</div>)

@@ -84,9 +84,9 @@ class Header extends React.Component {
                     {
                         this.props.themes.map((tag,key)=>{
                                 if (key === 0) {
-                                    return <span style={{cursor: 'pointer'}} key={key} onClick={()=>this.onFilterClick(tag)}>{tag}</span>
+                                    return <span className="button" style={{cursor: 'pointer'}} key={key} onClick={()=>this.onFilterClick(tag)}>{tag}</span>
                                 } else {
-                                    return <span style={{cursor: 'pointer'}} key={key}> • <span onClick={()=>this.onFilterClick(tag)}>{tag}</span></span>
+                                    return <span key={key}> • <span className="button" style={{cursor: 'pointer'}} onClick={()=>this.onFilterClick(tag)}>{tag}</span></span>
                                 }
                             })
                     } 
@@ -94,9 +94,9 @@ class Header extends React.Component {
                     {
                         this.props.genres.map((tag,key)=>{
                                 if (key === 0) {
-                                    return <span style={{cursor: 'pointer'}} key={key} onClick={()=>this.onFilterClick(tag)}>{tag}</span>
+                                    return <span className="button" style={{cursor: 'pointer'}} key={key} onClick={()=>this.onFilterClick(tag)}>{tag}</span>
                                 } else {
-                                    return <span style={{cursor: 'pointer'}} key={key}> • <span onClick={()=>this.onFilterClick(tag)}>{tag}</span></span>
+                                    return <span key={key}> • <span className="button" style={{cursor: 'pointer'}} onClick={()=>this.onFilterClick(tag)}>{tag}</span></span>
                                 }
                             })
                     } 

@@ -5,11 +5,12 @@ import urllib.parse
 from datetime import datetime
 
 from flask import render_template, request, jsonify
-from application import application, login_manager
+from application import application, login_manager, s3_bucket
 
 import requests
 from bs4 import BeautifulSoup
 from PIL import Image
+from io import BytesIO
 
 from api.models import *
 
@@ -107,7 +108,9 @@ def promote():
 	url = incoming['url']
 	title = incoming['title']
 	tags = incoming['tags']
-
+	crop_size = incoming['cropPixels']
+	if len(incoming['imgSrc']) and int(crop_size['width']):
+		print([crop_size['x'], crop_size['y'], crop_size['width'], crop_size['height']])
 	real_date = datetime.fromtimestamp(incoming['realTimestamp']/1000.0).isoformat()
 	if db.session.query(Link).filter_by(url=url).count() < 1:
 		link = Link(url, title, lead, real_date)
@@ -123,26 +126,35 @@ def promote():
 				tag_group.tags.append(tag)
 			tag.links.append(link)
 
-		db.session.commit()
-
 		crop_size = incoming['cropPixels']
 		if len(incoming['imgSrc']) and int(crop_size['width']):
-			size_spec = [crop_size['x'], crop_size['y'], crop_size['width'], crop_size['height']]
-			size_ratio = crop_size['height']/crop_size['width']
-			read_image = urllib.request.urlopen(incoming['imgSrc'])
-			im = Image.open(read_image)
-			cropped = im.crop(tuple([int(spec) for spec in size_spec]))
 
+			size_spec = [
+				crop_size['x'], 
+				crop_size['y'], 
+				crop_size['width']+crop_size['x'], 
+				crop_size['height']+crop_size['y']
+			]
+			size_ratio = crop_size['height']/crop_size['width']
+			read_image = urllib.request.urlopen(incoming['imgSrc']).read()
+			im = Image.open(BytesIO(read_image))
+
+			cropped = im.crop(tuple([int(spec) for spec in size_spec]))
 			if lead:
 				large = cropped.resize((400,int(400*size_ratio)), Image.ANTIALIAS)
-				img_src = '%r-400.png' % link.id
-				abs_src = '%s_src/images/%s' % (application.static_folder, img_src)
-				large.save(abs_src, quality=95)
-			
+				large_src = '%r-400.png' % link.id
+				# abs_src = '%s_src/images/%s' % (application.static_folder, large_src)
+				large_file = BytesIO()
+				large.save(large_file, 'png', quality=95)
+				large_key = s3_bucket.new_key(large_src)
+				large_key.set_contents_from_string(large_file.getvalue())
 			small = cropped.resize((70,int(70*size_ratio)), Image.ANTIALIAS)
-			img_src = '%r.png' % link.id
-			abs_src = '%s_src/images/%s' % (application.static_folder, img_src)
-			small.save(abs_src, quality=95)
+			small_src = '%r.png' % link.id
+			# abs_src = '%s_src/images/%s' % (application.static_folder, small_src)
+			small_file = BytesIO()
+			small.save(small_file, 'png', quality=95)
+			small_key = s3_bucket.new_key(small_src)
+			small_key.set_contents_from_string(small_file.getvalue())
 			
 			db.session.add(link)
 			db.session.commit()
