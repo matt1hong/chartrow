@@ -8,7 +8,6 @@ from flask import Flask
 from utils import DecimalEncoder
 from config import DevConfig, ProdConfig
 from tweepy import OAuthHandler
-import boto
 
 
 
@@ -21,9 +20,6 @@ elif os.environ['FLASK_DEBUG']=='0':
 
 db = SQLAlchemy(application)
 
-
-conn = boto.connect_s3(application.config['AWS_ACCESS_KEY_ID'], application.config['AWS_SECRET_ACCESS_KEY'])
-s3_bucket = conn.get_bucket(application.config['S3_BUCKET'])
 
 from api.controllers.main import *
 
