@@ -35,16 +35,16 @@ class Header extends React.Component {
         let style ={
             'h1': {fontFamily: 'VT323', fontSize: 60, display:'inline', marginRight: 6, cursor: 'pointer', fontWeight: 'bold'},
             'h4': {fontFamily: 'VT323', display:'inline'},
-            'burgerIcon': {display:'inline', float:'right', fontSize: 48, margin: '-6 0', cursor:'pointer', fontWeight: 'bold'},
+            'burgerIcon': {display:'inline', float:'right', fontSize: 60, margin: '-23 0', cursor:'pointer', fontWeight: 'bold'},
             'container': {
-                paddingTop: 8,
+                paddingTop: 12,
                 margin: '0 auto', 
                 width: this.props.tagged ? this.props.columnWidth : headerWidth, 
                 textAlign: 'left', 
                 borderBottom: 'solid black 1px',
                 paddingBottom: '30px'
             },
-            'image': {height:36, marginRight: 6}
+            'image': {height:45, marginRight: 6}
         }
         let key = 2
         if (width < this.props.columnWidth * 2 + 1 * this.props.gutterWidth || this.props.tagged) {
@@ -52,17 +52,17 @@ class Header extends React.Component {
             style.h1.fontSize = 36
             style.h4.margin = '0 auto'
             style.h4.display = 'block'
-            style.h4.fontSize = 12
+            style.h4.fontSize = '0.825em'
             style.image.height = 24
-            style.burgerIcon.fontSize = 30
-            style.burgerIcon.margin = "-52 0"
+            style.image.marginRight = 0
+            style.burgerIcon.fontSize = 33
+            style.burgerIcon.margin = "-50 0"
             key=0
         } else if (width < this.props.columnWidth * 3 + 2 * this.props.gutterWidth && !this.props.tagged) {
             key=1
         }
         return (<div key={key}><span style={style.h1} onClick={this.props.onClick}>
                         <img style={style.image} src={require('../../cat.jpg')} />
-                        {this.props.title}
                     </span>
 
                     <span style={style.h4}>{this.props.subheader}</span>
@@ -111,7 +111,7 @@ class Header extends React.Component {
         let headerWidth = this.props.columnWidth * 3 + 2 * this.props.gutterWidth;
         
         const containerStyle={
-            paddingTop: 8,
+            paddingTop: 12,
             margin: '0 auto', 
             width: this.props.tagged ? this.props.columnWidth : headerWidth, 
             textAlign: 'left', 

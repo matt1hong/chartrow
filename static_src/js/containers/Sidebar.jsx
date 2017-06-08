@@ -165,7 +165,7 @@ class Sidebar extends React.Component {
                         
                     </form>
                     <span>
-                        For submissions, contact the creator <a href="https://twitter.com/ChartrowCOM">@ChartrowCOM</a>. We welcome your blog posts!
+                        For submissions, contact the creator <a href="https://twitter.com/ChartrowCOM">@ChartrowCOM</a>. Personal blog posts are welcome!
                     </span>
                     <br/>
                     <br/>
