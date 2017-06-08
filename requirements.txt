@@ -16,7 +16,8 @@ tweepy==3.5.0
 jsonpickle==0.9.4
 beautifulsoup4==4.5.3
 sqlalchemy-migrate==0.10.0
-eventlet==0.21.0
 Pillow==4.0.0
 psycopg2==2.6.2
+gunicorn==19.7.1
+gevent==1.2.1
 boto==2.46.1
