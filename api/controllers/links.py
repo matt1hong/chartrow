@@ -77,13 +77,13 @@ def create_tags():
 		db.session.add(theme)
 	for x in ['Annotated charts', 'Posters', 'Comic strips', 'Slide shows', 'Movies', 'Articles', 'Trackers']:
 		tag = Tag.query.filter_by(name=x)
-		if not tag:
+		if tag.count() == 0:
 			tag = Tag(x)
 			db.session.add(tag)
 			genre.tags.append(tag)
 	for x in ['Trends', 'Outliers', 'Networks', 'Averages', 'Groups']:
 		tag = Tag.query.filter_by(name=x)
-		if not tag:
+		if tag.count() == 0:
 			tag = Tag(x)
 			db.session.add(tag)
 			theme.tags.append(tag)
