@@ -8285,7 +8285,8 @@
 	      'div',
 	      null,
 	      app.getAttribute('data-section') === 'staging' ? _react2.default.createElement(_HomePage2.default, { staging: true }) : null,
-	      app.getAttribute('data-section') === 'home' ? _react2.default.createElement(_HomePage2.default, null) : null
+	      app.getAttribute('data-section') === 'home' ? _react2.default.createElement(_HomePage2.default, null) : null,
+	      app.getAttribute('data-section') === 'admin' ? _react2.default.createElement(_Admin2.default, null) : null
 	    )
 	  ), app);
 	}
