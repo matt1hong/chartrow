@@ -31,6 +31,9 @@ function init () {
       { 
         app.getAttribute('data-section') === 'home' ? <Home/> : null
       }
+      { 
+        app.getAttribute('data-section') === 'admin' ? <Admin/> : null
+      }
       </div>
     </MuiThemeProvider>,
 	app

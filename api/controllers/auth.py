@@ -21,7 +21,7 @@ def authorized():
 	del session['request_token']
 	session['twitter_token'] = twitter.get_access_token(verifier)
 	username = twitter.get_username()
-	if username == 'ChartrowCOM' or username == 'madeon_young':
+	if username == 'ChartrowCOM' or username == 'madeon_young' or username == 'datavincillc':
 		user = User.query.filter_by(name=username).first()
 		if not user:
 			user = User(name=username)

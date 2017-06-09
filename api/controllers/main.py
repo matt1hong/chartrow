@@ -20,7 +20,7 @@ def staging():
 	return render_template('index.html', page='staging', debug=application.config['DEBUG'], title='Chartrow')
 
 
-@application.route('/')
+@application.route('/admin')
 def admin():
 	if not current_user.is_anonymous and session.get('twitter_token'):
 		return render_template('index.html', page='admin', debug=application.config['DEBUG'])
