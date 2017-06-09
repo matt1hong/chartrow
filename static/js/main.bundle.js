@@ -36962,7 +36962,7 @@
 				small: 'https://s3.amazonaws.com/chartrow' + ((undefined) === "production" ? "" : "-test") + '/' + _this.props.imgSrc + '.png'
 			};
 			if (_this.props.lead) {
-				_this.imgImports.large = 'https://s3.amazonaws.com/chartrow' + ((undefined) === "production" ? "" : "-test") + '/' + _this.props.imgSrc + '-400.png';
+				_this.imgImports.large = 'https://s3.amazonaws.com/chartrow' + ((undefined) === JSON.stringify("production") ? "" : "-test") + '/' + _this.props.imgSrc + '-400.png';
 			}
 			_this.state = {
 				small: _this.props.small || !_this.props.lead || _this.props.index

@@ -25,7 +25,7 @@ class LinkItem extends React.Component {
 			small: `https://s3.amazonaws.com/chartrow${process.env.NODE_ENV==="production" ? "" : "-test"}/${this.props.imgSrc}.png`
 		}
 		if (this.props.lead) {
-			this.imgImports.large = `https://s3.amazonaws.com/chartrow${process.env.NODE_ENV==="production" ? "" : "-test"}/${this.props.imgSrc}-400.png`
+			this.imgImports.large = `https://s3.amazonaws.com/chartrow${process.env.NODE_ENV===JSON.stringify("production") ? "" : "-test"}/${this.props.imgSrc}-400.png`
 		}
 		this.state = {
 			small: this.props.small || !this.props.lead || this.props.index
