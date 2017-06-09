@@ -22,10 +22,10 @@ class LinkItem extends React.Component {
 	constructor(props) {
 		super(props)
 		this.imgImports = {
-			small: `https://s3.amazonaws.com/chartrow-test/${this.props.imgSrc}.png`
+			small: `https://s3.amazonaws.com/chartrow${JSON.stringify(process.env.NODE_ENV)==="production" ? "" : "-test"}/${this.props.imgSrc}.png`
 		}
 		if (this.props.lead) {
-			this.imgImports.large = `https://s3.amazonaws.com/chartrow-test/${this.props.imgSrc}-400.png`
+			this.imgImports.large = `https://s3.amazonaws.com/chartrow${JSON.stringify(process.env.NODE_ENV)==="production" ? "" : "-test"}/${this.props.imgSrc}-400.png`
 		}
 		this.state = {
 			small: this.props.small || !this.props.lead || this.props.index
