@@ -1,6 +1,7 @@
 import sys
 import urllib
 import urllib.request
+from urllib.request import Request
 import urllib.parse
 from datetime import datetime
 
@@ -16,6 +17,7 @@ from api.models import *
 
 user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.7) Gecko/2009021910 Firefox/3.0.7'
 accept = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+header = {'User-Agent': user_agent,'Accept': accept}
 
 def is_number(s):
     try:
@@ -139,7 +141,7 @@ def promote():
 				crop_size['height']+crop_size['y']
 			]
 			size_ratio = crop_size['height']/crop_size['width']
-			read_image = urllib.request.urlopen(incoming['imgSrc']).read()
+			read_image = urllib.request.urlopen(Request(incoming['imgSrc'], headers=header)).read()
 			im = Image.open(BytesIO(read_image))
 
 			cropped = im.crop(tuple([int(spec) for spec in size_spec]))
@@ -169,7 +171,6 @@ def promote():
 @application.route('/api/links/external/page_title')
 def fetch_title():
 	url = request.args.get('address')
-	header = {'User-Agent': user_agent,'Accept': accept}
 	soup = BeautifulSoup(requests.get(url, headers=header).text, "html.parser")
 	title = soup.select('title')[0].text
 	return jsonify(result={"title":title, "name": urllib.parse.urlparse(url).netloc}, success=True)
@@ -180,7 +181,6 @@ def fetch_title():
 def get_images():
 	url = urllib.parse.unquote(request.args.get('link'))
 	# opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor())
-	header = {'User-Agent': user_agent,'Accept': accept}
 	soup = BeautifulSoup(requests.get(url, headers=header).text, "html.parser")
 	meta_tags = soup.select('meta[property*="image"],meta[name*="image"]')
 	meta_content = [
