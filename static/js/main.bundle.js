@@ -59791,10 +59791,10 @@
 				addresses: [],
 				connected: false,
 				loaded: false,
-				activeTab: 0,
+				activeTab: 1,
 				lastSeen: '',
 				error: false,
-				tweetType: 'recents'
+				tweetType: 'likes'
 			};
 			_this.socket = null;
 			_this.updateTweets = _this.updateTweets.bind(_this);
@@ -59818,13 +59818,14 @@
 						lastSeen: response.data.result
 					});
 				});
-				this.getExistingTweets('Recents');
 			}
 		}, {
 			key: 'componentWillUpdate',
 			value: function componentWillUpdate(nextProps, nextState) {
 				if (nextState.activeTab === 0 && this.state.activeTab !== 0) {
 					this.getExistingTweets('Recents');
+				} else if (nextState.activeTab === 1 && this.state.activeTab !== 1) {
+					this.getExistingTweets('Likes');
 				}
 			}
 		}, {
@@ -59878,6 +59879,12 @@
 					type = this.state.tweetType;
 				}
 				var concat = type === this.state.tweetType ? true : false;
+				var page = this.state.page;
+				if (!concat) {
+					this.setState({
+						page: 0
+					});
+				}
 				this.setState({
 					tweetType: type
 				});
@@ -59886,7 +59893,7 @@
 				} else if (type.toLowerCase() === 'recents') {
 					this.startFeed();
 				}
-				_axios2.default.get('/api/tweets?type=' + type + '&page=' + this.state.page).then(function (response) {
+				_axios2.default.get('/api/tweets?type=' + type + '&page=' + (concat ? page : 0)).then(function (response) {
 
 					var results = response.data.results.filter(function (el) {
 						return Object.keys(el).length;
@@ -68166,10 +68173,13 @@
 	  }, {
 	    key: 'onInfiniteLoad',
 	    value: function onInfiniteLoad() {
+	      var _this2 = this;
+
 	      console.log('load');
 	      if (this.props.incrementPage) {
-	        this.props.incrementPage();
-	        this.props.loadTweets(null, this.stopSpinner.bind(this));
+	        this.props.incrementPage(function () {
+	          _this2.props.loadTweets(_this2.props.tweetType.toLowerCase(), _this2.stopSpinner.bind(_this2));
+	        });
 	      }
 	    }
 	  }, {
@@ -68182,31 +68192,31 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this2 = this;
+	      var _this3 = this;
 
 	      return _react2.default.createElement(
 	        _reactInfinite2.default,
 	        {
-	          containerHeight: 600,
-	          elementHeight: 100
-	          // onInfiniteLoad={this.onInfiniteLoad.bind(this)}
-	          , infiniteLoadBeginEdgeOffset: 10,
+	          containerHeight: 800,
+	          elementHeight: 100,
+	          onInfiniteLoad: this.onInfiniteLoad.bind(this),
+	          infiniteLoadBeginEdgeOffset: 10,
 	          isInfiniteLoading: this.state.isInfiniteLoading },
 	        this.props.tweets.map(function (x, k) {
 	          var text = x.title;
 	          return _react2.default.createElement(_Tweet2.default, {
 	            key: k,
 	            tweet: x,
-	            lastSeen: _this2.props.lastSeen,
+	            lastSeen: _this3.props.lastSeen,
 	            color: colors[colorKeys[text.hashCode() % colorKeys.length]],
 	            icon: icons[text.hashCode() % icons.length],
-	            onSurf: _this2.props.onSurf,
-	            'delete': _this2.props.delete,
-	            toDelete: _this2.toDelete.bind(_this2),
-	            chosen: _this2.props.chosen,
-	            confirmDelete: _this2.state.confirmDelete,
-	            unlike: _this2.props.tweetType.toLowerCase() === 'likes' ? _this2.props.unlike : null,
-	            tweetOut: _this2.props.tweet
+	            onSurf: _this3.props.onSurf,
+	            'delete': _this3.props.delete,
+	            toDelete: _this3.toDelete.bind(_this3),
+	            chosen: _this3.props.chosen,
+	            confirmDelete: _this3.state.confirmDelete,
+	            unlike: _this3.props.tweetType.toLowerCase() === 'likes' ? _this3.props.unlike : null,
+	            tweetOut: _this3.props.tweet
 	          });
 	        })
 	      );
@@ -72756,7 +72766,7 @@
 	    var _this = _possibleConstructorReturn(this, (AdminNav.__proto__ || Object.getPrototypeOf(AdminNav)).call(this));
 
 	    _this.state = {
-	      selectedIndex: 0,
+	      selectedIndex: 1,
 	      open: false
 	    };
 	    return _this;

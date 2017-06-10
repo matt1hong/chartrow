@@ -45,10 +45,10 @@ export default class Admin extends React.Component {
 			addresses: [],
 			connected: false,
 			loaded: false,
-			activeTab: 0,
+			activeTab: 1,
 			lastSeen: '',
 			error: false,
-			tweetType: 'recents'
+			tweetType: 'likes'
 		}
 		this.socket = null;
 		this.updateTweets = this.updateTweets.bind(this)
@@ -70,11 +70,12 @@ export default class Admin extends React.Component {
 					lastSeen: response.data.result
 				})
 			})
-		this.getExistingTweets('Recents')
 	}
 	componentWillUpdate(nextProps, nextState) {
 		if (nextState.activeTab === 0 && this.state.activeTab !== 0) {
 			this.getExistingTweets('Recents');
+		} else if (nextState.activeTab === 1 && this.state.activeTab !== 1) {
+			this.getExistingTweets('Likes');
 		}
 	}
 	startFeed() {
@@ -109,6 +110,12 @@ export default class Admin extends React.Component {
 			type = this.state.tweetType
 		}
 		let concat = type === this.state.tweetType ? true : false
+		const page = this.state.page
+		if (!concat) {
+			this.setState({
+				page: 0
+			})
+		}
 		this.setState({
 			tweetType: type
 		})
@@ -118,7 +125,7 @@ export default class Admin extends React.Component {
 			this.startFeed();
 		}
 		axios
-			.get(`/api/tweets?type=${type}&page=${this.state.page}`)
+			.get(`/api/tweets?type=${type}&page=${concat ? page : 0}`)
 			.then((response) => {
 
 				const results = response.data.results.filter((el) => {

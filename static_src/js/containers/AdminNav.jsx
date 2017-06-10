@@ -14,7 +14,7 @@ class AdminNav extends Component {
   constructor() {
     super()
     this.state = {
-      selectedIndex: 0,
+      selectedIndex: 1,
       open: false
     };
   }

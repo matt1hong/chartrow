@@ -60,8 +60,9 @@ export default class TweetFeed extends React.Component {
   onInfiniteLoad(){
     console.log('load')
     if (this.props.incrementPage) {
-      this.props.incrementPage()
-      this.props.loadTweets(null, this.stopSpinner.bind(this))
+      this.props.incrementPage(()=>{
+        this.props.loadTweets(this.props.tweetType.toLowerCase(), this.stopSpinner.bind(this))
+      })
     }
   }
 
@@ -74,9 +75,9 @@ export default class TweetFeed extends React.Component {
   render() {
     return (
         <Infinite 
-          containerHeight={600} 
+          containerHeight={800} 
           elementHeight={100}
-          // onInfiniteLoad={this.onInfiniteLoad.bind(this)}
+          onInfiniteLoad={this.onInfiniteLoad.bind(this)}
           infiniteLoadBeginEdgeOffset={10}
           isInfiniteLoading={this.state.isInfiniteLoading}>
             {this.props.tweets.map((x,k)=> {
