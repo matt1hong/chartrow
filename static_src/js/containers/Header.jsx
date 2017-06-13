@@ -37,7 +37,7 @@ class Header extends React.Component {
             'h4': {fontFamily: 'VT323', display:'inline'},
             'burgerIcon': {display:'inline', float:'right', fontSize: 60, margin: '-23 0', cursor:'pointer', fontWeight: 'bold'},
             'container': {
-                paddingTop: 12,
+                paddingTop: 18,
                 margin: '0 auto', 
                 width: this.props.tagged ? this.props.columnWidth : headerWidth, 
                 textAlign: 'left', 
@@ -78,7 +78,7 @@ class Header extends React.Component {
     }
 
     renderHeaderMenu(width) {
-        const style={fontFamily: 'VT323', float: 'left', margin: "6 0 0"}
+        const style={fontFamily: 'VT323', float: 'left', margin: "12 0 0"}
         if (!(width < this.props.columnWidth * 3 + 2 * this.props.gutterWidth || this.props.tagged)) {
             return (<span key={0} style={style}>
                     {
@@ -111,12 +111,12 @@ class Header extends React.Component {
         let headerWidth = this.props.columnWidth * 3 + 2 * this.props.gutterWidth;
         
         const containerStyle={
-            paddingTop: 12,
+            paddingTop: 18,
             margin: '0 auto', 
             width: this.props.tagged ? this.props.columnWidth : headerWidth, 
             textAlign: 'left', 
             borderBottom: 'solid black 1px',
-            paddingBottom: '30px'
+            paddingBottom: '36px'
         }
         if (width < this.props.columnWidth * 2 + 1 * this.props.gutterWidth || this.props.tagged) {
             containerStyle.width = width < this.props.columnWidth ? width : this.props.columnWidth
@@ -124,7 +124,7 @@ class Header extends React.Component {
             containerStyle.paddingBottom = 12
         } else if (width < this.props.columnWidth * 3 + 2 * this.props.gutterWidth && !this.props.tagged) {
             containerStyle.width = this.props.columnWidth * 2 + 1 * this.props.gutterWidth
-            containerStyle.paddingBottom = 8
+            containerStyle.paddingBottom = 16
         }
         return (
         	<div>

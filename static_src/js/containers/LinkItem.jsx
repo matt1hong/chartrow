@@ -13,8 +13,9 @@ const style= {
 		// fontWeight: 'bold'
 	},
 	smallTitle: {
-		fontSize: 15,
-		fontFamily: 'Helvetica Neue'
+		fontSize: 13,
+		fontFamily: 'Helvetica Neue',
+		fontWeight: 'bold'
 	}
 }
 
