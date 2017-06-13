@@ -36937,12 +36937,15 @@
 		largeTitle: {
 			fontSize: 36,
 			fontFamily: 'Garamond',
-			display: 'inline-block'
+			display: 'inline-block',
+			fontStyle: 'italic'
 			// fontWeight: 'bold'
 		},
 		mediumTitle: {
 			fontSize: 24,
-			fontFamily: 'Garamond'
+			fontFamily: 'Garamond',
+			fontStyle: 'italic'
+			// fontWeight: 'bold'
 		},
 		smallTitle: {
 			fontSize: 13,
