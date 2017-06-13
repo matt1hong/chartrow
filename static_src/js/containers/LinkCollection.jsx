@@ -28,7 +28,7 @@ class LinkCollection extends React.Component {
 					))
 					: null
 				}
-				<Divider></Divider>
+				<Divider style={{height: 2}}></Divider>
 			</div>
 		)
 	}

@@ -37093,7 +37093,7 @@
 								width: _this2.props.width })
 						);
 					}) : null,
-					_react2.default.createElement(_Divider2.default, null)
+					_react2.default.createElement(_Divider2.default, { style: { height: 2 } })
 				);
 			}
 		}]);
