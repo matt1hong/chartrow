@@ -36995,7 +36995,7 @@
 			value: function render() {
 				return _react2.default.createElement(
 					'div',
-					{ style: { textAlign: 'left', overflow: 'hidden', marginBottom: 12 } },
+					{ style: { textAlign: 'left', overflow: 'hidden', marginBottom: 18 } },
 					this.props.imgSrc ? _react2.default.createElement('img', { src: this.state.small ? this.imgImports.small : this.imgImports.large, style: { float: 'left', marginRight: 6 } }) : null,
 					this.state.small ? _react2.default.createElement(
 						'span',
