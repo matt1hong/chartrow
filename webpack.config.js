@@ -82,5 +82,7 @@ config.resolve = {
   ]
 };
 
+config.watch = true
+
 
 module.exports = config;

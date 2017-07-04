@@ -76,21 +76,26 @@ class HomePage extends React.Component {
 			})
 	}
 
-	onHeaderClick(tag) {
-		axios
-			.get(`/api/links/tagged?tag=${tag}`)
-			.then((response) => this.onHeaderClickCallback(response, tag))
+	componentWillUpdate(nextProps, nextState) {
+		console.log(nextState)
+		if (this.state.tag !== nextState.tag) {
+			console.log("catch")
+			axios
+				.get(`/api/links/tagged${this.props.staging ? '/all' : ''}?tag=${nextState.tag}`)
+				.then((response) => this.onHeaderClickCallback(response, nextState.tag))	
+		}
+
 	}
 
 	onHeaderClickCallback(response, tag) {
+		console.log(response.data.results)
 		let links = response.data.results
 		if (links.length > 0) {
 			links.sort(sort)
 			let newTaggedLinks = this.state.taggedLinks
 			newTaggedLinks[tag] = links
 			this.setState({
-				taggedLinks: newTaggedLinks,
-				tag: tag
+				taggedLinks: newTaggedLinks
 			})
 		}
 	}
@@ -138,7 +143,7 @@ class HomePage extends React.Component {
 						title="CHARTROW"
 						subheader="THE DATA VISUALIZATION CATALOG"
 						onClick={()=>{this.setState({tag:''})}}
-						onFilterClick={this.onHeaderClick.bind(this)}
+						onFilterClick={(tag)=>{this.setState({tag:tag})}}
 						genres={genres}
 						themes={themes} />
 			      <div>
@@ -169,7 +174,9 @@ class HomePage extends React.Component {
 													width < columnWidth * 2 + 2 * gutterWidth 
 													? true 
 													: false}
-												onHeaderClick={() => this.onHeaderClick(tag)}/>
+												onHeaderClick={(title) => this.setState({
+													tag: title
+												})}/>
 										)
 									})
 								: null

@@ -38,6 +38,7 @@ def all_links():
 
 @application.route('/api/links/tagged')
 def tagged_links():
+	import pdb; pdb.set_trace()
 	tlinks = Link.query.filter(Link.tags.any(name=request.args.get('tag')))
 	links = tlinks.filter_by(published=True).all()
 	if len(links) > 0:
@@ -46,6 +47,16 @@ def tagged_links():
 		return jsonify(success=True, results=[])
 	return jsonify(error=True), 403
 
+@application.route('/api/links/tagged/all')
+def all_tagged_links():
+	# import pdb; pdb.set_trace()
+	tlinks = Link.query.filter(Link.tags.any(name=request.args.get('tag')))
+	links = tlinks.all()
+	if len(links) > 0:
+		return jsonify(success=True, results=[link.serialize for link in links])
+	else:
+		return jsonify(success=True, results=[])
+	return jsonify(error=True), 403
 
 @application.route('/api/links/publish_all', methods=['POST'])
 def publish_links():

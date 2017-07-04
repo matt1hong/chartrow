@@ -12,7 +12,7 @@ class LinkCollection extends React.Component {
 				<h4 
 					style={{color:'gray', fontWeight:'normal', marginBottom: '0.66em', cursor: 'pointer', fontSize: 21}}
 					className="button"
-					onClick={this.props.onHeaderClick}>{this.props.title || ""}</h4>
+					onClick={this.props.onHeaderClick ? ()=>{this.props.onHeaderClick(this.props.title)} : null}>{this.props.title || ""}</h4>
 				{this.props.links ? 
 					this.props.links.map((link, key) => (
 						<a key={key} href={link.url} target="_blank">

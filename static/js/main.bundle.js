@@ -30013,25 +30013,29 @@
 				});
 			}
 		}, {
-			key: 'onHeaderClick',
-			value: function onHeaderClick(tag) {
+			key: 'componentWillUpdate',
+			value: function componentWillUpdate(nextProps, nextState) {
 				var _this3 = this;
 
-				_axios2.default.get('/api/links/tagged?tag=' + tag).then(function (response) {
-					return _this3.onHeaderClickCallback(response, tag);
-				});
+				console.log(nextState);
+				if (this.state.tag !== nextState.tag) {
+					console.log("catch");
+					_axios2.default.get('/api/links/tagged' + (this.props.staging ? '/all' : '') + '?tag=' + nextState.tag).then(function (response) {
+						return _this3.onHeaderClickCallback(response, nextState.tag);
+					});
+				}
 			}
 		}, {
 			key: 'onHeaderClickCallback',
 			value: function onHeaderClickCallback(response, tag) {
+				console.log(response.data.results);
 				var links = response.data.results;
 				if (links.length > 0) {
 					links.sort(sort);
 					var newTaggedLinks = this.state.taggedLinks;
 					newTaggedLinks[tag] = links;
 					this.setState({
-						taggedLinks: newTaggedLinks,
-						tag: tag
+						taggedLinks: newTaggedLinks
 					});
 				}
 			}
@@ -30082,7 +30086,9 @@
 							onClick: function onClick() {
 								_this4.setState({ tag: '' });
 							},
-							onFilterClick: this.onHeaderClick.bind(this),
+							onFilterClick: function onFilterClick(tag) {
+								_this4.setState({ tag: tag });
+							},
 							genres: genres,
 							themes: themes }),
 						_react2.default.createElement(
@@ -30108,8 +30114,10 @@
 										links: taggedLinks,
 										width: width < columnWidth ? width : columnWidth,
 										small: width < columnWidth * 2 + 2 * gutterWidth ? true : false,
-										onHeaderClick: function onHeaderClick() {
-											return _this4.onHeaderClick(tag);
+										onHeaderClick: function onHeaderClick(title) {
+											return _this4.setState({
+												tag: title
+											});
 										} });
 								}) : null
 							)
@@ -37077,7 +37085,9 @@
 						{
 							style: { color: 'gray', fontWeight: 'normal', marginBottom: '0.66em', cursor: 'pointer', fontSize: 21 },
 							className: 'button',
-							onClick: this.props.onHeaderClick },
+							onClick: this.props.onHeaderClick ? function () {
+								_this2.props.onHeaderClick(_this2.props.title);
+							} : null },
 						this.props.title || ""
 					),
 					this.props.links ? this.props.links.map(function (link, key) {
