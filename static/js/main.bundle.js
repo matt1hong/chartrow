@@ -36997,12 +36997,12 @@
 				return _react2.default.createElement(
 					'div',
 					{ style: { textAlign: 'left', overflow: 'hidden', marginBottom: 12 } },
+					this.props.imgSrc ? _react2.default.createElement('img', { src: this.state.small ? this.imgImports.small : this.imgImports.large, style: { float: 'left', marginRight: 6 } }) : null,
 					this.state.small ? _react2.default.createElement(
 						'span',
-						{ className: 'button', style: Object.assign({ maxWidth: this.props.width - 70, display: "inline-block" }, this.props.lead && !this.props.index ? style.mediumTitle : style.smallTitle) },
+						{ className: 'button', style: Object.assign({ maxWidth: this.props.width - 76, display: "inline-block" }, this.props.lead && !this.props.index ? style.mediumTitle : style.smallTitle) },
 						this.props.headline
 					) : null,
-					this.props.imgSrc ? _react2.default.createElement('img', { src: this.state.small ? this.imgImports.small : this.imgImports.large, style: { float: 'right' } }) : null,
 					!this.state.small ? _react2.default.createElement(
 						'span',
 						{ className: 'button', style: style.largeTitle },

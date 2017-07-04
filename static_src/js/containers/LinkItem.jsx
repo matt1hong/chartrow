@@ -45,20 +45,20 @@ class LinkItem extends React.Component {
 		return (
 			<div style={{textAlign:'left', overflow:'hidden', marginBottom: 12}}>
 				{
-					this.state.small ? 
-					<span className="button" style={
-						Object.assign(
-							{maxWidth:this.props.width-70, display: "inline-block"}, 
-							this.props.lead && !this.props.index ? style.mediumTitle : style.smallTitle
-							)}>{this.props.headline}</span>
-					: null
-				}
-				{
 					this.props.imgSrc ? 
 						<img src={this.state.small? 
 								this.imgImports.small
 								: this.imgImports.large
-						} style={{float:'right'}}/>
+						} style={{float:'left', marginRight: 6}}/>
+					: null
+				}
+				{
+					this.state.small ? 
+					<span className="button" style={
+						Object.assign(
+							{maxWidth:this.props.width-76, display: "inline-block"}, 
+							this.props.lead && !this.props.index ? style.mediumTitle : style.smallTitle
+							)}>{this.props.headline}</span>
 					: null
 				}
 				{
