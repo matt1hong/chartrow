@@ -37,8 +37,8 @@ const sort = function(x, y) {
 	return byLead;
 }
 
-const genres = ['Annotated charts', 'Posters', 'Comic strips', 'Slide shows', 'Movies', 'Trackers']
-const themes = ['Trends', 'Outliers', 'Networks', 'Averages', 'Groups']
+const genres = ['Singles', 'Composites', 'Comic strips', 'Slide shows', 'Movies', 'Trackers']
+const themes = ['Trends', 'Outliers', 'Networks', 'Averages', 'Groups', 'Rankings']
 
 class HomePage extends React.Component {
 

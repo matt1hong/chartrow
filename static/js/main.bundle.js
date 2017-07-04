@@ -29964,8 +29964,8 @@
 		return byLead;
 	};
 
-	var genres = ['Annotated charts', 'Posters', 'Comic strips', 'Slide shows', 'Movies', 'Trackers'];
-	var themes = ['Trends', 'Outliers', 'Networks', 'Averages', 'Groups'];
+	var genres = ['Singles', 'Composites', 'Comic strips', 'Slide shows', 'Movies', 'Trackers'];
+	var themes = ['Trends', 'Outliers', 'Networks', 'Averages', 'Groups', 'Rankings'];
 
 	var HomePage = function (_React$Component) {
 		_inherits(HomePage, _React$Component);
