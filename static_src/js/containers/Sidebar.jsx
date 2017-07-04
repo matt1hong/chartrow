@@ -39,9 +39,12 @@ const styles = {
         padding: '0.8em'
     },
     bmOverlay: {
-        background: 'rgba(0, 0, 0, 0.3)'
+        background: 'rgba(0, 0, 0, 0.3)',
+        zIndex: 3
     }
 };
+
+const breakStyle = {marginBottom: 24}
 
 class Sidebar extends React.Component {
     constructor(){
@@ -124,22 +127,22 @@ class Sidebar extends React.Component {
                     outerContainerId={'container'}
                     styles={styles} 
                     onStateChange={this.props.isMenuOpen}>
-                    <span style={{fontFamily: 'VT323', fontSize: 36, fontWeight: 'bold'}}>FILTERS</span>
-                    <br/>
-                    <span style={{fontWeight: 'bold'}}>Themes</span>
-                    {
-                        this.props.themes
-                            .map((tag,key)=>{
-                                return (<a 
-                                    className="menu-item button"
-                                    id={tag}
-                                	key={key}
-                                    style={{cursor: 'pointer'}}
-                                	onClick={()=>this.props.onFilterClick(tag)}>
-                                	{tag}</a>)
-                            })
-                    } 
-                    <br/>
+                    <span style={{fontFamily: 'VT323', fontSize: 36, fontWeight: 'bold', marginBottom: 24}}>FILTERS</span>
+                  
+                        <span style={{fontWeight: 'bold'}}>Themes</span>
+                        {
+                            this.props.themes
+                                .map((tag,key)=>{
+                                    return (<a 
+                                        className="menu-item button"
+                                        id={tag}
+                                        key={key}
+                                        style={{cursor: 'pointer'}}
+                                        onClick={()=>this.props.onFilterClick(tag)}>
+                                        {tag}</a>)
+                                })
+                        } 
+                    <div style={breakStyle}></div>
                     <span style={{fontWeight: 'bold'}}>Genres</span>
                     {
                         this.props.genres
@@ -153,7 +156,8 @@ class Sidebar extends React.Component {
                                 	{tag}</a>)
                             })
                     }
-                    <br/><hr /><br/>
+                    <div style={breakStyle}></div>
+                    <hr style={breakStyle}/>
                     <div style={{fontSize: '0.8em'}}>
                     <form id='subscribe'>
                         <p>

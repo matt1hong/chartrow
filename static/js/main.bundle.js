@@ -30040,6 +30040,11 @@
 				}
 			}
 		}, {
+			key: 'pushHashLocation',
+			value: function pushHashLocation(loc) {
+				window.location.hash = loc;
+			}
+		}, {
 			key: 'renderCollections',
 			value: function renderCollections(width) {
 				var widthTagged = 400;
@@ -30084,11 +30089,9 @@
 							title: 'CHARTROW',
 							subheader: 'THE DATA VISUALIZATION CATALOG',
 							onClick: function onClick() {
-								_this4.setState({ tag: '' });
+								_this4.pushHashLocation('');
 							},
-							onFilterClick: function onFilterClick(tag) {
-								_this4.setState({ tag: tag });
-							},
+							onFilterClick: this.pushHashLocation,
 							genres: genres,
 							themes: themes }),
 						_react2.default.createElement(
@@ -30114,11 +30117,7 @@
 										links: taggedLinks,
 										width: width < columnWidth ? width : columnWidth,
 										small: width < columnWidth * 2 + 2 * gutterWidth ? true : false,
-										onHeaderClick: function onHeaderClick(title) {
-											return _this4.setState({
-												tag: title
-											});
-										} });
+										onHeaderClick: _this4.pushHashLocation });
 								}) : null
 							)
 						)
@@ -38147,9 +38146,12 @@
 	        padding: '0.8em'
 	    },
 	    bmOverlay: {
-	        background: 'rgba(0, 0, 0, 0.3)'
+	        background: 'rgba(0, 0, 0, 0.3)',
+	        zIndex: 3
 	    }
 	};
+
+	var breakStyle = { marginBottom: 24 };
 
 	var Sidebar = function (_React$Component) {
 	    _inherits(Sidebar, _React$Component);
@@ -38253,10 +38255,9 @@
 	                        onStateChange: this.props.isMenuOpen },
 	                    _react2.default.createElement(
 	                        'span',
-	                        { style: { fontFamily: 'VT323', fontSize: 36, fontWeight: 'bold' } },
+	                        { style: { fontFamily: 'VT323', fontSize: 36, fontWeight: 'bold', marginBottom: 24 } },
 	                        'FILTERS'
 	                    ),
-	                    _react2.default.createElement('br', null),
 	                    _react2.default.createElement(
 	                        'span',
 	                        { style: { fontWeight: 'bold' } },
@@ -38276,7 +38277,7 @@
 	                            tag
 	                        );
 	                    }),
-	                    _react2.default.createElement('br', null),
+	                    _react2.default.createElement('div', { style: breakStyle }),
 	                    _react2.default.createElement(
 	                        'span',
 	                        { style: { fontWeight: 'bold' } },
@@ -38296,9 +38297,8 @@
 	                            tag
 	                        );
 	                    }),
-	                    _react2.default.createElement('br', null),
-	                    _react2.default.createElement('hr', null),
-	                    _react2.default.createElement('br', null),
+	                    _react2.default.createElement('div', { style: breakStyle }),
+	                    _react2.default.createElement('hr', { style: breakStyle }),
 	                    _react2.default.createElement(
 	                        'div',
 	                        { style: { fontSize: '0.8em' } },

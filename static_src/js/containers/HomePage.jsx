@@ -100,6 +100,10 @@ class HomePage extends React.Component {
 		}
 	}
 
+	pushHashLocation(loc) {
+		window.location.hash = loc
+	}
+
 	renderCollections(width) {
 		let widthTagged = 400;
 		if (this.state.tag === "") {
@@ -142,8 +146,8 @@ class HomePage extends React.Component {
 						tagged={this.state.tag !== ""}
 						title="CHARTROW"
 						subheader="THE DATA VISUALIZATION CATALOG"
-						onClick={()=>{this.setState({tag:''})}}
-						onFilterClick={(tag)=>{this.setState({tag:tag})}}
+						onClick={()=>{this.pushHashLocation('')}}
+						onFilterClick={this.pushHashLocation}
 						genres={genres}
 						themes={themes} />
 			      <div>
@@ -174,9 +178,7 @@ class HomePage extends React.Component {
 													width < columnWidth * 2 + 2 * gutterWidth 
 													? true 
 													: false}
-												onHeaderClick={(title) => this.setState({
-													tag: title
-												})}/>
+												onHeaderClick={this.pushHashLocation}/>
 										)
 									})
 								: null
