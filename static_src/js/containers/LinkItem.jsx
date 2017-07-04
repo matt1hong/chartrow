@@ -43,7 +43,7 @@ class LinkItem extends React.Component {
 	}
 	render() {
 		return (
-			<div style={{textAlign:'left', overflow:'hidden', marginBottom: 18}}>
+			<div style={{textAlign:'left', overflow:'hidden', marginBottom: 12}}>
 				{
 					this.props.imgSrc ? 
 						<img src={this.state.small? 
