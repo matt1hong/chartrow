@@ -9,7 +9,8 @@ export default class Tweet extends React.Component {
     super()
     this.state = {
       imageClicked: false,
-      linkClicked: false
+      linkClicked: false,
+      expanded: false
     }
   }
 
@@ -21,12 +22,19 @@ export default class Tweet extends React.Component {
     this.setState({linkClicked: true})
   }
 
+  handleExpand () {
+    this.setState({expanded: true})
+  }
+  handleExpandChange (expanded) {
+    this.setState({expanded: expanded});
+  };
+
   render() {
     const SvgIcon = this.props.icon;
     const lastSeen = this.props.lastSeen;
     const isNew = new Date(this.props.tweet.timestamp_ms * 1000) > new Date(lastSeen.substring(0, lastSeen.indexOf('.'))+'-04:00');
     return (
-      <Card style={{marginTop:6}} href={this.props.tweet.url}>
+      <Card expanded={this.state.expanded} onExpandChange={this.handleExpandChange} style={{marginTop:6}} href={this.props.tweet.url}>
         <a href={this.props.tweet.tweet || null} target="_blank" style={{textDecoration: 'none'}}>
           <CardTitle title={
             <div>
@@ -39,7 +47,7 @@ export default class Tweet extends React.Component {
         <CardActions>
           <FlatButton 
             label="Images" 
-            onTouchTap={() => {this.clickImage(); this.props.onSurf(this.props.tweet);}} 
+            onTouchTap={() => {this.clickImage(); this.props.onSurf(this.props.tweet); this.handleExpand;}} 
             primary={true}
             // primary={!this.state.imageClicked} 
             // secondary={this.state.imageClicked}/>
@@ -70,6 +78,12 @@ export default class Tweet extends React.Component {
               : null
           }
         </CardActions>
+        <CardMedia
+          expandable={true}
+          overlay={<CardTitle title="Overlay title" subtitle="Overlay subtitle" />}
+        >
+          <img src="https://pbs.twimg.com/profile_images/2037777108/TEMP-Image_1_6_normal.png" alt="" />
+        </CardMedia>
       </Card>
       )}
      

@@ -20,12 +20,12 @@ application.json_encoder = DecimalEncoder
 
 conn = None
 s3_bucket = None
-if os.environ['FLASK_DEBUG']=='1':
+if not 'FLASK_DEBUG' in os.environ or os.environ['FLASK_DEBUG']=='1':
 	application.config.from_object(DevConfig)
 elif os.environ['FLASK_DEBUG']=='0':
 	application.config.from_object(ProdConfig)
-	conn = boto.connect_s3(application.config['AWS_ACCESS_KEY_ID'], application.config['AWS_SECRET_ACCESS_KEY'])
-	s3_bucket = conn.get_bucket(application.config['S3_BUCKET'])
+conn = boto.connect_s3(application.config['AWS_ACCESS_KEY_ID'], application.config['AWS_SECRET_ACCESS_KEY'])
+s3_bucket = conn.get_bucket(application.config['S3_BUCKET'])
 
 	
 twitter = OAuthHandler(application.config['TWITTER_KEY'], application.config['TWITTER_SECRET'])
