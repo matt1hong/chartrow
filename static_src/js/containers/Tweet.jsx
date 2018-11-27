@@ -3,6 +3,7 @@ import { purple800 } from 'material-ui/styles/colors'
 import FontIcon from 'material-ui/FontIcon';
 import {Card, CardActions, CardHeader, CardTitle, CardText, CardMedia} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
+import PostIt from './PostIt'
 
 export default class Tweet extends React.Component {
   constructor() {
@@ -47,7 +48,7 @@ export default class Tweet extends React.Component {
         <CardActions>
           <FlatButton 
             label="Images" 
-            onTouchTap={() => {this.clickImage(); this.props.onSurf(this.props.tweet); this.handleExpand;}} 
+            onTouchTap={() => {this.clickImage(); this.props.onSurf(this.props.tweet); this.handleExpand();}} 
             primary={true}
             // primary={!this.state.imageClicked} 
             // secondary={this.state.imageClicked}/>
@@ -80,9 +81,13 @@ export default class Tweet extends React.Component {
         </CardActions>
         <CardMedia
           expandable={true}
-          overlay={<CardTitle title="Overlay title" subtitle="Overlay subtitle" />}
         >
-          <img src="https://pbs.twimg.com/profile_images/2037777108/TEMP-Image_1_6_normal.png" alt="" />
+          <PostIt 
+            linkUrl={'http://google.com'}
+            imgSrc={'https://pbs.twimg.com/profile_images/2037777108/TEMP-Image_1_6_normal.png'}
+            tags={['asd']}
+            headline={'test'}
+            addTag={this.clickLink.bind(this)}></PostIt>
         </CardMedia>
       </Card>
       )}

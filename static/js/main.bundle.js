@@ -68284,6 +68284,10 @@
 
 	var _FlatButton2 = _interopRequireDefault(_FlatButton);
 
+	var _PostIt = __webpack_require__(836);
+
+	var _PostIt2 = _interopRequireDefault(_PostIt);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -68302,7 +68306,8 @@
 
 	    _this.state = {
 	      imageClicked: false,
-	      linkClicked: false
+	      linkClicked: false,
+	      expanded: false
 	    };
 	    return _this;
 	  }
@@ -68318,6 +68323,16 @@
 	      this.setState({ linkClicked: true });
 	    }
 	  }, {
+	    key: 'handleExpand',
+	    value: function handleExpand() {
+	      this.setState({ expanded: true });
+	    }
+	  }, {
+	    key: 'handleExpandChange',
+	    value: function handleExpandChange(expanded) {
+	      this.setState({ expanded: expanded });
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      var _this2 = this;
@@ -68327,7 +68342,7 @@
 	      var isNew = new Date(this.props.tweet.timestamp_ms * 1000) > new Date(lastSeen.substring(0, lastSeen.indexOf('.')) + '-04:00');
 	      return _react2.default.createElement(
 	        _Card.Card,
-	        { style: { marginTop: 6 }, href: this.props.tweet.url },
+	        { expanded: this.state.expanded, onExpandChange: this.handleExpandChange, style: { marginTop: 6 }, href: this.props.tweet.url },
 	        _react2.default.createElement(
 	          'a',
 	          { href: this.props.tweet.tweet || null, target: '_blank', style: { textDecoration: 'none' } },
@@ -68354,7 +68369,7 @@
 	          _react2.default.createElement(_FlatButton2.default, {
 	            label: 'Images',
 	            onTouchTap: function onTouchTap() {
-	              _this2.clickImage();_this2.props.onSurf(_this2.props.tweet);
+	              _this2.clickImage();_this2.props.onSurf(_this2.props.tweet);_this2.handleExpand();
 	            },
 	            primary: true
 	            // primary={!this.state.imageClicked} 
@@ -68381,6 +68396,18 @@
 	          this.props.tweetOut ? _react2.default.createElement(_FlatButton2.default, { label: 'Tweet', onTouchTap: function onTouchTap() {
 	              return _this2.props.tweetOut(_this2.props.tweet);
 	            } }) : null
+	        ),
+	        _react2.default.createElement(
+	          _Card.CardMedia,
+	          {
+	            expandable: true
+	          },
+	          _react2.default.createElement(_PostIt2.default, {
+	            linkUrl: 'http://google.com',
+	            imgSrc: 'https://pbs.twimg.com/profile_images/2037777108/TEMP-Image_1_6_normal.png',
+	            tags: ['asd'],
+	            headline: 'test',
+	            addTag: this.clickLink.bind(this) })
 	        )
 	      );
 	    }

@@ -7,3 +7,4 @@ db_repository_prod
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+config.py
